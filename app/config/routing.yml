@@ -1,0 +1,12 @@
+istore_backend:
+    resource: "@istoreBackendBundle/Resources/config/routing.yml"
+    prefix:   /
+
+istore_security:
+    resource: "@istoreSecurityBundle/Resources/config/routing.yml"
+    prefix:   /
+
+istoregomlaphone:
+    resource: "@istoregomlaphoneBundle/Resources/config/routing.yml"
+    prefix:   /
+    

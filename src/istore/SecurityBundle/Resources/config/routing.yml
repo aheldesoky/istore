@@ -1,0 +1,14 @@
+#istore_security_homepage:
+#    pattern:  /hello/{name}
+#    defaults: { _controller: istoreSecurityBundle:Default:index }
+
+login:
+    pattern:   /login
+    defaults:  { _controller: istoreSecurityBundle:Security:login }
+    
+login_check:
+    pattern:   /login_check
+    
+create_user:
+    pattern:   /create_user
+    defaults:  { _controller: istoreSecurityBundle:Security:createUser }

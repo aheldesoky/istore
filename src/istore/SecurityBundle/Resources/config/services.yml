@@ -1,0 +1,7 @@
+parameters:
+#    istore_security.example.class: istore\SecurityBundle\Example
+
+services:
+#    istore_security.example:
+#        class: %istore_security.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

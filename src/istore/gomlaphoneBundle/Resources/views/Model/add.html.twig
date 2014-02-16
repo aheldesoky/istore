@@ -1,0 +1,66 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<form class="form-horizontal" role="form" method="post" id="modelForm">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Add New Model</h4>
+		</div>
+		<div class="panel-body">
+			<div class="form-container">
+				<div class="">
+					<div class="row input-serial alert alert-info alert-serial-model">
+						<div class="col-lg-5 col-lg-offset-3">
+							<div class="form-group">
+								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="Model Serial">
+							</div>
+						</div>
+						<div class="col-lg-1">
+							<button id="model-serial" data-loading-text="Loading..." class="btn btn-danger btn-lg" type="button">Check</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="modelBrand" class="col-sm-4 control-label">Brand Name</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="modelBrand" name="modelBrand" placeholder="Brand Name">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modelModel" class="col-sm-4 control-label">Model</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="modelModel" name="modelModel" placeholder="Model">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="modelCategory" class="col-sm-4 control-label">Category</label>
+								<div class="col-sm-6">
+									<select class="form-control required" id="modelCategory" name="modelCategory">
+										<option value="" selected>Select category</option>
+										{% for category in categories %}
+										<option value="{{ category.c_id }}">{{ category.c_category_name }}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="modelSpecs" class="col-sm-4 control-label">Specifications</label>
+								<div class="col-sm-7">
+									<textarea class="form-control" rows="3" id="modelSpecs" name="modelSpecs" placeholder="Enter specifications ...."></textarea>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<button type="submit" class="btn btn-success btn-lg">Add Model</button>
+		</div>
+	</div>
+</form>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

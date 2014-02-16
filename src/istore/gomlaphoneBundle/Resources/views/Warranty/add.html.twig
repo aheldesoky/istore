@@ -1,0 +1,28 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<form class="form-horizontal" role="form" method="post" id="warrantyForm">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Add New Warranty</h4>
+		</div>
+		<div class="panel-body">
+			<div class="form-container">
+				<div class="">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="warrantyName" class="col-sm-4 control-label">Warranty Name</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="warrantyName" name="warrantyName" placeholder="Name">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<button type="submit" class="btn btn-success btn-lg">Add Warranty</button>
+		</div>
+	</div>
+</form>{% endblock %}

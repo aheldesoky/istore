@@ -1,0 +1,97 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="form-horizontal">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-heading-sale">Sales Page</h4>
+            <span id="datetime">
+                {{ datetime.format('l jS F Y') }}
+            </span>
+            
+        </div>
+        <div class="panel-body">
+            <div class="form-container">
+                <div class="row">
+                    <div class="col-lg-5">
+                            <div class="row input-serial alert alert-info alert-serial-sale">
+                                    <div class="col-lg-9">
+                                            <div class="form-group">
+                                                    <input type="text" class="form-control input-lg" id="itemSerial" name="itemSerial" placeholder="{% trans %}Item Serial{% endtrans %}">
+                                            </div>
+                                    </div>
+                                    <div class="col-lg-1">
+                                            <button id="item-serial-sale" data-loading-text="{% trans %}Loading{% endtrans %}" class="btn btn-danger btn-lg" type="button">{% trans %}Check{% endtrans %}</button>
+                                    </div>
+                            </div>
+                            <div class="row">
+                                    <div class="col-md-12">
+                                            <div class="form-group">
+                                                    <label for="itemBrand" class="col-sm-4 control-label">{% trans %}Brand{% endtrans %} : </label>
+                                                    <div class="col-sm-6">
+                                                            <label class="control-label" id="itemBrand" name="Brand"></label>
+                                                    </div>
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="itemModel" class="col-sm-4 control-label">{% trans %}Model{% endtrans %} : </label>
+                                                    <div class="col-sm-6">
+                                                            <label class="control-label" id="itemModel" name="itemModel"></label>
+                                                    </div>
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="itemCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %} : </label>
+                                                    <div class="col-sm-6">
+                                                            <label class="control-label" id="itemCategory" name="itemCategory"></label>
+                                                    </div>
+                                            </div>
+                                            <div class="form-group">
+                                                    <label for="itemPrice" class="col-sm-4 control-label">{% trans %}Price{% endtrans %} : </label>
+                                                    <div class="col-sm-3">
+                                                            <label class="control-label" id="itemPrice" name="itemPrice"></label>
+                                                    </div>
+                                                    <button class="btn btn-info btn-sm btn-discount hidden">Discount</button>
+                                            </div>
+                                            <div class="hidden discount-field">
+                                            <div class="form-group">
+                                                    <label for="itemDiscount" class="col-sm-4 control-label">{% trans %}Discount{% endtrans %} : </label>
+                                                    <div class="col-sm-4">
+                                                            <input type="number" class="form-control" id="itemDiscount" name="itemDiscount" value="0" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                                    </div>
+                                            </div>
+                                            </div>
+                                            <div class="form-group">
+                                                    <div class="col-sm-12">
+                                                        <button class="col-md-3 col-md-offset-5 btn btn-success btn-md btn-add-item" id="addItem" name="addItem">{% trans %}Add{% endtrans %}</button>
+                                                    </div>
+                                            </div>
+                                    </div>
+                            </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="row item-list">
+                            <div class="col-lg-12">
+                                <table class="table table-hover table-bordered table-view table-view-sale">
+                                    <tr>
+                                        <th>{% trans %}Serial{% endtrans %}</th>
+                                        <th>{% trans %}Brand{% endtrans %}</th>
+                                        <th>{% trans %}Model{% endtrans %}</th>
+                                        <th>{% trans %}Category{% endtrans %}</th>
+                                        <th>{% trans %}Price L.E.{% endtrans %}</th>
+                                        <th>{% trans %}Discount{% endtrans %}</th>
+                                        <th>{% trans %}Action{% endtrans %}</th>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3 col-lg-offset-4">
+                                <button class="col-lg-12 btn btn-success btn-lg btn-sell-list" data-toggle="modal" data-target=".bs-modal-lg">Checkout Bill</button>
+                                {% include('istoregomlaphoneBundle:Default:addCustomer.html.twig') %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,114 @@
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>Gomla Phone</title>
+        <link href="/bundles/istoregomlaphone/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/style-bill.css' />
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/print.css' media="print" />
+    </head>
+    <body>
+        <div id="page-wrap" class="page-border">
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">Print</a>
+                <a href="/" class="btn btn-lg btn-default btn-print">Back to Home</a>
+            </div>
+            <div id="header">INVOICE</div>
+            <div id="identity">
+                <div id="address">
+                    <div>Chris Coyier</div>
+                    <div>123 Appleseed Street</div>
+                    <div>Appleville, WI 53719</div>
+
+                    <div>Phone: (555) 555-5555</div>
+                </div>
+                <div id="logo">
+                    <img id="image" src="/bundles/istoregomlaphone/img/logo.png" alt="logo" />
+                </div>
+            </div>
+            <div style="clear:both"></div>
+            <div id="customer">
+                <div id="customer-title">
+                    {{ sales[0].c_customer_fname }} {{ sales[0].c_customer_lname }}
+                </div>
+                <table id="meta">
+                    <tr>
+                        <td class="meta-head">Invoice #</td>
+                        <td>{{ sales[0].s_id }}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-head">Date</td>
+                        <td>{{ sales[0].s_sale_date.format('l jS') }} of {{ sales[0].s_sale_date.format('F Y') }}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-head">Time</td>
+                        <td>{{ sales[0].s_sale_date.format('h:i:s A') }}</td>
+                    </tr>
+                    <tr>
+                        {% set subtotal = 0 %}
+                        {% set discount = 0 %}
+                        {% for item in sales %}
+                            {% set subtotal = subtotal + item.b_bulk_price %}
+                            {% set discount = discount + item.si_saleitem_discount %}
+                        {% endfor %}
+                        <td class="meta-head">Amount Due</td>
+                        <td><div class="due">{{ subtotal - discount }} L.E.</div></td>
+                    </tr>
+                </table>
+            </div>
+            <table id="items">
+                <tr>
+                    <th>Item Serial</th>
+                    <th>Description</th>
+                    <th>Category</th>
+                    <th>Discount</th>
+                    <th>Price</th>
+                </tr>
+                {% for item in sales %}
+                <tr class="item-row">
+                    <td class="item-name">{{ item.i_item_serial }}</td>
+                    <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }} {{ item.i_item_color }}</td>
+                    <td>{{ item.ca_category_name }}</td>
+                    <td>{{ item.si_saleitem_discount }} L.E.</td>
+                    <td>{{ item.b_bulk_price }} L.E.</td>
+                </tr>
+                {% endfor %}
+                <tr class="last-row">
+                    <td colspan="3" class="blank"> </td>
+                    <td colspan="1" class="total-line">Subtotal</td>
+                    <td class="total-value"><div id="subtotal">{{ subtotal }} L.E.</div></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="blank"> </td>
+                    <td colspan="1" class="total-line">Total Discount</td>
+                    <td class="total-value"><div id="discount">{{ discount }} L.E.</div></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="blank"> </td>
+                    <td colspan="1" class="total-line">Total</td>
+                    <td class="total-value"><div id="total">{{ subtotal - discount }} L.E.</div></td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="blank"> </td>
+                    <td colspan="1" class="total-line">Amount Paid</td>
+                    <td class="total-value">{{ subtotal - discount }} L.E.</td>
+                </tr>
+                <tr>
+                    <td colspan="3" class="blank"> </td>
+                    <td colspan="1" class="total-line balance">Balance Due</td>
+                    <td class="total-value balance"><div class="due">{{ subtotal - discount }} L.E.</div></td>
+                </tr>
+            </table>
+            <div id="terms">
+              <h5>Terms</h5>
+              <div>NET 30 Days. Finance Charge of 1.5% will be made on unpaid balances after 30 days.</div>
+            </div>
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">Print</a>
+                <a href="/" class="btn btn-lg btn-default btn-print">Back to Home</a>
+            </div>
+        </div>
+    </body>
+</html>
+{% endblock %}

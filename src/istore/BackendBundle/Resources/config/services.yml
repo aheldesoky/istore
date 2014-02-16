@@ -1,0 +1,7 @@
+parameters:
+#    istore_backend.example.class: istore\BackendBundle\Example
+
+services:
+#    istore_backend.example:
+#        class: %istore_backend.example.class%
+#        arguments: [@service_id, "plain_value", %parameter%]

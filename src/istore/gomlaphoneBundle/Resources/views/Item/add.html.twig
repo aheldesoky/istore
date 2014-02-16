@@ -1,0 +1,81 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<form class="form-horizontal" role="form" method="post">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>Add New Bulk</h4>
+		</div>
+		<div class="panel-body">
+			<div class="form-container">
+				<div class="">
+					<div class="row input-serial jumbotron">
+						<div class="col-lg-5 col-lg-offset-3">
+							<div class="form-group">
+								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="{% trans %}Barcode{% endtrans %}">
+							</div>
+						</div>
+						<div class="col-lg-1">
+							<button id="find-serial" data-loading-text="{% trans %}Loading{% endtrans %}..." class="btn btn-danger btn-lg" type="button">{% trans %}Check{% endtrans %}</button>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="bulkBrand" class="col-sm-4 control-label">{% trans %}Bulk Brand{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" disabled id="bulkBrand" name="bulkBrand" placeholder="{% trans %}Brand{% endtrans %}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="bulkModel" class="col-sm-4 control-label">{% trans %}Bulk Model{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" disabled id="bulkModel" name="bulkModel" placeholder="{% trans %}Model{% endtrans %}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="bulkCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" disabled id="bulkCategory" name="bulkCategory" placeholder="{% trans %}Category{% endtrans %}">
+								</div>
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="bulkPrice" class="col-sm-4 control-label">{% trans %}Price{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="number" class="form-control" id="bulkPrice" name="bulkPrice" placeholder="{% trans %}Price L.E.{% endtrans %}">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="bulkQuantity" class="col-sm-4 control-label">{% trans %}Quantity{% endtrans %}</label>
+								<div class="col-sm-3">
+									<input type="number" class="form-control" id="bulkQuantity" name="bulkQuantity" placeholder="{% trans %}Quantity{% endtrans %}" value="1">
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="bulkSupplier" class="col-sm-4 control-label">{% trans %}Supplier{% endtrans %}</label>
+								<div class="col-sm-6">
+									<select class="form-control" id="bulkSupplier" name="bulkSupplier">
+										<option selected>{% trans %}Select supplier{% endtrans %}</option>>
+										{% for supplier in suppliers %}
+										<option value="{{ supplier.s_id }}">{{ supplier.s_supplier_name }}</option>
+									{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="bulkDate" class="col-sm-4 control-label">{% trans %}Bulk Date{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="bulkDate" name="bulkDate" placeholder="{% trans %}Select Date{% endtrans %}" data-date-format="yyyy-mm-dd">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<button type="submit" class="btn btn-success btn-lg">Add Bulk</button>
+		</div>
+	</div>
+</form>{% endblock %}

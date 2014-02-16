@@ -1,0 +1,175 @@
+@CHARSET "UTF-8";
+body{
+	background-color: #fff;
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+.body-ar{
+  direction: rtl;
+}
+.ar{
+  float: right;
+}
+.container .content{
+	background-color: #bbd8e9;
+}
+#header{
+	/*margin: 10px;
+	padding: 20px;*/
+}
+#header h1{
+	text-align: center;
+}
+#footer{
+	clear: both;
+	text-align: center;
+	padding: 55px 10px 25px 10px;
+}
+html, body {
+  height: 100%;
+}
+.wrapper {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+}
+.footer, .push {
+    height: 2em;
+    text-align: center;
+}
+
+.btn-success {
+  background-color: #57a900;
+  background-image: -moz-linear-gradient(top, #70d900, #57a900);
+  background-image: -ms-linear-gradient(top, #70d900, #57a900);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#70d900), to(#57a900));
+  background-image: -webkit-linear-gradient(top, #70d900, #57a900);
+  background-image: -o-linear-gradient(top, #70d900, #57a900);
+  background-image: linear-gradient(top, #70d900, #57a900);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#70d900', endColorstr='#57a900', GradientType=0);
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.active,
+.btn-success.disabled,
+.btn-success[disabled] {
+  background-color: #57a900;
+}
+
+.btn-success:active, .btn-success.active {
+  background-color: #57a900;
+}
+
+div.container a.brand {
+    background: url("../img/zf2-logo.png") no-repeat scroll 0 10px transparent;
+    margin-left: 0;
+    padding: 8px 20px 12px 40px;
+}
+
+.logo{
+  padding: 5px 15px;
+}
+
+.logo img{
+  width: 40px;
+  height: 40px;
+}
+
+.table-view{
+  background: white;
+  margin-bottom: 0px;
+}
+.table-view td, .table-view th{
+  text-align: center;
+}
+.lang-btn{
+  margin-top: 10px;
+}
+.navbar .navbar-header .ar, .navbar .navbar-nav .ar{
+  float: right !important;
+}
+.left{
+  float: left;
+}
+.right{
+  float: right;
+}
+.list-header{
+  padding: 0px;
+}
+#paginator{
+  margin-right: 60px;
+}
+#paginator-ar{
+  margin-left: 60px;
+}
+.panel-footer{
+  text-align: center;
+}
+#find-serial{
+  padding: 10px;
+}
+.badge{
+  color: #428bca;
+  background-color: #fff;
+}
+.alert{
+    margin-bottom: 5px;
+    text-align: center;
+}
+.item-edit{
+    width: 80%;
+}
+.edit-header{
+    background-color: #357ebd;
+    color: #fff;
+}
+.immutable-data{
+    background-color: #eee;
+}
+.item-details-container{
+    padding: 20px 25px 0px 25px;
+}
+.item-serial-container{
+    padding: 20px 20px 10px 20px;
+}
+.modal-footer-override{
+    margin-top: 0px;
+    padding-top: 15px;
+}
+.alert-serial-model{
+    padding: 25px 0px 15px 20px;
+    margin: 10px 10px 40px 10px;
+}
+.alert-serial-sale{
+    padding: 20px 0px 5px 15px;
+    margin: 10px 10px 30px 10px;
+}
+.table-view-sale{
+    margin-top: 10px;
+}
+#clockbox{
+    float: right;
+    margin-top: -30px;
+}
+.item-list{
+    padding-bottom: 30px;
+}
+#item-serial-sale{
+    padding: 10px;
+}
+.hidden{
+    visibility: hidden;
+}
+.item-current-status{
+    margin-top: 10px;
+    margin-left: 40px;
+}
+.btn-add-item{
+    margin-top: 10px;
+}
+#datetime{
+    float: right;
+    margin-top: -30px;
+}

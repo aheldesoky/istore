@@ -1,0 +1,63 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h4 class="">
+			{% trans %}Category List{% endtrans %}
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_categories }}) categories</span>
+		</h4>
+	</div>
+	<div class="panel-body">
+		<table class="table table-hover table-view">
+			<tr>
+				<th>#</th>
+				<th>{% trans %}Category Name{% endtrans %}</th>
+				<th>Action</th>
+			</tr>
+                {% if categories|length %}
+		{% for category in categories %}
+			<tr>
+				<td>{{ category.c_id }}</td>
+				<td>{{ category.c_category_name }}</td>
+				<td>
+					<a href="/category/edit/{{category.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
+					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="category:{{category.c_id}}:{{category.c_category_name}}">{% trans %}Delete{% endtrans %}</a>
+				</td>
+			</tr>
+		{% endfor %}
+                {% else %}
+                        <tr>
+                            <td colspan="3">{% trans %}There are no categories.{% endtrans %}</td>
+			</tr>
+                {% endif %}
+			<tr>
+				<td colspan="6"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="panel-footer">
+		<a href="/category/add" class="btn btn-success btn-lg">+ Add New Category</a>
+		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<input type="hidden" value="{{ current_page }}" id="current_page">
+	</div>
+</div>
+<!-- Delete Confirmation modal -->
+<div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Delete Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <label id="entityName"></label>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

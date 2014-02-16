@@ -1,0 +1,7 @@
+istore_backend_homepage:
+    pattern:  /backend
+    defaults: { _controller: istoreBackendBundle:Default:index }
+
+#istore_backend_index:
+#    pattern:  /backend/
+#    defaults: { _controller: istoreBackendBundle:Index:index }

@@ -1,0 +1,68 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h4 class="">
+			{% trans %}Sales List{% endtrans %}
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_sales }}) {% trans %}sales{% endtrans %}</span>
+		</h4>
+	</div>
+	<div class="panel-body">
+		<table class="table table-hover table-view">
+			<tr>
+				<th>{% trans %}Bill Number{% endtrans %}</th>
+				<th>{% trans %}Customer Name{% endtrans %}</th>
+                                <th>{% trans %}Description{% endtrans %}</th>
+				<th>{% trans %}Date{% endtrans %}</th>
+				<th>{% trans %}Action{% endtrans %}</th>
+			</tr>
+                {% if sales|length %}
+		{% for sale in sales %}
+			<tr>
+				<td>{{ sale.s_id }}</td>
+				<td>{{ sale.cu_customer_fname }} {{ sale.cu_customer_lname }}</td>
+				<td>{{ sale.m_model_brand }} {{ sale.m_model_model }}</td>
+                                <td>{{ sale.b_bulk_date.format('Y-m-d') }}</td>
+				<td>
+					<a href="/bulk/edit/{{sale.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> - 
+                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:{{ sale.m_model_brand }} {{ sale.m_model_model }}">{% trans %}Delete{% endtrans %}</a>
+				</td>
+			</tr>
+		{% endfor %}
+                {% else %}
+                        <tr>
+                            <td colspan="9">{% trans %}There are no bulks.{% endtrans %}</td>
+			</tr>
+                {% endif %}
+			<tr>
+				<td colspan="9"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+			</tr>
+		</table>
+	</div>
+	<div class="panel-footer">
+		<a href="/" class="btn btn-success btn-lg">+ {% trans %}Add New Sale{% endtrans %}</a>
+		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<input type="hidden" value="{{ current_page }}" id="current_page">
+	</div>
+</div>
+<!-- Delete Confirmation modal -->
+<div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Delete Confirmation</h4>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete <label id="entityName"></label>?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
+                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+            </div>
+        </div>
+    </div>
+</div>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

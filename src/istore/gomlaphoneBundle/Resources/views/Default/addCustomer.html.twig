@@ -1,0 +1,64 @@
+<form class="form-horizontal" id="itemForm" role="form" method="post" action="/sale/add">
+    <input type="hidden" id="itemList" name="itemList" value="" />
+    <div class="modal fade bs-modal-lg" id="customerDataModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header edit-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title">Customer Data</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-container">
+                        <div class="">
+                            <div class="row">
+                                <div class="col-lg-12 alert-message-modal"></div>
+                            </div>
+                            <div class="row item-details-container">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="customerPhone" class="col-sm-4 control-label">Phone Number : </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="customerPhone" name="customerPhone" placeholder="Enter Phone Number">
+                                        </div>
+                                        <button class="btn btn-info btn-sm btn-find-phone">Find</button>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerFirstName" class="col-sm-4 control-label">First Name : </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="customerFirstName" name="customerFirstName" placeholder="Enter First Name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerLastName" class="col-sm-4 control-label">Last Name : </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="customerLastName" name="customerLastName" placeholder="Enter Last Name">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerAddress" class="col-sm-4 control-label">Address : </label>
+                                        <div class="col-sm-6">
+                                            <input type="text" class="form-control" id="customerAddress" name="customerAddress" placeholder="Enter Address">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="customerNotes" class="col-sm-4 control-label">Notes : </label>
+                                        <div class="col-sm-6">
+                                            <div class="col-sm-12">
+                                                <textarea class="form-control" rows="4" id="customerNotes" name="customerNotes" placeholder="Enter notes for this item ...."></textarea>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer modal-footer-override">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-danger">Continue</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</form>

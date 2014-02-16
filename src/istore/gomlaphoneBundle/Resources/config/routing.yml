@@ -1,0 +1,154 @@
+istoregomlaphone_default:
+    path:  /
+    defaults: { _controller: istoregomlaphoneBundle:Default:index }
+    requirements:
+        _method: GET
+
+istoregomlaphone_category_index:
+    pattern:  /category
+    defaults: { _controller: istoregomlaphoneBundle:Category:index }
+
+istoregomlaphone_category_add:
+    pattern:  /category/add
+    defaults: { _controller: istoregomlaphoneBundle:Category:add }
+
+istoregomlaphone_category_edit:
+    pattern:  /category/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Category:edit }
+
+istoregomlaphone_category_delete:
+    pattern:  /category/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Category:delete }
+
+istoregomlaphone_model_index:
+    pattern:  /model
+    defaults: { _controller: istoregomlaphoneBundle:Model:index }
+
+istoregomlaphone_model_add:
+    pattern:  /model/add
+    defaults: { _controller: istoregomlaphoneBundle:Model:add }
+
+istoregomlaphone_model_edit:
+    pattern:  /model/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Model:edit }
+
+istoregomlaphone_model_delete:
+    pattern:  /model/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Model:delete }
+
+istoregomlaphone_model_find:
+    pattern:  /model/find
+    defaults: { _controller: istoregomlaphoneBundle:Model:find }
+
+istoregomlaphone_supplier_index:
+    pattern:  /supplier
+    defaults: { _controller: istoregomlaphoneBundle:Supplier:index }
+
+istoregomlaphone_supplier_add:
+    pattern:  /supplier/add
+    defaults: { _controller: istoregomlaphoneBundle:Supplier:add }
+
+istoregomlaphone_supplier_edit:
+    pattern:  /supplier/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Supplier:edit }
+
+istoregomlaphone_supplier_delete:
+    pattern:  /supplier/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Supplier:delete }
+
+istoregomlaphone_bulk_index:
+    pattern:  /bulk
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:index }
+
+istoregomlaphone_bulk_add:
+    pattern:  /bulk/add
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:add }
+
+istoregomlaphone_bulk_edit:
+    pattern:  /bulk/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:edit }
+
+istoregomlaphone_bulk_delete:
+    pattern:  /bulk/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:delete }
+
+istoregomlaphone_item_index:
+    pattern:  /item
+    defaults: { _controller: istoregomlaphoneBundle:Item:index }
+
+istoregomlaphone_item_add:
+    pattern:  /item/add
+    defaults: { _controller: istoregomlaphoneBundle:Item:add }
+
+istoregomlaphone_item_edit:
+    pattern:  /item/edit
+    defaults: { _controller: istoregomlaphoneBundle:Item:edit }
+
+istoregomlaphone_item_delete:
+    pattern:  /item/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Item:delete }
+
+istoregomlaphone_item_find:
+    pattern:  /item/find
+    defaults: { _controller: istoregomlaphoneBundle:Item:find }
+
+istoregomlaphone_item_get:
+    pattern:  /item/get
+    defaults: { _controller: istoregomlaphoneBundle:Item:get }
+
+istoregomlaphone_sale_index:
+    pattern:  /sale
+    defaults: { _controller: istoregomlaphoneBundle:Sale:index }
+
+istoregomlaphone_sale_add:
+    pattern:  /sale/add
+    defaults: { _controller: istoregomlaphoneBundle:Sale:add }
+
+istoregomlaphone_sale_bill:
+    pattern:  /sale/bill/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:bill }
+
+istoregomlaphone_sale_delete:
+    pattern:  /sale/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:delete }
+
+istoregomlaphone_customer_index:
+    pattern:  /customer
+    defaults: { _controller: istoregomlaphoneBundle:Customer:index }
+
+istoregomlaphone_customer_find:
+    pattern:  /customer/find
+    defaults: { _controller: istoregomlaphoneBundle:Customer:find }
+
+istoregomlaphone_customer_edit:
+    pattern:  /customer/edit
+    defaults: { _controller: istoregomlaphoneBundle:Customer:edit }
+
+istoregomlaphone_customer_find:
+    pattern:  /customer/find
+    defaults: { _controller: istoregomlaphoneBundle:Customer:find }
+
+istoregomlaphone_customer_edit:
+    pattern:  /customer/edit
+    defaults: { _controller: istoregomlaphoneBundle:Customer:edit }
+
+istoregomlaphone_warranty_index:
+    pattern:  /warranty
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:index }
+
+istoregomlaphone_warranty_add:
+    pattern:  /warranty/add
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:add }
+
+istoregomlaphone_warranty_edit:
+    pattern:  /warranty/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:edit }
+
+istoregomlaphone_warranty_delete:
+    pattern:  /warranty/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:delete }
+
+istoregomlaphone_report_index:
+    pattern:  /report
+    defaults: { _controller: istoregomlaphoneBundle:Report:index }
+
