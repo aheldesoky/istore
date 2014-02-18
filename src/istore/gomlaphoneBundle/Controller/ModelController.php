@@ -199,4 +199,86 @@ class ModelController extends Controller //implements AuthenticatedController
         $model[0]['count'] = count($model);
         return new JsonResponse(array('model' => $model[0]));
     }
+    
+    public function validateAction(Request $request)
+    {
+        //var_dump($request);die;
+        $modelNew['modelId'] = $request->request->get('modelId');
+        $modelNew['modelSerial'] = $request->request->get('modelSerial');
+        $modelNew['modelBrand'] = $request->request->get('modelBrand');
+        $modelNew['modelModel'] = $request->request->get('modelModel');
+        $modelNew['modelCategory'] = $request->request->get('modelCategory');
+        $modelNew['modelSpecs'] = $request->request->get('modelSpecs');
+        $action = $request->request->get('action');
+        $controller = $request->request->get('controller');
+        
+        if($modelNew['modelSerial'] == '')
+            $error = 'is_null';
+        //$alphanumericspaces = '/^[a-z0-9\u0600-\u06FF\-\s]+$/i';
+        //if(!preg_match($alphanumericspaces, $modelNew['modelSerial'])){
+          //  $errors['modelSerial'] = 'Serial should be alphanumeric';
+        //}
+        
+        //if (!ctype_alnum($modelNew['modelSerial'])) {
+          //  $errors[] = "The string $property does not consist of all letters or digits.\n";
+        //}
+        //var_dump($errors);die;
+        
+        /*
+        $modelNew = new Model();
+        $modelNew->setModelSerial($modelSerial)
+                 ->setModelBrand($modelBrand)
+                 ->setModelModel($modelModel)
+                 ->setModelSpecs($modelSpecs);
+        $modelCategory = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Category')
+                ->find($modelCategory);
+        $modelNew->setModelCategory($modelCategory);
+        
+        //var_dump($modelNew);die;
+        $validator = $this->get('validator');
+        */
+        $model = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('m , c')
+            ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->where('m.model_serial = ?1')
+            ->setParameter(1 , $modelNew['modelSerial'])
+            ->getQuery()
+            ->getScalarResult();
+    //var_dump($model);die;
+        //Model exists
+        if(count($model)){
+            //Model Controller
+            if($controller === 'model' && $action === 'add'){
+                $error = 'model_exists';
+            //Bulk Controllers
+            } elseif($controller === 'model' && $action === 'edit') {
+                if($model[0]['m_id'] != $modelNew['modelId'])
+                    $error = 'model_exists';
+            } elseif ($controller === 'bulk' && $action === 'add'){
+                $error = 'model_exists';
+            } elseif ($controller === 'bulk' && $action === 'edit'){
+                if($model[0]['m_id'] != $modelNew['modelId'])
+                    $error = 'model_exists';
+            }
+            
+        //Model does not exist
+        } else {
+            //Model Controller
+            if($controller === 'model' && $action === 'add'){
+                
+            } elseif($controller === 'model' && $action === 'edit') {
+                
+            }
+            
+        }
+        return new JsonResponse(array('error' => $error , 'model' => $model[0]));
+        /*var_dump($errors);die;
+        if (count($errors) > 0) {
+            return $this->render('istoregomlaphoneBundle:Model:validate.html.twig', array(
+                'errors' => $errors,
+            ));
+        }*/
+    }
 }

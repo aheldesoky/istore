@@ -25,4 +25,7 @@
 			<button type="submit" class="btn btn-success btn-lg btn-categroy-add">Add Category</button>
 		</div>
 	</div>
-</form>{% endblock %}
+</form>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

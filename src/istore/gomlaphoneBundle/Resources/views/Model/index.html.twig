@@ -24,7 +24,7 @@
 				<td>{{ model.m_model_brand }}</td>
 				<td>{{ model.m_model_model }}</td>
 				<td>{{ model.c_category_name }}</td>
-				<td><button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="{{ model.m_model_specs }}">Show Specifications</button></td>
+				<td><button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ model.m_model_specs }}" data-title="{{ model.m_model_brand }} {{ model.m_model_model }}">Show Specifications</button></td>
 				<td>
 					<a href="/model/edit/{{model.m_id}}" class="btn btn-primary btn-sm">Edit</a> - 
                                         <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="model:{{model.m_id}}:{{ model.m_model_brand }} {{ model.m_model_model }} #{{ model.m_model_serial }}">{% trans %}Delete{% endtrans %}</a>

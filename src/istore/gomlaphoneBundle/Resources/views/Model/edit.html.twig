@@ -11,7 +11,9 @@
 					<div class="row input-serial alert alert-info alert-serial-model">
 						<div class="col-lg-5 col-lg-offset-3">
 							<div class="form-group">
-								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="Barcode" value="{{ model.modelSerial }}">
+                                                                <input type="hidden" id="modelId" name="modelId" value="{{ model.id }}">
+								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="Enter Model Serial" value="{{ model.modelSerial }}">
+                                                                <label for="modelSerial" class="serial-error"></label>
 							</div>
 						</div>
 						<div class="col-lg-1">

@@ -8,6 +8,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class CategoryController extends Controller //implements AuthenticatedController
 {
@@ -82,7 +83,10 @@ class CategoryController extends Controller //implements AuthenticatedController
             //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
-        return $this->render('istoregomlaphoneBundle:Category:add.html.twig');
+        return $this->render('istoregomlaphoneBundle:Category:add.html.twig', array(
+            "action" => "add",
+            "controller" => "category",
+        ));
     }
     
     public function editAction(Request $request, $id)
@@ -103,6 +107,8 @@ class CategoryController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Category:edit.html.twig' , array(
             "category" => $category,
+            "action" => "edit",
+            "controller" => "category",
         ));
     }
     
@@ -117,5 +123,21 @@ class CategoryController extends Controller //implements AuthenticatedController
         $entityManager->flush();
 
         return $this->redirect($this->generateUrl('istoregomlaphone_category_index'));
+    }
+    
+    public function findAction(Request $request)
+    {
+        //echo $request->request->get('categoryName');die;
+        $category = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('c')
+            ->from('istoregomlaphoneBundle:Category', 'c')
+            ->where('c.category_name = ?1')
+            ->setParameter(1 , $request->request->get('categoryName'))
+            ->getQuery()
+            ->getScalarResult();
+    //var_dump($category);die;
+        
+        $category[0]['count'] = count($category);
+        return new JsonResponse(array('category' => $category[0]));
     }
 }

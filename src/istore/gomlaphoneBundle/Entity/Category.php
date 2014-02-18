@@ -18,7 +18,7 @@ class Category
     protected $id;
 
     /**
-     * @ORM\Column(type="string", unique=true, nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $category_name;
     

@@ -1,5 +1,6 @@
 {% extends 'istoregomlaphoneBundle::layout.html.twig' %}
 {% block body %}
+<input type="hidden" id="validationMessage" value="{{ message }}">
 <form class="form-horizontal" role="form" method="post" id="modelForm">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
@@ -11,7 +12,8 @@
 					<div class="row input-serial alert alert-info alert-serial-model">
 						<div class="col-lg-5 col-lg-offset-3">
 							<div class="form-group">
-								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="Model Serial">
+								<input type="text" class="form-control input-lg" id="modelSerial" name="modelSerial" placeholder="Enter Model Serial">
+                                                                <label for="modelSerial" class="serial-error"></label>
 							</div>
 						</div>
 						<div class="col-lg-1">

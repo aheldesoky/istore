@@ -37,6 +37,11 @@ class BulkController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(b) AS total_bulks')
             ->from('istoregomlaphoneBundle:Bulk', 'b')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, 1)
             ->getQuery()
             ->getSingleResult();
         
@@ -69,32 +74,55 @@ class BulkController extends Controller //implements AuthenticatedController
             "controller" => "bulk"
         ));
         
-        /*
-        $entityManager = $this->getDoctrine()->getManager();
-        $count = $entityManager->createQueryBuilder()
-            ->select('m , c')
-            ->from('istoregomlaphoneBundle:Model', 'm')
-            ->join('istoregomlaphoneBundle:Category', 'c')
-            ->where('m.model_category=c.category_id')
-            ->getSingleScalarResult();
-
-        $query = $entityManager
-            ->createQueryBuilder()
-            ->select('m , c')
-            ->from('istoregomlaphoneBundle:Model', 'm')
-            ->join('istoregomlaphoneBundle:Category', 'c')
-            ->where('m.model_category=c.category_id')
-            ->setHint('knp_paginator.count', $count);
-        $paginator = new Paginator($query);
-        $pagination = $paginator->paginate($query, 1, 10, array('distinct' => false));
-
-        return $this->render('istoregomlaphoneBundle:Model:index.html.twig', array(
-            'models'      => $pagination,
-            'total_models'=> count($pagination),
-            'total_pages'     => ceil(count($pagination)/10),
+    }
+    
+    public function viewAction(Request $request, Bulk $bulk)
+    {
+        //$language = $request->query->get('lang');
+        //$request->setLocale($language);
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(i) AS total_items')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('b.id=?2')
+            ->setParameter(1, 1)
+            ->setParameter(2, $bulk->getId())
+            ->getQuery()
+            ->getSingleResult();
+        
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('i , b , m , c')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('b.id=?2')
+            ->setParameter(1, 1)
+            ->setParameter(2, $bulk->getId())
+            //->orderBy('i.id', 'DESC')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+    //var_dump($paginator);die;
+        
+        return $this->render('istoregomlaphoneBundle:Item:index.html.twig', array(
+            'bulk' => $bulk,
+            'items'      => $paginator,
+            'total_items'=> $count['total_items'],
+            'total_pages'     => ceil($count['total_items']/10),
             'current_page'    => $currentPage,
         ));
-        */
+        
     }
     
     public function addAction(Request $request) 

@@ -39,6 +39,12 @@ class ItemController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(i) AS total_items')
             ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, 1)
             ->getQuery()
             ->getSingleResult();
         

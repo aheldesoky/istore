@@ -32,6 +32,7 @@
 				<td>{{ bulk.s_supplier_name }}</td>
                                 <td>{{ bulk.b_bulk_date.format('Y-m-d') }}</td>
 				<td>
+                                        <a href="/bulk/view/{{bulk.b_id}}" class="btn btn-info btn-sm">{% trans %}View{% endtrans %}</a> - 
 					<a href="/bulk/edit/{{bulk.b_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> - 
                                         <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="bulk:{{bulk.b_id}}:{{ bulk.m_model_brand }} {{ bulk.m_model_model }}">{% trans %}Delete{% endtrans %}</a>
 				</td>

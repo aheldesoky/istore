@@ -3,11 +3,72 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Item List{% endtrans %}
+			{% trans %}Bulk{% endtrans %} # : {{ bulk.id }}
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_items }}) {% trans %}items{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
+            {% if bulk|length %}
+                <div class="immutable-bulk-view-data">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="modelSerial" class="col-sm-4 control-label">Model Serial :</label>
+                                <div class="col-sm-6">
+                                    <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelSerial }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelBrand" class="col-sm-4 control-label">Brand Name :</label>
+                                <div class="col-sm-6">
+                                    <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelBrand }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelModel" class="col-sm-4 control-label">Model Name :</label>
+                                <div class="col-sm-6">
+                                    <label for="modelModel" class="col-sm-12 control-label">{{ bulk.bulkModel.modelModel }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelCategory" class="col-sm-4 control-label">Category :</label>
+                                <div class="col-sm-6">
+                                    <label for="modelCategory" class="col-sm-12 control-label">{{ bulk.bulkModel.modelCategory.categoryName }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bulkDate" class="col-sm-4 control-label">Bulk Date :</label>
+                                <div class="col-sm-6">
+                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkDate.format('yyyy-mm-dd') }}</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="bulkSupplier" class="col-sm-4 control-label">Supplier :</label>
+                                <div class="col-sm-6">
+                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkSupplier.supplierName }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="modelPrice" class="col-sm-4 control-label">Item Price :</label>
+                                <div class="col-sm-6">
+                                    <label for="modelCategory" class="col-sm-12 control-label">{{ bulk.bulkPrice }} L.E.</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="bulkQuantity" class="col-sm-4 control-label">Quantity :</label>
+                                <div class="col-sm-6">
+                                    <label for="bulkQuantity" class="col-sm-12 control-label">{{ bulk.bulkQuantity }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="{{ bulk.bulkModel.modelSpecs }}">Show Specifications</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
 		<table class="table table-hover table-view">
 			<tr>
 				<th>{% trans %}Item Serial{% endtrans %}</th>
@@ -88,7 +149,11 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Items{% endtrans %}</a>
+                {% if bulk|length %}
+                <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a>
+                {% else %}
+                <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Items{% endtrans %}</a>
+                {% endif %}
                 <div id="editModalContainer"></div>
 		<input type="hidden" value="{{ total_pages }}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">

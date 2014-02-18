@@ -8,6 +8,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use istore\gomlaphoneBundle\Entity\Warranty;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class WarrantyController extends Controller //implements AuthenticatedController
 {
@@ -82,7 +83,10 @@ class WarrantyController extends Controller //implements AuthenticatedController
             //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
-        return $this->render('istoregomlaphoneBundle:Warranty:add.html.twig');
+        return $this->render('istoregomlaphoneBundle:Warranty:add.html.twig' , array(
+            "action" => "add",
+            "controller" => "warranty",
+        ));
     }
     
     public function editAction(Request $request, $id)
@@ -103,6 +107,8 @@ class WarrantyController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Warranty:edit.html.twig' , array(
             "warranty" => $warranty,
+            "action" => "edit",
+            "controller" => "warranty",
         ));
     }
     
@@ -117,5 +123,21 @@ class WarrantyController extends Controller //implements AuthenticatedController
         $entityManager->flush();
 
         return $this->redirect($this->generateUrl('istoregomlaphone_warranty_index'));
+    }
+    
+    public function findAction(Request $request)
+    {
+        //echo $request->request->get('categoryName');die;
+        $warranty = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('w')
+            ->from('istoregomlaphoneBundle:Warranty', 'w')
+            ->where('w.warranty_name = ?1')
+            ->setParameter(1 , $request->request->get('warrantyName'))
+            ->getQuery()
+            ->getScalarResult();
+    //var_dump($category);die;
+        
+        $warranty[0]['count'] = count($warranty);
+        return new JsonResponse(array('warranty' => $warranty[0]));
     }
 }

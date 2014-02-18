@@ -20,6 +20,10 @@ istoregomlaphone_category_delete:
     pattern:  /category/delete/{id}
     defaults: { _controller: istoregomlaphoneBundle:Category:delete }
 
+istoregomlaphone_category_find:
+    pattern:  /category/find
+    defaults: { _controller: istoregomlaphoneBundle:Category:find }
+
 istoregomlaphone_model_index:
     pattern:  /model
     defaults: { _controller: istoregomlaphoneBundle:Model:index }
@@ -40,6 +44,10 @@ istoregomlaphone_model_find:
     pattern:  /model/find
     defaults: { _controller: istoregomlaphoneBundle:Model:find }
 
+istoregomlaphone_model_validate:
+    pattern:  /model/validate
+    defaults: { _controller: istoregomlaphoneBundle:Model:validate }
+
 istoregomlaphone_supplier_index:
     pattern:  /supplier
     defaults: { _controller: istoregomlaphoneBundle:Supplier:index }
@@ -59,6 +67,10 @@ istoregomlaphone_supplier_delete:
 istoregomlaphone_bulk_index:
     pattern:  /bulk
     defaults: { _controller: istoregomlaphoneBundle:Bulk:index }
+
+istoregomlaphone_bulk_view:
+    pattern:  /bulk/view/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:view }
 
 istoregomlaphone_bulk_add:
     pattern:  /bulk/add
@@ -147,6 +159,10 @@ istoregomlaphone_warranty_edit:
 istoregomlaphone_warranty_delete:
     pattern:  /warranty/delete/{id}
     defaults: { _controller: istoregomlaphoneBundle:Warranty:delete }
+
+istoregomlaphone_warranty_find:
+    pattern:  /warranty/find
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:find }
 
 istoregomlaphone_report_index:
     pattern:  /report

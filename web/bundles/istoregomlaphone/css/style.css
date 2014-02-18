@@ -173,3 +173,17 @@ div.container a.brand {
     float: right;
     margin-top: -30px;
 }
+#modelForm #modelSerial,
+#bulkForm #modelSerial,
+#bulkForm #bulkBrand,
+#bulkForm #bulkModel,
+#bulkForm #bulkCategory{
+    text-align: center;
+}
+.immutable-bulk-view-data{
+    background-color: #428A9A;
+    padding: 20px 20px 10px 20px;
+    text-align: center;
+    color: #fff;
+    margin: 0px 20px 15px 20px;
+}

@@ -13,6 +13,7 @@
 							<div class="form-group">
 								<label for="warrantyName" class="col-sm-4 control-label">Warranty Name</label>
 								<div class="col-sm-6">
+                                                                        <input type="hidden" id="warrantyId" name="warrantyId" value="{{ warranty.id }}">
 									<input type="text" class="form-control" id="warrantyName" name="warrantyName" placeholder="Name" value="{{ warranty.warrantyName }}">
 								</div>
 							</div>
@@ -26,4 +27,6 @@
 		</div>
 	</div>
 </form>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}
