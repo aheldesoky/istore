@@ -17,10 +17,11 @@
                                     <div class="col-lg-9">
                                             <div class="form-group">
                                                     <input type="text" class="form-control input-lg" id="itemSerial" name="itemSerial" placeholder="{% trans %}Item Serial{% endtrans %}">
+                                                    <label for="itemSerial" class="serial-error"></label>
                                             </div>
                                     </div>
                                     <div class="col-lg-1">
-                                            <button id="item-serial-sale" data-loading-text="{% trans %}Loading{% endtrans %}" class="btn btn-danger btn-lg" type="button">{% trans %}Check{% endtrans %}</button>
+                                            <button id="item-serial-sale" data-loading-text="{% trans %}Loading{% endtrans %}" class="btn btn-warning btn-lg" type="button">{% trans %}Check{% endtrans %}</button>
                                     </div>
                             </div>
                             <div class="row">
@@ -48,50 +49,105 @@
                                                     <div class="col-sm-3">
                                                             <label class="control-label" id="itemPrice" name="itemPrice"></label>
                                                     </div>
-                                                    <button class="btn btn-info btn-sm btn-discount hidden">Discount</button>
                                             </div>
-                                            <div class="hidden discount-field">
-                                            <div class="form-group">
-                                                    <label for="itemDiscount" class="col-sm-4 control-label">{% trans %}Discount{% endtrans %} : </label>
-                                                    <div class="col-sm-4">
-                                                            <input type="number" class="form-control" id="itemDiscount" name="itemDiscount" value="0" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                            <div class="hidden quantity-field">
+                                                <div class="form-group">
+                                                    <label for="itemQuantity" class="col-sm-4 control-label">{% trans %}Quantity{% endtrans %} : </label>
+                                                    <div class="col-sm-3">
+                                                            <input type="number" class="form-control" id="itemQuantity" name="itemQuantity" value="1" placeholder="{% trans %}Quantity L.E.{% endtrans %}">
                                                     </div>
+                                                    <label id="bulkQuantity" name="bulkQuantity" class="col-sm-3 control-label"></label>
+                                                    <input type="hidden" id="bulk-qty" name="bulk-qty" value="">
+                                                </div>
                                             </div>
-                                            </div>
+                                            
                                             <div class="form-group">
-                                                    <div class="col-sm-12">
-                                                        <button class="col-md-3 col-md-offset-5 btn btn-success btn-md btn-add-item" id="addItem" name="addItem">{% trans %}Add{% endtrans %}</button>
+                                                    <div class="col-sm-6">
+                                                        <button class="col-md-4 col-md-offset-8 btn btn-default btn-md btn-clear-item" id="clearItem" name="clearItem">{% trans %}Clear{% endtrans %}</button>
+                                                    </div>
+                                                    <div class="col-sm-6">
+                                                        <button class="col-md-4 col-md-offset-1 btn btn-success btn-md btn-add-item" id="addItem" name="addItem">{% trans %}Add{% endtrans %}</button>
                                                     </div>
                                             </div>
                                     </div>
                             </div>
                     </div>
-                    <div class="col-lg-7">
-                        <div class="row item-list">
-                            <div class="col-lg-12">
-                                <table class="table table-hover table-bordered table-view table-view-sale">
-                                    <tr>
-                                        <th>{% trans %}Serial{% endtrans %}</th>
-                                        <th>{% trans %}Brand{% endtrans %}</th>
-                                        <th>{% trans %}Model{% endtrans %}</th>
-                                        <th>{% trans %}Category{% endtrans %}</th>
-                                        <th>{% trans %}Price L.E.{% endtrans %}</th>
-                                        <th>{% trans %}Discount{% endtrans %}</th>
-                                        <th>{% trans %}Action{% endtrans %}</th>
-                                    </tr>
-                                </table>
+                    <form class="form-horizontal" id="saleForm" role="form" method="post" action="/sale/add">
+                        <div class="col-lg-7">
+                            <div class="row item-list">
+                                <div class="col-lg-12">
+                                    <input type="hidden" id="itemList" name="itemList" value="" />
+                                    <table class="table table-bordered table-curved table-view table-view-sale">
+                                        <tr class="table-header active">
+                                            <th>{% trans %}Serial{% endtrans %}</th>
+                                            <th>{% trans %}Item{% endtrans %}</th>
+                                            <th>{% trans %}Category{% endtrans %}</th>
+                                            <th>{% trans %}Qty{% endtrans %}</th>
+                                            <th class="table-col-price">{% trans %}Price{% endtrans %}</th>
+                                            <th class="table-col-action">{% trans %}Action{% endtrans %}</th>
+                                        </tr>
+                                        <tr class="table-empty-row">
+                                            <td colspan="6">{% trans %}There is no items.{% endtrans %}</td>
+                                        </tr>
+                                        <tr class="table-footer success">
+                                            <td colspan="3" rowspan="3">
+                                                <div class="row padding-10">
+                                                    <div class="col-md-12">
+                                                        <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Payment{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            <select class="form-control required" id="paymentMethod" name="paymentMethod">
+                                                                <option value="prepaid" selected>{% trans %}Prepaid{% endtrans %}</option>
+                                                                <option value="postpaid">{% trans %}Postpaid{% endtrans %}</option>
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row padding-10 input-amount-paid hidden">
+                                                    <div class="col-md-12">
+                                                        <label for="amountPaid" class="col-sm-5 control-label">{% trans %}Amount Paid{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            <input type="number" class="form-control" id="amountPaid" name="amountPaid" placeholder="Amount L.E." value="0">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row padding-10 input-amount-paid hidden">
+                                                    <div class="col-md-12">
+                                                        <label for="remainingAmount" class="col-sm-5 control-label">{% trans %}Remaining{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            <label id="remainingAmount" name="remainingAmount" class="col-sm-10 control-label"></label>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <th>{% trans %}Subtotal{% endtrans %}</th>
+                                            <th colspan="2" id="subtotal">0 {% trans %}L.E.{% endtrans %}</th>
+                                        </tr>
+                                        <tr class="success">
+                                            <th>{% trans %}Discount{% endtrans %}</th>
+                                            <td colspan="2" class="discount-field">
+                                                <input type="number" class="form-control" id="saleDiscount" name="saleDiscount" value="0" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                            </td>
+                                        </tr>
+                                        <tr class="success">
+                                            <th>{% trans %}Total{% endtrans %}</th>
+                                            <th colspan="2" id="total">0 {% trans %}L.E.{% endtrans %}</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-3 col-lg-offset-4">
+                                    <a class="col-lg-12 btn btn-danger btn-lg btn-checkout">Checkout</a>
+                                    {% include('istoregomlaphoneBundle:Default:addCustomer.html.twig') %}
+                                </div>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-sm-3 col-lg-offset-4">
-                                <button class="col-lg-12 btn btn-success btn-lg btn-sell-list" data-toggle="modal" data-target=".bs-modal-lg">Checkout Bill</button>
-                                {% include('istoregomlaphoneBundle:Default:addCustomer.html.twig') %}
-                            </div>
-                        </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
 </div>
+<input type="hidden" id="action" name="action" value="index" />
+<input type="hidden" id="controller" name="controller" value="default" />
 {% endblock %}

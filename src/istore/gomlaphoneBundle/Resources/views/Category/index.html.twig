@@ -10,14 +10,12 @@
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
-				<th>#</th>
 				<th>{% trans %}Category Name{% endtrans %}</th>
 				<th>Action</th>
 			</tr>
                 {% if categories|length %}
 		{% for category in categories %}
 			<tr>
-				<td>{{ category.c_id }}</td>
 				<td>{{ category.c_category_name }}</td>
 				<td>
 					<a href="/category/edit/{{category.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
@@ -27,11 +25,11 @@
 		{% endfor %}
                 {% else %}
                         <tr>
-                            <td colspan="3">{% trans %}There are no categories.{% endtrans %}</td>
+                            <td colspan="2">{% trans %}There are no categories.{% endtrans %}</td>
 			</tr>
                 {% endif %}
 			<tr>
-				<td colspan="6"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+				<td colspan="5"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
 			</tr>
 		</table>
 	</div>
@@ -59,5 +57,6 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

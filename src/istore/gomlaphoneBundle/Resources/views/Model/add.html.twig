@@ -17,7 +17,7 @@
 							</div>
 						</div>
 						<div class="col-lg-1">
-							<button id="model-serial" data-loading-text="Loading..." class="btn btn-danger btn-lg" type="button">Check</button>
+							<button id="model-serial" data-loading-text="Loading..." class="btn btn-warning btn-lg" type="button">Check</button>
 						</div>
 					</div>
 					<div class="row">
@@ -54,6 +54,15 @@
 								</div>
 							</div>
 						</div>
+                                                <div class="col-md-6">
+                                                        <label for="modelItemHasSerial" class="col-sm-4 control-label">{% trans %}Item has serial{% endtrans %}</label>
+                                                        <div class="col-sm-3">
+                                                                <select class="form-control required" id="modelItemHasSerial" name="modelItemHasSerial">
+                                                                        <option value="1" selected>{% trans %}Yes{% endtrans %}</option>
+                                                                        <option value="0">{% trans %}No{% endtrans %}</option>
+                                                                </select>
+                                                        </div>
+                                                </div>
 					</div>
 				</div>
 			</div>

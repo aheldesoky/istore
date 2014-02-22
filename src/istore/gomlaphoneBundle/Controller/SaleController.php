@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Item;
 use istore\gomlaphoneBundle\Entity\Customer;
 use istore\gomlaphoneBundle\Entity\Sale;
 use istore\gomlaphoneBundle\Entity\SaleItem;
+use istore\gomlaphoneBundle\Entity\Postpaid;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 
@@ -38,34 +39,36 @@ class SaleController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(s) AS total_sales')
             ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
-            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
-            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
-            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
-            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            //->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            //->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            //->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, 1)
+//            //->groupBy('s.id')
             ->getQuery()
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , cu , si , i , b , m , c')
+            ->select('s , cu , SUM(b.bulk_price)-s.sale_discount as s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=s.id')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
-            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, 1)
+            ->groupBy('s.id')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
         
-        //var_dump($paginator);die;
+//var_dump($paginator);die;
         /*
         $paginator = new Paginator($query, $fetchJoinCollection = true);
         
@@ -84,8 +87,192 @@ class SaleController extends Controller //implements AuthenticatedController
         ));
     }
     
+    public function discountAction(Request $request)
+    {
+        
+        //$language = $request->query->get('lang');
+        //$request->setLocale($language);
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(s) AS total_sales')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            //->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            //->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            //->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('s.sale_discount>0 AND s.sale_discount_confirmed=0')
+            ->setParameter(1, 1)
+//            //->groupBy('s.id')
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s , cu , SUM(b.bulk_price)-s.sale_discount as s_sale_total , SUM(b.bulk_price) as s_sale_subtotal')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('s.sale_discount>0 AND s.sale_discount_confirmed=0')
+            ->setParameter(1, 1)
+            ->groupBy('s.id')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+//var_dump($paginator);die;
+        /*
+        $paginator = new Paginator($query, $fetchJoinCollection = true);
+        
+        if (!$paginator) {
+            throw $this->createNotFoundException('Unable to find categories.');
+        }
+        */
+        
+        return $this->render('istoregomlaphoneBundle:Sale:index.html.twig', array(
+            'sales'      => $paginator,
+            'total_sales'=> $count['total_sales'],
+            'total_pages'     => ceil($count['total_sales']/10),
+            'current_page'    => $currentPage,
+            "action" => "discount",
+            "controller" => "sale"
+        ));
+    }
+    
+    public function prepaidAction(Request $request)
+    {
+        
+        //$language = $request->query->get('lang');
+        //$request->setLocale($language);
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(s) AS total_sales')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            //->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            //->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            //->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('po.id IS NULL')
+            ->setParameter(1, 1)
+//            //->groupBy('s.id')
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s , cu , SUM(b.bulk_price)-s.sale_discount as s_sale_total , SUM(b.bulk_price) as s_sale_subtotal')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->leftJoin('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->andWhere('po.id IS NULL')
+            ->setParameter(1, 1)
+            ->groupBy('s.id')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+//var_dump($paginator);die;
+        /*
+        $paginator = new Paginator($query, $fetchJoinCollection = true);
+        
+        if (!$paginator) {
+            throw $this->createNotFoundException('Unable to find categories.');
+        }
+        */
+        
+        return $this->render('istoregomlaphoneBundle:Sale:index.html.twig', array(
+            'sales'      => $paginator,
+            'total_sales'=> $count['total_sales'],
+            'total_pages'     => ceil($count['total_sales']/10),
+            'current_page'    => $currentPage,
+            "action" => "prepaid",
+            "controller" => "sale"
+        ));
+    }
+    
+    public function postpaidAction(Request $request)
+    {
+        
+        //$language = $request->query->get('lang');
+        //$request->setLocale($language);
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(s) AS total_sales')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            //->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            //->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, 1)
+//            //->groupBy('s.id')
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s , cu , po , SUM(b.bulk_price)-s.sale_discount as s_sale_total , SUM(b.bulk_price) as s_sale_subtotal')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, 1)
+            ->groupBy('s.id')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+//var_dump($paginator);die;
+        /*
+        $paginator = new Paginator($query, $fetchJoinCollection = true);
+        
+        if (!$paginator) {
+            throw $this->createNotFoundException('Unable to find categories.');
+        }
+        */
+        
+        return $this->render('istoregomlaphoneBundle:Sale:index.html.twig', array(
+            'sales'      => $paginator,
+            'total_sales'=> $count['total_sales'],
+            'total_pages'     => ceil($count['total_sales']/10),
+            'current_page'    => $currentPage,
+            "action" => "postpaid",
+            "controller" => "sale"
+        ));
+    }
+    
     public function addAction(Request $request) {
-//        var_dump($request->request);die;
+//var_dump($request->request);die;
         if ($request->getMethod() == 'POST') {
             
             $entityManager = $this->getDoctrine()->getManager();
@@ -111,11 +298,21 @@ class SaleController extends Controller //implements AuthenticatedController
             }
             
             $sale = new Sale();
-                $sale->setSaleCustomerId($customer[0]->getId());
-                $sale->setSaleStoreId(1);
-                $entityManager->persist($sale);
+            $sale->setSaleCustomerId($customer[0]->getId());
+            $sale->setSaleDiscount($request->request->get('saleDiscount'));
+            $sale->setSaleStoreId(1);
+            $entityManager->persist($sale);
+            $entityManager->flush();
+//var_dump($sale);die;            
+            
+            if($request->request->get('paymentMethod') === 'postpaid'){
+                $postpaid = new Postpaid();
+                $postpaid->setPostpaidSaleId($sale->getId());
+                $postpaid->setPostpaidAmount($request->request->get('amountPaid'));
+                $entityManager->persist($postpaid);
                 $entityManager->flush();
-                
+            }
+            
             //var_dump($customer);die;
             $itemList = json_decode(stripcslashes($request->request->get('itemList')));
             
@@ -127,17 +324,17 @@ class SaleController extends Controller //implements AuthenticatedController
                     ->setParameter(1 , $item->itemId)
                     ->getQuery()
                     ->getSingleResult();
-                if($item->itemDiscount == 0)
+                /*if($item->itemDiscount == 0)
                     $soldItem->setItemStatus('sold');
                 else
-                    $soldItem->setItemStatus('pending_discount');
+                    $soldItem->setItemStatus('pending_discount');*/
+                $soldItem->setItemStatus('sold');
                 $entityManager->persist($soldItem);
                 $entityManager->flush();
                 
                 $saleItem = new SaleItem();
                 $saleItem->setSaleitemSaleId($sale->getId());
                 $saleItem->setSaleitemItemId($item->itemId);
-                $saleItem->setSaleitemDiscount($item->itemDiscount);
                 $entityManager->persist($saleItem);
                 $entityManager->flush();
             }

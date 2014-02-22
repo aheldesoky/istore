@@ -67,6 +67,8 @@ class CategoryController extends Controller //implements AuthenticatedController
             'total_categories'=> $count['total_categories'],
             'total_pages'     => ceil($count['total_categories']/10),
             'current_page'    => $currentPage,
+            'action'          => 'index',
+            'controller'      => 'category',
         ));
     }
     

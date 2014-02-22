@@ -96,6 +96,10 @@ istoregomlaphone_item_edit:
     pattern:  /item/edit
     defaults: { _controller: istoregomlaphoneBundle:Item:edit }
 
+istoregomlaphone_item_validate:
+    pattern:  /item/validate
+    defaults: { _controller: istoregomlaphoneBundle:Item:validate }
+
 istoregomlaphone_item_delete:
     pattern:  /item/delete/{id}
     defaults: { _controller: istoregomlaphoneBundle:Item:delete }
@@ -111,6 +115,18 @@ istoregomlaphone_item_get:
 istoregomlaphone_sale_index:
     pattern:  /sale
     defaults: { _controller: istoregomlaphoneBundle:Sale:index }
+
+istoregomlaphone_sale_postpaid:
+    pattern:  /sale/postpaid
+    defaults: { _controller: istoregomlaphoneBundle:Sale:postpaid }
+
+istoregomlaphone_sale_prepaid:
+    pattern:  /sale/prepaid
+    defaults: { _controller: istoregomlaphoneBundle:Sale:prepaid }
+
+istoregomlaphone_sale_discount:
+    pattern:  /sale/discount
+    defaults: { _controller: istoregomlaphoneBundle:Sale:discount }
 
 istoregomlaphone_sale_add:
     pattern:  /sale/add
@@ -133,7 +149,7 @@ istoregomlaphone_customer_find:
     defaults: { _controller: istoregomlaphoneBundle:Customer:find }
 
 istoregomlaphone_customer_edit:
-    pattern:  /customer/edit
+    pattern:  /customer/edit/{id}
     defaults: { _controller: istoregomlaphoneBundle:Customer:edit }
 
 istoregomlaphone_customer_find:

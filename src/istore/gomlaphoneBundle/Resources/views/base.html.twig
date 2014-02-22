@@ -16,6 +16,7 @@
                 <script src="/bundles/istoregomlaphone/js/jquery-ui.js"></script>
                 <script src="/bundles/istoregomlaphone/js/jquery.validate.js"></script>
                 <script src="/bundles/istoregomlaphone/js/jquery.validate.additional-methods.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.form.js"></script>
                 <script src="/bundles/istoregomlaphone/js/validation-messages.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap-datepicker.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap.min.js"></script>
@@ -50,16 +51,16 @@
                         </div>
                         <div class="navbar-collapse collapse" id="navbar-main">
                           <ul class="nav navbar-nav {% if lang=='ar' %}ar{% endif %}">
-                                <li class="active"><a href="/">Home</a></li>
-                                <li><a href="/customer">Customers</a></li>
-                                <li><a href="/item">Items</a></li>
-                                <li><a href="/bulk">Bulks</a></li>
-                                <li><a href="/model">Models</a></li>
-                                <li><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
-                                <li><a href="/supplier">Suppliers</a></li>
-                                <li><a href="/warranty">Warranty</a></li>
-                                <li><a href="/sale">Sales</a></li>
-                                <li><a href="/report">Reports</a></li>
+                                <li class="home"><a href="/">Home</a></li>
+                                <li class="sale"><a href="/sale">Sales</a></li>
+                                <li class="customer"><a href="/customer">Customers</a></li>
+                                <li class="item"><a href="/item">Items</a></li>
+                                <li class="bulk"><a href="/bulk">Bulks</a></li>
+                                <li class="model"><a href="/model">Models</a></li>
+                                <li class="category"><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
+                                <li class="supplier"><a href="/supplier">Suppliers</a></li>
+                                <li class="warranty"><a href="/warranty">Warranties</a></li>
+                                <li class="report"><a href="/report">Reports</a></li>
                           </ul>
                           <!-- Language button -->
                             <div class="btn-group lang-btn {% if lang=='ar' %}left{% else %}right{% endif %}">

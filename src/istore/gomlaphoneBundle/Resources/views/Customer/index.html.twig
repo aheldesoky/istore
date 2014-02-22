@@ -10,20 +10,18 @@
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
-				<th>#</th>
-				<th>{% trans %}Customer Name{% endtrans %}</th>
-                                <th>{% trans %}Customer Address{% endtrans %}</th>
-                                <th>{% trans %}Customer Phone{% endtrans %}</th>
-                                <th>{% trans %}Customer Notes{% endtrans %}</th>
+                                <th>{% trans %}Phone Number{% endtrans %}</th>
+				<th>{% trans %}Full Name{% endtrans %}</th>
+                                <th>{% trans %}Address{% endtrans %}</th>
+                                <th>{% trans %}Notes{% endtrans %}</th>
 				<th>{% trans %}Action{% endtrans %}</th>
 			</tr>
                 {% if customers|length %}
 		{% for customer in customers %}
 			<tr>
-				<td>{{ customer.c_id }}</td>
+                                <td>{{ customer.c_customer_phone }}</td>
 				<td>{{ customer.c_customer_fname }} {{ customer.c_customer_lname }}</td>
                                 <td>{{ customer.c_customer_address }}</td>
-                                <td>{{ customer.c_customer_phone }}</td>
                                 <td>{{ customer.c_customer_notes }}</td>
 				<td>
 					<a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
@@ -65,5 +63,6 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

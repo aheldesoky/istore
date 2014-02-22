@@ -58,6 +58,8 @@ class CustomerController extends Controller //implements AuthenticatedController
             'total_customers'=> $count['total_customers'],
             'total_pages'     => ceil($count['total_customers']/10),
             'current_page'    => $currentPage,
+            'action'    => 'index',
+            'controller' => 'customer',
         ));
     }
     
@@ -75,7 +77,10 @@ class CustomerController extends Controller //implements AuthenticatedController
             //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
-        return $this->render('istoregomlaphoneBundle:Supplier:add.html.twig');
+        return $this->render('istoregomlaphoneBundle:Supplier:add.html.twig', array(
+            'action'    => 'add',
+            'controller' => 'customer',
+        ));
     }
     
     public function editAction(Request $request, $id)
@@ -98,6 +103,8 @@ class CustomerController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Supplier:edit.html.twig' , array(
             "supplier" => $supplier,
+            'action'  => 'edit',
+            'controller' => 'customer',
         ));
     }
     

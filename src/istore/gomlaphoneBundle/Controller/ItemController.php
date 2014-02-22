@@ -45,6 +45,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, 1)
+            ->orderBy('i.id', 'ASC')
             ->getQuery()
             ->getSingleResult();
         
@@ -74,6 +75,8 @@ class ItemController extends Controller //implements AuthenticatedController
             'total_items'=> $count['total_items'],
             'total_pages'     => ceil($count['total_items']/10),
             'current_page'    => $currentPage,
+            'action'    => 'index',
+            'controller' => 'item',
         ));
         
         /*
@@ -126,7 +129,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         //var_dump($item[0]);die;
         
-        if( $request->request->get('action') == 'save')
+        if( $request->request->get('action') == 'save' || $request->request->get('action') == 'save_edit')
         {
             //var_dump($request->request);die;
             $itemId = $request->request->get('itemId');
@@ -221,7 +224,7 @@ class ItemController extends Controller //implements AuthenticatedController
     public function getAction(Request $request)
     {
         //echo $request->request->get('serial');die;
-        $item = $this->getDoctrine()->getManager()->createQueryBuilder()
+        $items = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('i , b , m , c')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
@@ -230,14 +233,60 @@ class ItemController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('i.item_serial = ?2')
+            ->andWhere('i.item_status = ?3')
+            ->orWhere('m.model_serial = ?2 AND m.model_item_has_serial = 0 AND i.item_status = ?3')
             ->setParameter(1 , 1)
             ->setParameter(2 , $request->request->get('serial'))
+            ->setParameter(3 , 'in_stock')
             ->getQuery()
             ->getScalarResult();
-        if(count($item)){
-            return new JsonResponse(array('count' => count($item) , 'item' => $item[0]));
+//var_dump($items);die;
+        if(count($items)){
+            return new JsonResponse(array('count' => count($items) , 'items' => $items));
         } else {
-            return new JsonResponse(array('count' => count($item) , 'item' => ''));
+            return new JsonResponse(array('count' => count($items) , 'items' => ''));
         }
+    }
+    
+    
+    public function validateAction(Request $request)
+    {
+        //var_dump($request);die;
+        $itemNew['itemId'] = $request->request->get('itemId');
+        $itemNew['itemSerial'] = $request->request->get('itemSerial');
+        
+        $action = $request->request->get('action');
+        $controller = $request->request->get('controller');
+//echo $controller.'/'.$action;die;        
+        if($itemNew['itemSerial'] == '')
+            $error = 'is_null';
+        
+        $item = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('i , b , m , c')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->where('i.item_serial = ?1')
+            ->setParameter(1 , $request->request->get('itemSerial'))
+            ->getQuery()
+            ->getScalarResult();
+    //var_dump($item);die;
+        //Item exists
+        if(count($item)){
+            if($controller === 'item' && $action === 'save'){
+                $error = 'item_exists';
+            } elseif($controller === 'item' && $action === 'save_edit') {
+                if($item[0]['i_id'] != $itemNew['itemId'])
+                    $error = 'item_exists';
+            }
+        //Item does not exist
+        } else {
+            if($controller === 'default' && $action === 'index'){
+                $error = 'not_found';
+            }
+        }
+        return new JsonResponse(array('error' => $error , 'item' => $item[0]));
+        
     }
 }

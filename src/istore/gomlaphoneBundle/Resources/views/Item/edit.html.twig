@@ -1,6 +1,11 @@
 <form class="form-horizontal" id="itemForm" role="form" method="post" action="/item/edit">
     <input type="hidden" id="itemId" name="itemId" value="{{ item.i_id }}" />
+    {% if item.i_item_serial==null %}
     <input type="hidden" id="action" name="action" value="save" />
+    {% else %}
+    <input type="hidden" id="action" name="action" value="save_edit" />
+    {% endif %}
+    <input type="hidden" id="controller" name="controller" value="item" />
     <div class="modal fade bs-modal-lg" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg item-edit">
             <div class="modal-content">
@@ -14,16 +19,20 @@
                             <div class="row">
                                 <div class="col-lg-12 alert-message-modal"></div>
                             </div>
-                            <div class="row item-serial-container alert alert-info">
+                            {% if item.m_model_item_has_serial == 1 %}
+                            <div class="row item-serial-container alert alert-info alert-serial-item">
                                 <div class="col-lg-6 col-lg-offset-2">
                                     <div class="form-group">
+                                        <input type="hidden" value="{{ item.i_id }}" id="itemId">
                                         <input type="text" class="form-control input-lg input-item-serial" id="itemSerial" name="itemSerial" placeholder="Item Serial" value="{{ item.i_item_serial }}">
+                                        <label for="itemSerial" class="serial-error"></label>
                                     </div>
                                 </div>
                                 <div class="col-lg-1">
-                                    <button data-loading-text="Loading..." class="btn btn-primary btn-lg btn-item-serial" type="button">Check</button>
+                                    <button data-loading-text="Loading..." class="btn btn-warning btn-lg btn-item-serial" type="button">Check</button>
                                 </div>
                             </div>
+                            {% endif %}
                             <div class="row item-details-container">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -128,13 +137,13 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelBrand" class="col-sm-4 control-label">Brand Name:</label>
+                                        <label for="modelBrand" class="col-sm-4 control-label">Brand:</label>
                                         <div class="col-sm-6">
                                             <label for="modelBrand" class="col-sm-10 control-label">{{ item.m_model_brand }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelModel" class="col-sm-4 control-label">Model Name:</label>
+                                        <label for="modelModel" class="col-sm-4 control-label">Model:</label>
                                         <div class="col-sm-6">
                                             <label for="modelModel" class="col-sm-10 control-label">{{ item.m_model_model }}</label>
                                         </div>
@@ -152,8 +161,16 @@
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="{{ item.m_model_specs }}">Show Specifications</button>
-                                        
+                                        <!--
+                                        <button class="btn btn-default btn-item-specs">Show Specifications</button>
+                                        <div class="modal fade modal-item-specs" tabindex="-1" role="dialog" aria-labelledby="itemSpecs" aria-hidden="true">
+                                          <div class="modal-dialog modal-sm">
+                                            <div class="modal-content">
+                                                {{ item.m_model_specs }}
+                                            </div>
+                                          </div>
+                                        </div>
+                                        -->
                                     </div>
                                 </div>
                             </div>
@@ -161,8 +178,8 @@
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-override">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-danger">Save changes</button>
+                    <button type="button" class="btn btn-default btn-item-edit-close" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success btn-item-edit-save">Save changes</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

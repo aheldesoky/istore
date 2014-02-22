@@ -21,7 +21,7 @@ class DefaultController extends Controller
         
         
         
-        $user = $this->get('security.context')->getToken()->getUser();
+        //$user = $this->get('security.context')->getToken()->getUser();
         //var_dump($user);die;
         return $this->render('istoregomlaphoneBundle:Default:index.html.twig', array(
             'datetime'      => new \DateTime(),

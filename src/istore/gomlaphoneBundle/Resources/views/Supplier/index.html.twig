@@ -10,7 +10,6 @@
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
-				<th>#</th>
 				<th>{% trans %}Supplier Name{% endtrans %}</th>
                                 <th>{% trans %}Supplier Address{% endtrans %}</th>
                                 <th>{% trans %}Supplier Phone{% endtrans %}</th>
@@ -20,7 +19,6 @@
                 {% if suppliers|length %}
 		{% for supplier in suppliers %}
 			<tr>
-				<td>{{ supplier.s_id }}</td>
 				<td>{{ supplier.s_supplier_name }}</td>
                                 <td>{{ supplier.s_supplier_address }} , {{ supplier.g_governorate_name }}</td>
                                 <td>{{ supplier.s_supplier_phone }}</td>
@@ -33,11 +31,11 @@
 		{% endfor %}
                 {% else %}
                         <tr>
-                            <td colspan="6">{% trans %}There are no suppliers.{% endtrans %}</td>
+                            <td colspan="5">{% trans %}There are no suppliers.{% endtrans %}</td>
 			</tr>
                 {% endif %}
 			<tr>
-				<td colspan="6"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+				<td colspan="5"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
 			</tr>
 		</table>
 	</div>
@@ -65,5 +63,6 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

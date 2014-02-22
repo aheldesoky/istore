@@ -68,6 +68,8 @@ class SupplierController extends Controller //implements AuthenticatedController
             'total_suppliers'=> $count['total_suppliers'],
             'total_pages'     => ceil($count['total_suppliers']/10),
             'current_page'    => $currentPage,
+            'action'          => 'index',
+            'controller'      => 'supplier',
         ));
     }
     
@@ -96,6 +98,8 @@ class SupplierController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Supplier:add.html.twig', array(
             'governorates' => $governorates,
+            'action'          => 'add',
+            'controller'      => 'supplier',
         ));
     }
     
@@ -128,6 +132,8 @@ class SupplierController extends Controller //implements AuthenticatedController
         return $this->render('istoregomlaphoneBundle:Supplier:edit.html.twig' , array(
             "supplier" => $supplier,
             'governorates' => $governorates,
+            'action'          => 'edit',
+            'controller'      => 'supplier',
         ));
     }
     

@@ -17,7 +17,7 @@
 							</div>
 						</div>
 						<div class="col-lg-1">
-							<button id="model-serial" data-loading-text="Loading..." class="btn btn-danger btn-lg" type="button">Check</button>
+							<button id="model-serial" data-loading-text="Loading..." class="btn btn-warning btn-lg" type="button">Check</button>
 						</div>
 					</div>
 					<div class="row">
@@ -48,12 +48,21 @@
 						</div>
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="modelSpecs" class="col-sm-4 control-label">Specifications</label>
+                                                            <label for="modelSpecs" class="col-sm-4 control-label">{% trans %}Specifications{% endtrans %}</label>
 								<div class="col-sm-7">
 									<textarea class="form-control" rows="3" id="modelSpecs" name="modelSpecs" placeholder="Enter specifications ...."> {{ model.modelSpecs }}</textarea>
 								</div>
 							</div>
 						</div>
+                                                <div class="col-md-6">
+                                                        <label for="modelItemHasSerial" class="col-sm-4 control-label">{% trans %}Item has serial{% endtrans %}</label>
+                                                        <div class="col-sm-3">
+                                                                <select class="form-control required" id="modelItemHasSerial" name="modelItemHasSerial" disabled>
+                                                                        <option value="1" {% if bulk.modelItemHasSerial %}selected{% endif %}>{% trans %}Yes{% endtrans %}</option>
+                                                                        <option value="0" {% if bulk.modelItemHasSerial %}selected{% endif %}>{% trans %}No{% endtrans %}</option>
+                                                                </select>
+                                                        </div>
+                                                </div>
 					</div>
 				</div>
 			</div>

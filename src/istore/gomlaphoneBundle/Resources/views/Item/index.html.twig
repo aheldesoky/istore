@@ -3,7 +3,11 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Bulk{% endtrans %} # : {{ bulk.id }}
+                        {% if bulk|length %}
+			{% trans %}Bulk{% endtrans %} #{{ bulk.id }}
+                        {% else %}
+                        {% trans %}Item List{% endtrans %}
+                        {% endif %}
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_items }}) {% trans %}items{% endtrans %}</span>
 		</h4>
 	</div>
@@ -19,13 +23,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelBrand" class="col-sm-4 control-label">Brand Name :</label>
+                                <label for="modelBrand" class="col-sm-4 control-label">Brand :</label>
                                 <div class="col-sm-6">
                                     <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelBrand }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelModel" class="col-sm-4 control-label">Model Name :</label>
+                                <label for="modelModel" class="col-sm-4 control-label">Model :</label>
                                 <div class="col-sm-6">
                                     <label for="modelModel" class="col-sm-12 control-label">{{ bulk.bulkModel.modelModel }}</label>
                                 </div>
@@ -39,7 +43,7 @@
                             <div class="form-group">
                                 <label for="bulkDate" class="col-sm-4 control-label">Bulk Date :</label>
                                 <div class="col-sm-6">
-                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkDate.format('yyyy-mm-dd') }}</label>
+                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkDate.format('Y-m-d') }}</label>
                                 </div>
                             </div>
                         </div>
@@ -63,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-default" data-toggle="tooltip" data-placement="top" title="{{ bulk.bulkModel.modelSpecs }}">Show Specifications</button>
+                                <button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{% if bulk.bulkModel.modelSpecs == '' %}{%trans%}empty{%endtrans%}{% else %}{{ bulk.bulkModel.modelSpecs }}{% endif %}" data-title="{{ bulk.bulkModel.modelBrand }} {{ bulk.bulkModel.modelModel }}">Show Specifications</button>
                             </div>
                         </div>
                     </div>
@@ -98,10 +102,14 @@
                             {% endif %}
                             >
 				<td>
-                                    {% if item.i_item_serial==null %}
-                                    <span class="label label-primary">Not Set</span>
+                                    {% if item.m_model_item_has_serial %}
+                                        {% if item.i_item_serial==null %}
+                                        <span class="label label-primary">{% trans %}Not Set{% endtrans %}</span>
+                                        {% else %}
+                                        <span class="label label-default">{{ item.i_item_serial }}</span>
+                                        {% endif %}
                                     {% else %}
-                                    <span class="label label-default">{{ item.i_item_serial }}</span>
+                                        <span class="label label-default">{% trans %}-{% endtrans %}</span>
                                     {% endif %}
                                 </td>
 				<td>{{ item.m_model_brand }}</td>
@@ -134,7 +142,6 @@
                                         <input type="hidden" value="{{ item.i_id }}" id="item-{{ item.i_id }}">
                                     </button> - 
                                     <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.m_model_brand }} {{ item.m_model_model }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a>
-                                    {# include('istoregomlaphoneBundle:Item:edit.html.twig') #}
 				</td>
 			</tr>
 		{% endfor %}
@@ -177,5 +184,6 @@
         </div>
     </div>
 </div>
-
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

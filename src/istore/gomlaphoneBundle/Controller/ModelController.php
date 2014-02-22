@@ -49,6 +49,7 @@ class ModelController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
             ->setParameter(1, 1)
+            ->orderBy('m.id', 'ASC')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -115,6 +116,7 @@ class ModelController extends Controller //implements AuthenticatedController
                 ->find($request->request->get('modelCategory'));
             $model->setModelCategory($modelCategory);
             $model->setModelSpecs($request->request->get('modelSpecs'));
+            $model->setModelItemHasSerial($request->request->get('modelItemHasSerial'));
             $model->setModelStoreId(1);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($model);
@@ -153,6 +155,7 @@ class ModelController extends Controller //implements AuthenticatedController
                 ->find($request->request->get('modelCategory'));
             $model->setModelCategory($modelCategory);
             $model->setModelSpecs($request->request->get('modelSpecs'));
+            $model->setModelItemHasSerial($request->request->get('modelItemHasSerial'));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($model);
             $entityManager->flush();
@@ -252,10 +255,11 @@ class ModelController extends Controller //implements AuthenticatedController
             //Model Controller
             if($controller === 'model' && $action === 'add'){
                 $error = 'model_exists';
-            //Bulk Controllers
             } elseif($controller === 'model' && $action === 'edit') {
                 if($model[0]['m_id'] != $modelNew['modelId'])
                     $error = 'model_exists';
+                
+            //Bulk Controllers
             } elseif ($controller === 'bulk' && $action === 'add'){
                 $error = 'model_exists';
             } elseif ($controller === 'bulk' && $action === 'edit'){

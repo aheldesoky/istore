@@ -3,8 +3,34 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Sales List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_sales }}) {% trans %}sales{% endtrans %}</span>
+                    <div class="row">
+                        <div class="col-lg-2 padding-top-7">
+                            {% if action == 'postpaid' %}
+                            {% trans %}Postpaid Sales{% endtrans %}
+                            {% elseif action == 'prepaid' %}
+                            {% trans %}Prepaid Sales{% endtrans %}
+                            {% elseif action == 'discount' %}
+                            {% trans %}Sales Discounts{% endtrans %}
+                            {% elseif action == 'index' %}
+                            {% trans %}All Sales{% endtrans %}
+                            {% endif %}
+                        </div>
+                        <div class="col-lg-1 col-lg-offset-5">
+                            <a {% if action!='index' %}href="/sale"{% endif %} class="btn btn-warning btn-md {% if action=='index' %}active{% endif %}">{% trans %}All Sales{% endtrans %}</a>
+                        </div>
+                        <div class="col-lg-1">
+                            <a {% if action!='prepaid' %}href="/sale/prepaid"{% endif %} class="btn btn-warning btn-md {% if action=='prepaid' %}active{% endif %}">{% trans %}Prepaid{% endtrans %}</a>
+                        </div>
+                        <div class="col-lg-1">
+                            <a {% if action!='postpaid' %}href="/sale/postpaid"{% endif %} class="btn btn-warning btn-md {% if action=='postpaid' %}active{% endif %}">{% trans %}Postpaid{% endtrans %}</a>
+                        </div>
+                        <div class="col-lg-1">
+                            <a {% if action!='discount' %}href="/sale/discount"{% endif %} class="btn btn-warning btn-md {% if action=='discount' %}active{% endif %}">{% trans %}Discounts{% endtrans %}</a>
+                        </div>
+                        <div class="col-lg-1 padding-top-7">
+                            <span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_sales }}) {% trans %}sales{% endtrans %}</span>
+                        </div>
+                    </div>
 		</h4>
 	</div>
 	<div class="panel-body">
@@ -12,7 +38,14 @@
 			<tr>
 				<th>{% trans %}Bill Number{% endtrans %}</th>
 				<th>{% trans %}Customer Name{% endtrans %}</th>
-                                <th>{% trans %}Description{% endtrans %}</th>
+                                {% if action == 'discount' %}
+                                    <th>{% trans %}Subtotal Price{% endtrans %}</th>
+                                    <th>{% trans %}Discount{% endtrans %}</th>
+                                {% endif %}
+                                <th>{% trans %}Total Price{% endtrans %}</th>
+                                {% if action == 'postpaid' %}
+                                    <th>{% trans %}Paid Amount{% endtrans %}</th>
+                                {% endif %}
 				<th>{% trans %}Date{% endtrans %}</th>
 				<th>{% trans %}Action{% endtrans %}</th>
 			</tr>
@@ -21,17 +54,27 @@
 			<tr>
 				<td>{{ sale.s_id }}</td>
 				<td>{{ sale.cu_customer_fname }} {{ sale.cu_customer_lname }}</td>
-				<td>{{ sale.m_model_brand }} {{ sale.m_model_model }}</td>
-                                <td>{{ sale.b_bulk_date.format('Y-m-d') }}</td>
+                                {% if action == 'discount' %}
+                                    <td>{{ sale.s_sale_subtotal }} {% trans %}L.E.{% endtrans %}</td>
+                                    <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
+                                {% endif %}
+                                <td>{{ sale.s_sale_total }} {% trans %}L.E.{% endtrans %}</td>
+                                {% if action == 'postpaid' %}
+                                    <td>{{ sale.po_postpaid_amount }} {% trans %}L.E.{% endtrans %}</td>
+                                {% endif %}
+                                <td>{{ sale.s_sale_date.format('Y-m-d H:i:s') }}</td>
 				<td>
-					<a href="/bulk/edit/{{sale.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> - 
-                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:{{ sale.m_model_brand }} {{ sale.m_model_model }}">{% trans %}Delete{% endtrans %}</a>
+                                        <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
+                                        {% if action == 'discount' %}
+                                        <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm">{% trans %}Confirm Discount{% endtrans %}</a>
+                                        {% endif %}
+                                        <!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:bill #{{sale.s_id}}">{% trans %}Delete{% endtrans %}</a>-->
 				</td>
 			</tr>
 		{% endfor %}
                 {% else %}
                         <tr>
-                            <td colspan="9">{% trans %}There are no bulks.{% endtrans %}</td>
+                            <td colspan="9">{% trans %}There are no sales.{% endtrans %}</td>
 			</tr>
                 {% endif %}
 			<tr>

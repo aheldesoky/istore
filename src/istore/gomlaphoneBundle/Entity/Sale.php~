@@ -156,27 +156,4 @@ class Sale
     {
         return $this->sale_discount;
     }
-
-    /**
-     * Set sale_discount_confirmed
-     *
-     * @param boolean $saleDiscountConfirmed
-     * @return Sale
-     */
-    public function setSaleDiscountConfirmed($saleDiscountConfirmed)
-    {
-        $this->sale_discount_confirmed = $saleDiscountConfirmed;
-
-        return $this;
-    }
-
-    /**
-     * Get sale_discount_confirmed
-     *
-     * @return boolean 
-     */
-    public function getSaleDiscountConfirmed()
-    {
-        return $this->sale_discount_confirmed;
-    }
 }

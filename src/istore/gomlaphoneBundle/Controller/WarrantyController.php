@@ -67,6 +67,8 @@ class WarrantyController extends Controller //implements AuthenticatedController
             'total_warranties'=> $count['total_warranties'],
             'total_pages'     => ceil($count['total_warranties']/10),
             'current_page'    => $currentPage,
+            'action'          => 'index',
+            'controller'      => 'warranty',
         ));
     }
     

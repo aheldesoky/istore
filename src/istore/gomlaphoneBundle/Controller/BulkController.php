@@ -54,6 +54,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, 1)
+            ->orderBy('b.id', 'ASC')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -121,6 +122,8 @@ class BulkController extends Controller //implements AuthenticatedController
             'total_items'=> $count['total_items'],
             'total_pages'     => ceil($count['total_items']/10),
             'current_page'    => $currentPage,
+            "action" => "view",
+            "controller" => "bulk"
         ));
         
     }
@@ -161,9 +164,12 @@ class BulkController extends Controller //implements AuthenticatedController
             for($i=0 ; $i<$quantity ; $i++)
             {
                 $item = new Item();
-                $item->setItemBulk($bulk)
-                     ->setItemStatus('pending_info')
-                     ->setItemHasWarranty(0);
+                $item->setItemBulk($bulk)->setItemHasWarranty(0);
+                if($bulkModel[0]->getModelItemHasSerial())
+                    $item->setItemStatus('pending_info');
+                else
+                    $item->setItemStatus('in_stock');
+                     
                 $entityManager = $this->getDoctrine()->getManager();
                 $entityManager->persist($item);
                 $entityManager->flush();
