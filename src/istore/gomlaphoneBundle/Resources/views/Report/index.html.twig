@@ -1,0 +1,129 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h4 class="">
+			{% trans %}Reports{% endtrans %}
+		</h4>
+	</div>
+	<div class="panel-body">
+                <div id="reportPage">
+                        <div class="report-criteria form-container">
+                                <form class="form-horizontal" action="/report/print" method="post" id="reportForm" target="_blank">
+                                        <div class="row">
+                                                <div class="col-md-6">
+                                                        <div class="form-group hidden">
+                                                                <label for="reportDisplay" class="col-sm-4 control-label">Display</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportDisplay" name="reportDisplay">
+                                                                                <option value="compact" selected>Compact</option>
+                                                                                <option value="comfortable">Comfortable</option>
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                                <label for="reportStatus" class="col-sm-4 control-label">Status</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportStatus" name="reportStatus">
+                                                                                <option value="" selected>All status</option>
+                                                                                <option value="pending_info">Pending Info</option>
+                                                                                <option value="in_stock">In Stock</option>
+                                                                                <option value="sold">Sold</option>
+                                                                                <option value="warranty">Warranty</option>
+                                                                                <option value="warranty_replaced">Warranty - Replaced</option>
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group report-range hidden">
+                                                                <label for="reportRange" class="col-sm-4 control-label">Period</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportRange" name="reportRange" disabled>
+                                                                                <option value="" selected>Select period</option>
+                                                                                <option value="today">Today</option>
+                                                                                <option value="this_week">This Week</option>
+                                                                                <option value="last_week">Last Week</option>
+                                                                                <option value="this_month">This Month</option>
+                                                                                <option value="last_month">Last Month</option>
+                                                                                <option value="this_year">This Year</option>
+                                                                                <option value="last_year">Last Year</option>
+                                                                                <option value="range">Range</option>
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group report-from-date hidden">
+                                                                <label for="reportFromDate" class="col-sm-4 control-label">From Date</label>
+                                                                <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="reportFromDate" name="reportFromDate" placeholder="{% trans %}From{% endtrans %}" data-date-format="yyyy-mm-dd" disabled>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group report-to-date hidden">
+                                                                <label for="reportToDate" class="col-sm-4 control-label">To Date</label>
+                                                                <div class="col-sm-6">
+                                                                        <input type="text" class="form-control" id="reportToDate" name="reportToDate" placeholder="{% trans %}To{% endtrans %}" data-date-format="yyyy-mm-dd" disabled>
+                                                                </div>
+                                                        </div>
+                                                        <!--<div class="form-group">
+                                                                <label for="reportSupplier" class="col-sm-4 control-label">Supplier</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportSupplier" name="reportSupplier">
+                                                                                <option value="" selected>Select supplier</option>
+                                                                                {% for supplier in suppliers %}
+                                                                                <option value="{{ supplier.id }}">{{ supplier.supplierName }}</option>
+                                                                                {% endfor %}
+                                                                        </select>
+                                                                </div>
+                                                        </div>-->
+                                                </div>
+                                                <div class="col-md-6">
+                                                        <div class="form-group">
+                                                                <label for="reportCategory" class="col-sm-4 control-label">Category</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportCategory" name="reportCategory">
+                                                                                <option value="" selected>All categories</option>
+                                                                                {% for category in categories %}
+                                                                                <option value="{{ category.id }}">{{ category.categoryName }}</option>
+                                                                                {% endfor %}
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                                <label for="reportModel" class="col-sm-4 control-label">Models</label>
+                                                                <div class="col-sm-6">
+                                                                        <div class="multiselect" id="reportModel" name="reportModel">
+                                                                                <label class="checkall">
+                                                                                    <input type="checkbox" name="" value="" class="checkall"/>{% trans %}(un)check all{% endtrans %}
+                                                                                </label>
+                                                                                {% for model in models %}
+                                                                                <label class="category-{{model.modelCategory.id}}">
+                                                                                    <input type="checkbox" name="model[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}"/>{{ model.modelBrand }} {{ model.modelModel }}
+                                                                                </label>
+                                                                                {% endfor %}
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="row">
+                                                <div class="col-md-12">
+                                                        <div class="form-group">
+                                                                <div class="col-sm-12">
+                                                                        <a href="" class="btn btn-primary btn-lg" id="viewReport">View Report</a>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                </form>
+                        </div>
+                        <div class="report-view">
+                                <table class="table table-hover table-view">
+                                        <tr>
+                                                <td colspan="2">{% trans %}There is no report to display.{% endtrans %}</td>
+                                        </tr>
+                                </table>
+                        </div>
+                </div>
+        </div>
+</div>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

@@ -14,7 +14,7 @@
 				<th>{% trans %}Full Name{% endtrans %}</th>
                                 <th>{% trans %}Address{% endtrans %}</th>
                                 <th>{% trans %}Notes{% endtrans %}</th>
-				<th>{% trans %}Action{% endtrans %}</th>
+				<!--<th>{% trans %}Action{% endtrans %}</th>-->
 			</tr>
                 {% if customers|length %}
 		{% for customer in customers %}
@@ -23,10 +23,10 @@
 				<td>{{ customer.c_customer_fname }} {{ customer.c_customer_lname }}</td>
                                 <td>{{ customer.c_customer_address }}</td>
                                 <td>{{ customer.c_customer_notes }}</td>
-				<td>
+				<!--<td>
 					<a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
 					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="customer:{{customer.c_id}}:{{ customer.c_customer_fname }} {{ customer.c_customer_lname }}">{% trans %}Delete{% endtrans %}</a>
-				</td>
+				</td>-->
 			</tr>
 		{% endfor %}
                 {% else %}
@@ -40,7 +40,7 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/customer/add" class="btn btn-success btn-lg">+ Add New Customer</a>
+		<!--<a href="/customer/add" class="btn btn-success btn-lg">+ Add New Customer</a>-->
 		<input type="hidden" value="{{ total_pages }}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>

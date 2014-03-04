@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Warranty;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\DBAL\DBALException;
 
 class WarrantyController extends Controller //implements AuthenticatedController
 {
@@ -116,15 +117,18 @@ class WarrantyController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Warranty $warranty)
     {
-        
-        if (!$warranty) {
-            throw $this->createNotFoundException('No warranty found');
+        try{
+            if (!$warranty) {
+                throw $this->createNotFoundException('No warranty found');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($warranty);
+            $entityManager->flush();
+            
+            return new JsonResponse(array('error' => 0 , 'message' => 'Warranty has been successfully deleted'));
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete warranty that already has item'));
         }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($warranty);
-        $entityManager->flush();
-
-        return $this->redirect($this->generateUrl('istoregomlaphone_warranty_index'));
     }
     
     public function findAction(Request $request)

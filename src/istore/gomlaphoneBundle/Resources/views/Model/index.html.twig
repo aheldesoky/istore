@@ -19,7 +19,7 @@
 			</tr>
                 {% if models|length %}
 		{% for model in models %}
-			<tr>
+			<tr class="model_{{model.m_id}}">
 				<td>{{ model.m_model_serial }}</td>
 				<td>{{ model.m_model_brand }}</td>
 				<td>{{ model.m_model_model }}</td>
@@ -60,7 +60,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="/category/delete/" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

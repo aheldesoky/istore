@@ -15,7 +15,7 @@
 			</tr>
                 {% if categories|length %}
 		{% for category in categories %}
-			<tr>
+			<tr class="category_{{category.c_id}}">
 				<td>{{ category.c_category_name }}</td>
 				<td>
 					<a href="/category/edit/{{category.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
@@ -52,7 +52,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

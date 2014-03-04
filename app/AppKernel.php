@@ -17,7 +17,8 @@ class AppKernel extends Kernel
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Sensio\Bundle\FrameworkExtraBundle\SensioFrameworkExtraBundle(),
             new istore\gomlaphoneBundle\istoregomlaphoneBundle(),
-            new istore\SecurityBundle\istoreSecurityBundle(),
+            //new istore\SecurityBundle\istoreSecurityBundle(),
+            new FOS\UserBundle\FOSUserBundle(),
             new istore\BackendBundle\istoreBackendBundle(),
         );
 

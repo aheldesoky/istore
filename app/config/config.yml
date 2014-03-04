@@ -1,5 +1,5 @@
 imports:
-    - { resource: parameters.yml }
+    - { resource: parameters_local.yml }
     - { resource: security.yml }
 
 framework:
@@ -79,4 +79,10 @@ services:
     #    class: istore\gomlaphoneBundle\EventListener\ControllerListener
     #    tags:
     #        - { name: kernel.event_listener, event: kernel.controller, method: onKernelController }
-            
+
+fos_user:
+    db_driver: orm # other valid values are 'mongodb', 'couchdb' and 'propel'
+    firewall_name: main
+    user_class: FOS\UserBundle\Entity\User
+    group:
+        group_class: FOS\UserBundle\Entity\Group

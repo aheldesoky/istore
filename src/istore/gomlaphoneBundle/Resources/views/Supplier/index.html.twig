@@ -18,7 +18,7 @@
 			</tr>
                 {% if suppliers|length %}
 		{% for supplier in suppliers %}
-			<tr>
+			<tr class="supplier_{{supplier.s_id}}">
 				<td>{{ supplier.s_supplier_name }}</td>
                                 <td>{{ supplier.s_supplier_address }} , {{ supplier.g_governorate_name }}</td>
                                 <td>{{ supplier.s_supplier_phone }}</td>
@@ -58,7 +58,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="/category/delete/" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

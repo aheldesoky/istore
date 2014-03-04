@@ -37,6 +37,9 @@ $(document).ready(function(){
     
     //$('#alert-message').html(alertDangerMessage($('#validationMessage').val()));
     $('.btn-popover').popover();
+    $('#bulkDate, #reportFromDate, #reportToDate').datepicker({endDate: new Date}).on('changeDate', function(){
+        $(this).focus().datepicker('hide');
+    });
     // Entity Delete Confirmation
     $(document).on("click", ".btn-delete", function (e) {
             e.preventDefault();
@@ -47,9 +50,38 @@ $(document).ready(function(){
             var entityId = entity[1];
             var entityName = entity[2];
             //alert(entityType + '/' + entityId + '/' + entityName);
+            $('#entityId').val(entityId);
             $('a.btn-delete-confirm').attr('href' , '/'+entityType+'/delete/'+entityId);
             $('label#entityName').html(entityName);
             $('#deleteConfirmation').modal('show');
+    });
+    $(document).on("click", "a.btn-delete-confirm", function (e) {
+            e.preventDefault();
+            var controller = $('#controller').val();
+            var action = $('#action').val();
+            var entityId = $('#entityId').val();
+            if(controller === 'bulk' && action === 'view')
+                controller = 'item';
+            var url = "/"+controller+"/delete/"+entityId;
+            var btn = $(this);
+            btn.button('loading');
+            $.ajax({
+                    url: url,
+                    type: "get",
+                    success: function(response){
+                        $('#deleteConfirmation').modal('hide');
+                        if(response.error===1){
+                            $('#alert-message').html(alertDangerMessage(response.message));
+                        } else {
+                            $('.'+controller+'_'+entityId).remove();
+                            var bulkQuantity = $('#bulkQuantity').html();
+                            $('#bulkQuantity').html(parseInt(bulkQuantity)-1);
+                            $('#alert-message').html(alertSuccessMessage(response.message));
+                        }
+                    }
+            }).always(function () {
+                        btn.button('reset');
+            });
     });
 
     $("#clockbox").flipcountdown({
@@ -245,10 +277,6 @@ $(document).ready(function(){
         }
     });
 
-    $('#bulkDate').datepicker().on('changeDate', function(){
-        $(this).focus().datepicker('hide');
-    });
-
     $('#itemSerial:focus').focus();
     $('.btn-specs').popover('toggle');
 
@@ -298,7 +326,6 @@ $(document).ready(function(){
     });
     // Add item to list
     $('.btn-add-item').click(function(){
-        console.log(item);
         var itemSerial = $('#itemSerial').val();
         var itemBrand = $('#itemBrand').html();
         if(itemSerial == ''){
@@ -312,7 +339,7 @@ $(document).ready(function(){
             var flag = false;
             var itemIndex;
             $.each(itemList , function(index , value){
-                if(value.m_model_item_serial){
+                if(item.m_model_item_has_serial){
                     if(value.i_item_serial===item.i_item_serial){
                         flag = true;
                         itemIndex = index+1;
@@ -328,7 +355,7 @@ $(document).ready(function(){
             });
             if(flag === true){
                 $('#alert-message').html(alertInfoMessage('Item already added to list.'));
-                $(".table-view-sale tr:eq("+ itemIndex +")").effect("highlight", {}, 1500);
+                //$(".table-view-sale tr:eq("+ itemIndex +")").effect("highlight", {}, 1500);
                 clearItem();
             } else {
                 addItem();
@@ -961,7 +988,122 @@ $(document).ready(function(){
                 }
         }).element('input#warrantyName');
     });
+    
+    // View Report
+    $('#viewReport').click(function(e){
+        var models = new Array();
+        $.each($('div#reportModel input:checked') , function(index, value){
+            if(value.value)
+                models.push(value.value);
+        })
+        var reportModel = models;
+        var reportCategory = $('#reportCategory ').val();
+        var reportStatus = $('#reportStatus').val();
+        var reportSupplier = $('#reportSupplier').val();
+        var reportRange = $('#reportRange').val();
+        var reportFromDate = $('#reportFromDate').val();
+        var reportToDate = $('#reportToDate').val();
+        var reportDisplay = $('#reportDisplay').val();
+        var action = $('#action').val();
+        var controller = $('#controller').val();
 
+        if(reportModel.length === 0){
+            $('#alert-message').html(alertWarningMessage('Please select model.'));
+            e.preventDefault();
+            return false;
+        } else {
+            $('#alert-message').html('');
+        }
+        
+        if(!$('#reportRange').prop('disabled') && reportRange === ''){
+            $('#alert-message').html(alertWarningMessage('Please select period.'));
+            e.preventDefault();
+            return false;
+        } else {
+            $('#alert-message').html('');
+        }
+        
+        var url = '/app_dev.php/report/';
+        if(reportDisplay === 'comfortable')
+            url += 'view-comfortable';
+        else if (reportDisplay === 'compact')
+            url += 'view-compact';
+        
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+            async: false,
+            url: url,
+            type: "post",
+            data: {
+                reportModel:reportModel,
+                reportCategory:reportCategory,
+                reportStatus:reportStatus,
+                reportSupplier:reportSupplier,
+                reportRange:reportRange,
+                reportFromDate:reportFromDate,
+                reportToDate:reportToDate,
+                reportDisplay:reportDisplay,
+                action:action,
+                controller:controller,
+            },
+            success: function(response){
+                $('.report-view').html(response);
+            }
+        }).always(function () {
+            btn.button('reset');
+            $(".redund-cell").empty();
+        });
+        e.preventDefault();
+    });
+    
+    $("#reportPage").on("click", "#exportReportPDF", function(e){
+        var models = new Array();
+        $.each($('div#reportModel input:checked') , function(index, value){
+            if(value.value)
+                models.push(value.value);
+        })
+        var reportModel = models;
+        var reportCategory = $('#reportCategory ').val();
+        var reportStatus = $('#reportStatus').val();
+        var reportSupplier = $('#reportSupplier').val();
+        var reportFromDate = $('#reportFromDate').val();
+        var reportToDate = $('#reportToDate').val();
+        var reportDisplay = $('#reportDisplay').val();
+        var action = $('#action').val();
+        var controller = $('#controller').val();
+        
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+            async: false,
+            url: "/report/export",
+            type: "post",
+            data: {
+                reportModel:reportModel,
+                reportCategory:reportCategory,
+                reportStatus:reportStatus,
+                reportSupplier:reportSupplier,
+                reportFromDate:reportFromDate,
+                reportToDate:reportToDate,
+                reportDisplay:reportDisplay,
+                action:action,
+                controller:controller
+            },
+            success: function(response){
+                
+            }
+        }).always(function () {
+            btn.button('reset');
+            $(".redund-cell").empty();
+        });
+        e.preventDefault();
+    });
+    
+    $("#reportPage").on("click", "#printReport", function(e){
+        $("#reportForm").submit();
+        e.preventDefault();
+    });
     //Functions
     /*function validateItemSerial(btn , itemSerial , handleData){
     btn.button('loading');
@@ -1076,7 +1218,7 @@ $(document).ready(function(){
             }
             console.log(itemList);
         });*/
-        console.log(itemList);
+        //console.log(itemList);
         
         for(var i=itemList.length-1 ; i>=0 ; i--){
             if(itemList[i].m_model_item_has_serial){
@@ -1090,7 +1232,7 @@ $(document).ready(function(){
             }
         }
         
-        console.log(itemList);
+        //console.log(itemList);
         itemListRequired = new Array();
         $.each(itemList , function (index, value){
             var requiredItem = {
@@ -1164,4 +1306,68 @@ $(document).ready(function(){
         }
         return isValid;
     }
+    
+    jQuery.fn.multiselect = function() {
+        $(this).each(function() {
+            var checkboxes = $(this).find("input:checkbox");
+            checkboxes.each(function() {
+                var checkbox = $(this);
+                // Highlight pre-selected checkboxes
+                if (checkbox.prop("checked"))
+                    checkbox.parent().addClass("multiselect-on");
+
+                // Highlight checkboxes that the user selects
+                checkbox.click(function() {
+                    if (checkbox.prop("checked"))
+                        checkbox.parent().addClass("multiselect-on");
+                    else
+                        checkbox.parent().removeClass("multiselect-on");
+                });
+            });
+        });
+    };
+    $(".multiselect").multiselect();
+    $(".multiselect input.checkall").change(function(){
+        if($(this).prop('checked')){
+            $(".multiselect input").prop('checked', true);
+            $(".multiselect label").addClass("multiselect-on");
+            $(".multiselect label.hidden input").prop('checked', false);
+            $(".multiselect label.hidden").removeClass("multiselect-on");
+        }else{
+            $(".multiselect input").prop('checked', false);
+            $(".multiselect label").removeClass("multiselect-on");
+        }
+    });
+    $("select#reportCategory").change(function(){
+        if($(this).val()){
+            $(".multiselect label").addClass("hidden").removeClass("multiselect-on");
+            $(".multiselect input").prop('checked', false);
+            $(".checkall").removeClass("hidden");
+            $(".category-"+this.value).removeClass("hidden");
+        } else {
+            $(".multiselect input").prop('checked', false);
+            $(".multiselect label").removeClass("hidden").removeClass("multiselect-on");
+        }
+    });
+    $("select#reportStatus").change(function(){
+        if($(this).val() === "sold"){
+            $(".report-range").removeClass("hidden");
+            $(".report-range select").prop("disabled", false);
+        } else {
+            $(".report-range").addClass("hidden");
+            $(".report-range select").prop("disabled", true).val('');
+        }
+    });
+    $("select#reportRange").change(function(){
+        if($(this).val() === "range"){
+            $(".report-from-date").removeClass("hidden");
+            $(".report-to-date").removeClass("hidden");
+            $(".report-from-date input, .report-to-date input").prop("disabled", false);
+        } else {
+            $(".report-from-date").addClass("hidden");
+            $(".report-to-date").addClass("hidden");
+            $(".report-from-date input, .report-to-date input").prop("disabled", true);
+        }
+    });
+    
 });

@@ -10,6 +10,7 @@ use istore\gomlaphoneBundle\Entity\Model;
 use istore\gomlaphoneBundle\Entity\Item;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class BulkController extends Controller //implements AuthenticatedController
 {
@@ -233,10 +234,43 @@ class BulkController extends Controller //implements AuthenticatedController
         if (!$bulk) {
             throw $this->createNotFoundException('No bulk found');
         }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($bulk);
-        $entityManager->flush();
+        
+        $items = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('i')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->where('i.item_bulk = ?1')
+            ->setParameter(1, $bulk->getId())
+            ->getQuery()
+            ->getResult();
+//var_dump($items);die;        
+        $flag = true;
+        
+        if($bulk->getBulkModel()->getModelItemHasSerial()){
+            foreach ($items as $item) {
+                if($item->getItemStatus() != 'pending_info')
+                    $flag = false;
+            }
+        } else {
+            foreach ($items as $item) {
+                if($item->getItemStatus() != 'in_stock')
+                    $flag = false;
+            }
+        }
 
-        return $this->redirect($this->generateUrl('istoregomlaphone_bulk_index'));
+        if($flag){
+            $entityManager = $this->getDoctrine()->getManager();
+            
+            foreach ($items as $item) {
+                $entityManager->remove($item);
+                $entityManager->flush();
+            }
+            
+            $entityManager->remove($bulk);
+            $entityManager->flush();
+
+            return new JsonResponse(array('error' => 0 , 'message' => 'Bulk has been successfully deleted'));
+        } else {
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete bulk that already has in stock or sold items'));
+        }
     }
 }

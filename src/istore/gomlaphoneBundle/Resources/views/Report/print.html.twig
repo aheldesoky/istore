@@ -1,0 +1,101 @@
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>Gomla Phone</title>
+        <link href="/bundles/istoregomlaphone/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/style-bill.css' />
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/print.css' media="print" />
+        <link rel="stylesheet" href="/bundles/istoregomlaphone/css/style.css">
+    </head>
+    <body>
+        <div id="page-wrap" class="page-border">
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">Print</a>
+            </div>
+            <div id="header">REPORT</div>
+            <div id="identity">
+                <div id="address">
+                    <div>Chris Coyier</div>
+                    <div>123 Appleseed Street</div>
+                    <div>Appleville, WI 53719</div>
+
+                    <div>Phone: (555) 555-5555</div>
+                </div>
+                <div id="logo">
+                    <img id="image" src="/bundles/istoregomlaphone/img/logo.png" alt="logo" />
+                </div>
+            </div>
+            <div style="clear:both"></div>
+            <div id="customer">
+                
+                
+            </div>
+            {% if report|length %}
+            <table class="table table-hover table-bordered table-report-view-compact">
+                    <tr class="active">
+                            <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Serial{% endtrans %}</th>
+                            <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Name{% endtrans %}</th>
+                            <th rowspan="2" class="vertical-middle text-center">{% trans %}Category{% endtrans %}</th>
+                            <th rowspan="1" colspan="5" class="text-center">{% trans %}Status{% endtrans %}</th>
+                            <th rowspan="2" class="vertical-middle text-center">{% trans %}Total{% endtrans %}</th>
+                    </tr>
+                    <tr class="active">
+                            <td class="text-center"><span class="label label-primary">{% trans %}Pending Info{% endtrans %}</span></td>
+                            <td class="text-center"><span class="label label-success">{% trans %}In Stock{% endtrans %}</span></td>
+                            <td class="text-center"><span class="label label-default">{% trans %}Sold{% endtrans %}</span></td>
+                            <td class="text-center"><span class="label label-warning">{% trans %}Warranty{% endtrans %}</span></td>
+                            <td class="text-center"><span class="label label-danger">{% trans %}Warranty - Replaced{% endtrans %}</span></td>
+                    </tr>
+                    {% set total_pending_info = 0 %}
+                    {% set total_in_stock = 0 %}
+                    {% set total_sold = 0 %}
+                    {% set total_warranty = 0 %}
+                    {% set total_warranty_replaced = 0 %}
+                    {% set total = 0 %}
+
+                    {% for model in report %}
+                            {% set total_pending_info = total_pending_info + model.pending_info %}
+                            {% set total_in_stock = total_in_stock + model.in_stock %}
+                            {% set total_sold = total_sold + model.sold %}
+                            {% set total_warranty = total_warranty + model.warranty %}
+                            {% set total_warranty_replaced = total_warranty_replaced + model.warranty_replaced %}
+                            {% set total = total + model.total_count %}
+                            <tr class="warning">
+                                    <td >{{ model.m_model_serial }}</td>
+                                    <td >{{ model.m_model_brand }} {{ model.m_model_model }}</td>
+                                    <td >{{ model.c_category_name }}</td>
+                                    <td class="text-center"><span class="label label-primary">{{ model.pending_info }}</span></td>
+                                    <td class="text-center"><span class="label label-success">{{ model.in_stock }}</span></td>
+                                    <td class="text-center"><span class="label label-default">{{ model.sold }}</span></td>
+                                    <td class="text-center"><span class="label label-warning">{{ model.warranty }}</span></td>
+                                    <td class="text-center"><span class="label label-danger">{{ model.warranty_replaced }}</span></td>
+                                    <th class="text-center">{{ model.total_count }}</th>
+                            </tr>
+                    {% endfor %}
+                    <tr>
+                            <th colspan="3" class="text-center"> {% trans %}Sum{% endtrans %}</th>
+                            <th class="text-center">{{ total_pending_info }}</th>
+                            <th class="text-center">{{ total_in_stock }}</th>
+                            <th class="text-center">{{ total_sold }}</th>
+                            <th class="text-center">{{ total_warranty }}</th>
+                            <th class="text-center">{{ total_warranty_replaced }}</th>
+                            <th class="text-center">{{ total }}</th>
+                    </tr>
+            </table>
+            {% else %}
+            <table class="table table-hover table-view">
+                    <tr>
+                            <td colspan="2">{% trans %}There is no report to display.{% endtrans %}</td>
+                    </tr>
+            </table>
+            {% endif %}
+            
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">Print</a>
+            </div>
+        </div>
+    </body>
+</html>
+{% endblock %}

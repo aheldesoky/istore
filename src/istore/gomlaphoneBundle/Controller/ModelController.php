@@ -10,6 +10,7 @@ use istore\gomlaphoneBundle\Entity\Model;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\DBAL\DBALException;
 
 class ModelController extends Controller //implements AuthenticatedController
 {
@@ -24,6 +25,7 @@ class ModelController extends Controller //implements AuthenticatedController
         //echo $language;die;
         //$session->set('language', $language);
         //echo $request->setLocale($language);
+        //var_dump($this->get('container'));die;
     }
 
     public function indexAction(Request $request)
@@ -173,14 +175,18 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Model $model)
     {
-        if (!$model) {
-            throw $this->createNotFoundException('No model found');
-        }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($model);
-        $entityManager->flush();
+        try{
+            if (!$model) {
+                throw $this->createNotFoundException('No model found');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($model);
+            $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('istoregomlaphone_model_index'));
+            return new JsonResponse(array('error' => 0 , 'message' => 'Model has been successfully deleted'));
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete model that already has bulk'));
+        }
     }
     
     public function findAction(Request $request)

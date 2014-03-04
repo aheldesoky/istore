@@ -112,9 +112,9 @@
                                             <label for="itemWarranty" class="col-sm-4 control-label">Change Warranty:</label>
                                             <div class="col-sm-6">
                                                 <select class="form-control required" id="itemWarranty" name="itemWarranty" {% if item.i_item_has_warranty==0 %}disabled{% endif %}>
-                                                    <option value="" {% if item.i_item_warranty==null%}selected{% endif %}>Select warranty</option>
+                                                    <option value="" {% if item.i_item_warranty_id==null%}selected{% endif %}>Select warranty</option>
                                                     {% for warranty in warranties %}
-                                                    <option value="{{ warranty.w_id }}" {% if item.i_item_warranty==warranty.w_id %}selected{% endif %}>{{ warranty.w_warranty_name }}</option>
+                                                    <option value="{{ warranty.w_id }}" {% if item.i_item_warranty_id==warranty.w_id %}selected{% endif %}>{{ warranty.w_warranty_name }}</option>
                                                     {% endfor %}
                                                 </select>
                                             </div>

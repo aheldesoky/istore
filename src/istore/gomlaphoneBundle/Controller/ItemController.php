@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Bulk;
 use istore\gomlaphoneBundle\Entity\Model;
 use istore\gomlaphoneBundle\Entity\Item;
 use istore\gomlaphoneBundle\Entity\Warranty;
+use istore\gomlaphoneBundle\Entity\WarrantyItem;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -26,6 +27,9 @@ class ItemController extends Controller //implements AuthenticatedController
         //echo $language;die;
         //$session->set('language', $language);
         //echo $request->setLocale($language);
+        //$user = $this->container->get('security.context')->getToken()->getUser();
+        
+        //var_dump($user);die;
     }
 
     public function indexAction(Request $request)
@@ -120,7 +124,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->select('i , b , m , c , w')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
-            ->leftJoin('istoregomlaphoneBundle:Warranty', 'w' , 'WITH' , 'i.item_warranty=w.id')
+            ->leftJoin('istoregomlaphoneBundle:Warranty', 'w' , 'WITH' , 'i.item_warranty_id=w.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->where('i.id= ?1')
@@ -140,10 +144,19 @@ class ItemController extends Controller //implements AuthenticatedController
             //var_dump($item);die;
         
             $item->setItemSerial($request->request->get('itemSerial'));
-            if($item->getItemStatus() == 'pending_info')
+            
+            if ($item->getItemStatus() == 'pending_info')
                 $item->setItemStatus('in_stock');
-            else
+            elseif ($request->request->get('itemStatus') == 'warranty'){
+                $warrantyItem = new WarrantyItem();
+                $warrantyItem->setWarrantyitemItemId($itemId);
+//var_dump($warrantyItem);die;
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($warrantyItem);
+                $entityManager->flush();
+                
                 $item->setItemStatus($request->request->get('itemStatus'));
+            }
             
             $item->setItemColor($request->request->get('itemColor'));
             $item->setItemNotes($request->request->get('itemNotes'));
@@ -154,12 +167,12 @@ class ItemController extends Controller //implements AuthenticatedController
                     ->find($request->request->get('itemWarranty'));
             
                 $item->setItemHasWarranty($request->request->get('itemHasWarranty'));
-                $item->setItemWarranty($warranty);
+                $item->setItemWarrantyId($warranty);
             } else {
                 $warranty = new Warranty();
             
                 $item->setItemHasWarranty($request->request->get('itemHasWarranty'));
-                $item->setItemWarranty($warranty);
+                $item->setItemWarrantyId($warranty);
             }
             
             //var_dump($item);die;
@@ -186,16 +199,26 @@ class ItemController extends Controller //implements AuthenticatedController
                 ->getRepository('istoregomlaphoneBundle:Bulk')
                 ->find($item->getItemBulk());
 
-        $bulk->setBulkQuantity($bulk->getBulkQuantity() - 1);
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($bulk);
-        $entityManager->flush();
+        if($item->getItemStatus() == 'pending_info' || $item->getItemStatus() == 'in_stock'){
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($item);
+            $entityManager->flush();
+            
+            if($bulk->getBulkQuantity() == 1){
+                $entityManager->remove($bulk);
+                $entityManager->flush();
+            } else {
+                $bulk->setBulkQuantity($bulk->getBulkQuantity() - 1);
+                $entityManager->persist($bulk);
+                $entityManager->flush();
+            }
+            
+            return new JsonResponse(array('error' => 0 , 'message' => 'Item has been successfully deleted'));
+        } else {
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete sold item'));
+        }
         
-        //var_dump($bulk);die;
-        $entityManager->remove($item);
-        $entityManager->flush();
-
-        return $this->redirect($this->generateUrl('istoregomlaphone_item_index'));
     }
     
     public function findAction(Request $request)
@@ -257,7 +280,8 @@ class ItemController extends Controller //implements AuthenticatedController
         
         $action = $request->request->get('action');
         $controller = $request->request->get('controller');
-//echo $controller.'/'.$action;die;        
+//echo $controller.'/'.$action;die;
+        $error = null;
         if($itemNew['itemSerial'] == '')
             $error = 'is_null';
         
@@ -271,7 +295,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->setParameter(1 , $request->request->get('itemSerial'))
             ->getQuery()
             ->getScalarResult();
-    //var_dump($item);die;
+//var_dump($item);die;
         //Item exists
         if(count($item)){
             if($controller === 'item' && $action === 'save'){

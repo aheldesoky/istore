@@ -9,6 +9,8 @@ use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use istore\gomlaphoneBundle\Entity\Supplier;
+use Doctrine\DBAL\DBALException;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class SupplierController extends Controller //implements AuthenticatedController
 {
@@ -139,14 +141,17 @@ class SupplierController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Supplier $supplier)
     {
-        
-        if (!$supplier) {
-            throw $this->createNotFoundException('No supplier found');
-        }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($supplier);
-        $entityManager->flush();
+        try{
+            if (!$supplier) {
+                throw $this->createNotFoundException('No supplier found');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($supplier);
+            $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('istoregomlaphone_supplier_index'));
+            return new JsonResponse(array('error' => 0 , 'message' => 'Supplier has been successfully deleted'));
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete supplier that already has bulk'));
+        }
     }
 }

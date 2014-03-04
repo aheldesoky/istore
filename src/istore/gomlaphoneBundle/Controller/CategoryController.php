@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Doctrine\DBAL\DBALException;
 
 class CategoryController extends Controller //implements AuthenticatedController
 {
@@ -116,15 +117,19 @@ class CategoryController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Category $category)
     {
-        
-        if (!$category) {
-            throw $this->createNotFoundException('No category found');
-        }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($category);
-        $entityManager->flush();
+        //var_dump($category);die;
+        try{
+            if (!$category) {
+                throw $this->createNotFoundException('No category found');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($category);
+            $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('istoregomlaphone_category_index'));
+            return new JsonResponse(array('error' => 0 , 'message' => 'Category has been successfully deleted'));
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete category that already has models'));
+        }
     }
     
     public function findAction(Request $request)

@@ -22,7 +22,7 @@
 			</tr>
                 {% if bulks|length %}
 		{% for bulk in bulks %}
-			<tr>
+			<tr class="bulk_{{bulk.b_id}}">
 				<td>{{ bulk.m_model_serial }}</td>
 				<td>{{ bulk.m_model_brand }}</td>
 				<td>{{ bulk.m_model_model }}</td>
@@ -67,7 +67,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

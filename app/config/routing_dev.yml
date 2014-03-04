@@ -13,6 +13,13 @@ _configurator:
 _main:
     resource: routing.yml
 
+test_security:
+    pattern: /secure_area
+    defaults: {_controller: istoreSecurityBundle:Security:dumpstring }
+    
+#login_failure:
+#    pattern: /login_failure
+#    defaults: {_controller: istoreSecurityBundle:Security:dumpstring }
 # AcmeDemoBundle routes (to be removed)
 #_acme_demo:
 #    resource: "@AcmeDemoBundle/Resources/config/routing.yml"

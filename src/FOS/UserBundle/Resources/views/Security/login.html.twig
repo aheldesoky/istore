@@ -1,0 +1,55 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+{% if error %}
+    <div>{{ error|trans }}</div>
+{% endif %}
+
+<form action="{{ path("fos_user_security_check") }}" method="post" class="form-horizontal">
+        <input type="hidden" name="_csrf_token" value="{{ csrf_token }}" />
+        <div class="row">
+            <div class="col-md-4"></div>
+            <div class="col-md-4 text-center">
+                    <div class="page-header login-header">
+                            <h1>iStore</h1>
+                    </div>
+            </div>
+            <div class="col-md-4"></div>
+        </div>
+        <div class="row">
+                <div class="col-md-4"></div>
+                <div class="col-md-4">
+                        <div class="panel panel-default">
+                                <div class="panel-body">
+                                        <div class="form-group">
+                                                <label for="username" class="col-sm-4 control-label">{{ 'security.login.username'|trans }}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="username" name="_username" value="{{ last_username }}" required="required" placeholder="Enter username" />
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="password" class="col-sm-4 control-label">{{ 'security.login.password'|trans }}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="password" class="form-control" id="password" name="_password" value="{{ last_username }}" required="required" placeholder="Enter password" />
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <div class="col-md-offset-4 col-md-1">
+                                                        <input type="checkbox" class="" id="remember_me" name="_remember_me" value="on" />
+                                                </div>
+                                                <label for="remember_me">{{ 'security.login.remember_me'|trans }}</label>
+                                        </div>
+                                        <div class="form-group">
+                                                <input type="submit" id="_submit" name="_submit" value="{{ 'security.login.submit'|trans }}" class="btn btn-success btn-md col-md-offset-5" />
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+                <div class="col-md-4">
+                        
+                </div>
+        </div>
+</form>
+{% endblock fos_user_content %}

@@ -184,3 +184,18 @@ istoregomlaphone_report_index:
     pattern:  /report
     defaults: { _controller: istoregomlaphoneBundle:Report:index }
 
+istoregomlaphone_report_view_comfortable:
+    pattern:  /report/view-comfortable
+    defaults: { _controller: istoregomlaphoneBundle:Report:viewComfortable }
+
+istoregomlaphone_report_view_compact:
+    pattern:  /report/view-compact
+    defaults: { _controller: istoregomlaphoneBundle:Report:viewCompact }
+
+istoregomlaphone_report_export:
+    pattern:  /report/export
+    defaults: { _controller: istoregomlaphoneBundle:Report:export }
+
+istoregomlaphone_report_print:
+    pattern:  /report/print
+    defaults: { _controller: istoregomlaphoneBundle:Report:print }

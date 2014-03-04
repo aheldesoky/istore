@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html" charset=utf-8" />
+        <link rel="shortcut icon" href="/bundles/istoregomlaphone/img/mobile.png" />
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+        <title>{% block title %}Gomla Phone Store Management System{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            {% block javascripts %}
+                <script src="/bundles/istoregomlaphone/js/ar.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery-2.1.0.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.flipcountdown.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery-ui.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.validate.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.validate.additional-methods.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.form.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.fileDownload.js"></script>
+                <script src="/bundles/istoregomlaphone/js/validation-messages.js"></script>
+                <script src="/bundles/istoregomlaphone/js/bootstrap-datepicker.js"></script>
+                <script src="/bundles/istoregomlaphone/js/bootstrap.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/bootstrap-paginator.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/tooltipsy.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/json2.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/main.js"></script>
+            {% endblock %}
+            {% block stylesheets %}
+                <link href="/bundles/istoregomlaphone/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+                <link href="/bundles/istoregomlaphone/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css">
+                <link rel="stylesheet" type="text/css" href="/bundles/istoregomlaphone/css/jquery.flipcountdown.css" />
+                <link rel="stylesheet" href="/bundles/istoregomlaphone/css/datepicker.css">
+                <link rel="stylesheet" href="/bundles/istoregomlaphone/css/jquery-ui.css">
+                <link rel="stylesheet" href="/bundles/istoregomlaphone/css/style.css">
+            {% endblock %}
+
+    </head>
+    <body>
+<table class="table table-hover table-report-view">
+        <tr class="active">
+                <th>{% trans %}Model Serial{% endtrans %}</th>
+                <th>{% trans %}Model Name{% endtrans %}</th>
+                <th>{% trans %}Category{% endtrans %}</th>
+                <th>{% trans %}Status{% endtrans %}</th>
+                <th>{% trans %}Quantity{% endtrans %}</th>
+        </tr>
+        {% for model in report %}
+                {% set total = 0 %}
+                {% set i = 0 %}
+                {% for status in model %}
+                <tr class="warning">
+                        <td class="{% if i>0 %}redund-cell{% endif %} {% if i>1 %}no-border{% endif %}">{{ status.m_model_serial }}</td>
+                        <td class="{% if i>0 %}redund-cell{% endif %} {% if i>1 %}no-border{% endif %}">{{ status.m_model_brand }} {{ status.m_model_model }}</td>
+                        <td class="{% if i>0 %}redund-cell{% endif %} {% if i>1 %}no-border{% endif %}">{{ status.c_category_name }}</td>
+                        <td>
+                            {% if status.i_item_status=='pending_info' %}
+                            <span class="label label-primary">{% trans %}Pending Info{% endtrans %}</span>
+                            {% elseif status.i_item_status=='in_stock' %}
+                            <span class="label label-success">{% trans %}In Stock{% endtrans %}</span>
+                            {% elseif status.i_item_status=='sold' %}
+                            <span class="label label-default">{% trans %}Sold{% endtrans %}</span>
+                            {% elseif status.i_item_status=='warranty' %}
+                            <span class="label label-warning">{% trans %}Warranty{% endtrans %}</span>
+                            {% elseif status.i_item_status=='warranty_replaced' %}
+                            <span class="label label-danger">{% trans %}Warranty - Replaced{% endtrans %}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ status.items_count }}</td>
+                        {% set total = total + status.items_count %}
+                        {% set i = i + 1 %}
+                </tr>
+                {% endfor %}
+                <tr class="">
+                    <td colspan="3" class="no-border"></td>
+                    <th class="success no-border">{%trans%}Total{%endtrans%}</th>
+                    <th class="success no-border">{{ total }}</th>
+                </tr>
+                <tr class="report-total-model"></tr>
+        {% endfor %}
+</table>
+</body>
+</html>

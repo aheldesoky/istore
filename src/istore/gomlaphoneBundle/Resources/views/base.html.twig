@@ -17,6 +17,7 @@
                 <script src="/bundles/istoregomlaphone/js/jquery.validate.js"></script>
                 <script src="/bundles/istoregomlaphone/js/jquery.validate.additional-methods.js"></script>
                 <script src="/bundles/istoregomlaphone/js/jquery.form.js"></script>
+                <script src="/bundles/istoregomlaphone/js/jquery.fileDownload.js"></script>
                 <script src="/bundles/istoregomlaphone/js/validation-messages.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap-datepicker.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap.min.js"></script>
@@ -54,13 +55,16 @@
                                 <li class="home"><a href="/">Home</a></li>
                                 <li class="sale"><a href="/sale">Sales</a></li>
                                 <li class="customer"><a href="/customer">Customers</a></li>
-                                <li class="item"><a href="/item">Items</a></li>
-                                <li class="bulk"><a href="/bulk">Bulks</a></li>
-                                <li class="model"><a href="/model">Models</a></li>
-                                <li class="category"><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
-                                <li class="supplier"><a href="/supplier">Suppliers</a></li>
-                                <li class="warranty"><a href="/warranty">Warranties</a></li>
-                                <li class="report"><a href="/report">Reports</a></li>
+                                {% set admin = 'ROLE_ADMIN' %}
+                                {% if admin in app.user.roles %}
+                                        <li class="item"><a href="/item">Items</a></li>
+                                        <li class="bulk"><a href="/bulk">Bulks</a></li>
+                                        <li class="model"><a href="/model">Models</a></li>
+                                        <li class="category"><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
+                                        <li class="supplier"><a href="/supplier">Suppliers</a></li>
+                                        <li class="warranty"><a href="/warranty">Warranties</a></li>
+                                        <li class="report"><a href="/report">Reports</a></li>
+                                {% endif %}
                           </ul>
                           <!-- Language button -->
                             <div class="btn-group lang-btn {% if lang=='ar' %}left{% else %}right{% endif %}">
@@ -71,6 +75,20 @@
                                 <li><a href="?lang=ar">Arabic</a></li>
                                 <li><a href="?lang=en">English</a></li>
                               </ul>
+                            </div>
+                            <div class="">
+                                {% if app.user %}
+                                    <ul class="nav navbar-nav navbar-right user-nav">
+                                        <li class="dropdown">
+                                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ app.user.name }} <b class="caret"></b></a>
+                                          <ul class="dropdown-menu">
+                                            <li><a href="/profile">{%trans%}Profile{%endtrans%}</a></li>
+                                            <li><a href="/logout">{%trans%}Logout{%endtrans%}</a></li>
+                                          </ul>
+                                        </li>
+                                    </ul>
+                                {% endif %}
+                                
                             </div>
                         </div><!--/.nav-collapse -->
                     </div>

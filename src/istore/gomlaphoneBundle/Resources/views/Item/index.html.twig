@@ -63,7 +63,7 @@
                             <div class="form-group">
                                 <label for="bulkQuantity" class="col-sm-4 control-label">Quantity :</label>
                                 <div class="col-sm-6">
-                                    <label for="bulkQuantity" class="col-sm-12 control-label">{{ bulk.bulkQuantity }}</label>
+                                    <label id="bulkQuantity" class="col-sm-12 control-label">{{ bulk.bulkQuantity }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -88,17 +88,17 @@
 		{% for item in items %}
 			<tr 
                             {% if item.i_item_status=='pending_info' %}
-                            class="default"
+                            class="default item_{{item.i_id}}"
                             {% elseif item.i_item_status=='in_stock' %}
-                            class="success"
+                            class="success item_{{item.i_id}}"
                             {% elseif item.i_item_status=='pending_discount' %}
-                            class="info"
+                            class="info item_{{item.i_id}}"
                             {% elseif item.i_item_status=='sold' %}
-                            class="active"
+                            class="active item_{{item.i_id}}"
                             {% elseif item.i_item_status=='warranty' %}
-                            class="warning"
+                            class="warning item_{{item.i_id}}"
                             {% elseif item.i_item_status=='warranty_replaced' %}
-                            class="danger"
+                            class="danger item_{{item.i_id}}"
                             {% endif %}
                             >
 				<td>
@@ -179,7 +179,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

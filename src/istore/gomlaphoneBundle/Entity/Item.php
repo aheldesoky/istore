@@ -34,10 +34,10 @@ class Item
      * @ORM\Column(nullable=true)
      * @ORM\ManyToOne(targetEntity="Warranty")
      * @ORM\JoinTable(name="warranty" , 
-     *                joinColumns={@ORM\JoinColumn(name="item_warranty", 
+     *                joinColumns={@ORM\JoinColumn(name="item_warranty_id", 
      *                                         referencedColumnName="id")})
      */
-    protected $item_warranty = null;
+    protected $item_warranty_id;
     
     /**
      * @ORM\Column(type="string", unique=true, nullable=true)
@@ -185,29 +185,6 @@ class Item
     }
 
     /**
-     * Set item_warranty
-     *
-     * @param \istore\gomlaphoneBundle\Entity\Warranty $itemWarranty
-     * @return Item
-     */
-    public function setItemWarranty(\istore\gomlaphoneBundle\Entity\Warranty $itemWarranty = null)
-    {
-        $this->item_warranty = $itemWarranty;
-
-        return $this;
-    }
-
-    /**
-     * Get item_warranty
-     *
-     * @return \istore\gomlaphoneBundle\Entity\Warranty 
-     */
-    public function getItemWarranty()
-    {
-        return $this->item_warranty;
-    }
-
-    /**
      * Set item_has_warranty
      *
      * @param string $itemHasWarranty
@@ -228,5 +205,28 @@ class Item
     public function getItemHasWarranty()
     {
         return $this->item_has_warranty;
+    }
+
+    /**
+     * Set item_warranty_id
+     *
+     * @param string $itemWarrantyId
+     * @return Item
+     */
+    public function setItemWarrantyId($itemWarrantyId)
+    {
+        $this->item_warranty_id = $itemWarrantyId;
+
+        return $this;
+    }
+
+    /**
+     * Get item_warranty_id
+     *
+     * @return string 
+     */
+    public function getItemWarrantyId()
+    {
+        return $this->item_warranty_id;
     }
 }

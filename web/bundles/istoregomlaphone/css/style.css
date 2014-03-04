@@ -181,11 +181,12 @@ div.container a.brand {
     text-align: center;
 }
 .immutable-bulk-view-data{
-    background-color: #428A9A;
+    background-image: linear-gradient(to bottom,#d9edf7 0,#c4e3f3 100%);
     padding: 20px 20px 10px 20px;
     text-align: center;
-    color: #fff;
+    color: #3a87ad;
     margin: 0px 20px 15px 20px;
+    -webkit-border-radius: 10px;
 }
 .table-col-price{
     width: 13%;
@@ -238,4 +239,45 @@ div.container a.brand {
     background: url(/bundles/istoregomlaphone/img/remove-icon.png) 0 -6px;
     height: 20px;
     width: 35px;
+}
+.report-criteria{
+    background-image: linear-gradient(to bottom,#d9edf7 0,#c4e3f3 100%);
+    padding: 20px 20px 10px 20px;
+    text-align: center;
+    color: #3a87ad;
+    margin: 0px 20px 15px 20px;
+    -webkit-border-radius: 10px;
+}
+
+.multiselect {
+    height: 135px;
+    border: solid 1px #c0c0c0;
+    overflow: auto;
+    text-align: left;
+    padding: 10px;
+    background-color: #fff;
+}
+ 
+.multiselect label {
+    display:block;
+    font-weight: 500;
+}
+.multiselect input{
+    margin: 0px 4px 0px 0px;
+}
+.multiselect-on {
+    color:#ffffff;
+    background-color:#000099;
+}
+.report-total-model{
+    height: 30px;
+}
+.table-report-view td{
+    border: none !important;
+}
+.vertical-middle{
+    vertical-align: middle !important;
+}
+.user-nav{
+    padding: 0px 30px 0px 30px;
 }
