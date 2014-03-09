@@ -176,7 +176,7 @@ class BulkController extends Controller //implements AuthenticatedController
                 $entityManager->flush();
             }
 
-            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_index'));
+            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));
             //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
@@ -218,7 +218,7 @@ class BulkController extends Controller //implements AuthenticatedController
             $entityManager->persist($bulk);
             $entityManager->flush();
 
-            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_index'));
+            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId())));
         }
         
         return $this->render('istoregomlaphoneBundle:Bulk:edit.html.twig' , array(

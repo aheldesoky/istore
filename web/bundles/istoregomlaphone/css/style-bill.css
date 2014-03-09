@@ -22,7 +22,7 @@ table td, table th { border: 1px solid black; padding: 5px; text-align: center; 
 #items td.item-name { width: 175px; }
 #items td.description textarea, #items td.item-name textarea { width: 100%; }
 #items td.total-line { border-right: 0; text-align: right; }
-#items td.total-value { border-left: 0; padding: 10px; }
+#items td.total-value { padding: 10px; }
 #items td.total-value textarea { height: 20px; background: none; }
 #items td.balance { background: #eee; }
 #items td.blank { border: 0; }
@@ -32,3 +32,5 @@ table td, table th { border: 1px solid black; padding: 5px; text-align: center; 
 textarea:hover, textarea:focus, #items td.total-value textarea:hover, #items td.total-value textarea:focus, .delete:hover { background-color:#EEFF88; }
 .print-control{ padding: 20px; text-align: center; }
 .page-border{ border: 1px solid; padding: 25px; width: 825px !important; }
+.bold{ font-weight: bold; }
+.row-separator{ height: 20px; }

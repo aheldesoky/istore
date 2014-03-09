@@ -5,6 +5,7 @@
     {% else %}
     <input type="hidden" id="action" name="action" value="save_edit" />
     {% endif %}
+    <input type="hidden" id="itemHasSerial" name="itemHasSerial" value="{{item.m_model_item_has_serial}}" />
     <input type="hidden" id="controller" name="controller" value="item" />
     <div class="modal fade bs-modal-lg" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-lg item-edit">

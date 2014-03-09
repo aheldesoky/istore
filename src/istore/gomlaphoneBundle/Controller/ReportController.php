@@ -150,10 +150,9 @@ class ReportController extends Controller //implements AuthenticatedController
     public function viewCompactAction(Request $request) {
         if ($request->getMethod() == 'POST') {
 //var_dump($request->request);die;
-            
             $status = $request->request->get('reportStatus');
             if($status === 'sold')
-                $soldQuery = ', SUM(CASE WHEN i.item_status=\'sold\' OR i.item_status=\'warranty\' THEN b.bulk_price-s.sale_discount ELSE 0 END) AS price';
+                $soldQuery = ', s , SUM(CASE WHEN i.item_status=\'sold\' OR i.item_status=\'warranty\' THEN b.bulk_price-s.sale_discount ELSE 0 END) AS price';
             else
                 $soldQuery = "";
             
@@ -198,9 +197,9 @@ class ReportController extends Controller //implements AuthenticatedController
                 if($status === 'sold'){
                     $reportQuery->leftJoin('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')    
                                 ->leftJoin('istoregomlaphoneBundle:Sale', 's', 'WITH', 'si.saleitem_sale_id=s.id');
+                    //$reportQuery->andWhere('i.item_status=?2')->setParameter(2, $status);
+                    //$reportQuery->orWhere('i.item_status=?3')->setParameter(3, 'warranty');
                 }
-                $reportQuery->andWhere('i.item_status=?2')->setParameter(2, $status);
-                $reportQuery->orWhere('i.item_status=?3')->setParameter(3, 'warranty');
             }
             
             //Date Range filter
@@ -248,7 +247,7 @@ class ReportController extends Controller //implements AuthenticatedController
                 $reportQuery->andWhere('s.sale_date >= \''.$now->format("Y-m-d H:i:s")."'");
             
             } elseif ($rangeDate === 'this_week') {
-                $reportQuery->andWhere('s.sale_date >= \''.$first_day_this_week->format('Y-m-d H-i-s')."'");
+                $reportQuery->andWhere('s.sale_date >= \''.$first_day_this_week->format('Y-m-d H-i-s')."' OR 1=1");
             
             } elseif ($rangeDate === 'last_week') {
                 $reportQuery->andWhere('s.sale_date >= \''.$first_day_last_week->format('Y-m-d H-i-s')."'");
@@ -285,8 +284,8 @@ class ReportController extends Controller //implements AuthenticatedController
             $report = $reportQuery->orderBy('m.id', 'ASC')
                 ->getQuery()
                 ->getScalarResult();
-//echo $reportQuery->getQuery()->getSQL();die;
-//var_dump($report);die;
+echo $reportQuery->getQuery()->getSQL();//die;
+var_dump($report);//die;
         }
         
         return $this->render('istoregomlaphoneBundle:Report:viewCompact.html.twig', array(

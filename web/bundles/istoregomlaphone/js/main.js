@@ -6,7 +6,6 @@ $(document).ready(function(){
     var itemListRequired = new Array();
     var itemId;
     var passedValidation = false;
-    var isValidCategoryName;
     var isValidWarrantyName;
     var subtotal = 0;
     var discount = 0;
@@ -68,6 +67,7 @@ $(document).ready(function(){
             $.ajax({
                     url: url,
                     type: "get",
+                    async: false,
                     success: function(response){
                         $('#deleteConfirmation').modal('hide');
                         if(response.error===1){
@@ -84,6 +84,184 @@ $(document).ready(function(){
             });
     });
 
+    //Add new postpaid payment
+    $(document).on("click", ".btn-payment-modal", function (e) {
+            e.preventDefault();
+            
+            var _self = $(this);
+            var saleId = _self.data('id');
+            
+            var btn = $(this);
+            var data = {saleId:saleId};
+            btn.button('loading');
+            $('#addPaymentModalContainer').load("/sale/postpaid/add" , data , function(){
+                btn.button('reset');
+                $('a.btn-save-payment').attr('href' , '/sale/postpaid/add/'+saleId);
+                $('#addPostpaidPayment').modal('show');
+            });
+            
+    });
+    
+    $('#addPaymentModalContainer').on('change' , '#postpaidAmount' , function(){
+        validPostpaidAmount($(this));
+    }).on('click' , '.btn-add-payment' , function(e){
+        e.preventDefault();
+        var element = $('#postpaidAmount');
+        if(!validPostpaidAmount($(element))){
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(element).focus();
+        } else {
+            $('label#paidAmount').html($(element).val());
+            $('#confirmPaymentModal').modal('show');
+        }
+    }).on('click' , '.btn-confirm-payment' , function(e){
+        e.preventDefault();
+        var element = $('#postpaidAmount');
+        var saleId = $('#saleId').val();
+        var amount = $(element).val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/sale/postpaid/add/" + saleId,
+                type: "post",
+                async: false,
+                data: {amount:amount},
+                success: function(response){
+                    if(response.error==0){
+                        $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+                        $('.postpaid-amount-error').html('Amount successfully added');
+                        $('#alert-message').html(alertSuccessMessage('Payment of '+ amount +' L.E. is successfully added to bill #'+saleId));
+                        $(element).val(0);
+                        $('#label-sale-paid').html(response.total_paid + ' ' + 'L.E.');
+                        $('#label-sale-remaining').html(response.total_due - response.total_paid + ' ' + 'L.E.');
+                        $('tr.sale-'+saleId+' td.total-paid').html(response.total_paid + ' ' + 'L.E.');
+                        $('tr.sale-'+saleId+' td.total-remaining').html(response.total_due - response.total_paid + ' ' + 'L.E.');
+                        $('#confirmPaymentModal').modal('hide');
+                        $('#addPostpaidPayment').modal('hide');
+                    } else {
+                        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                        $('.postpaid-amount-error').html('Amount can not be added');
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+    });
+    
+    //View postpaid payment
+    $(document).on("click", ".btn-view-payments", function (e) {
+            e.preventDefault();
+            
+            var _self = $(this);
+            var saleId = _self.data('id');
+            
+            var btn = $(this);
+            var data = {saleId:saleId};
+            btn.button('loading');
+            $('#viewPaymentsModalContainer').load("/app_dev.php/sale/postpaid/view" , data , function(){
+                btn.button('reset');
+                $('#viewPostpaidPayments').modal('show');
+            });
+            
+    });
+    
+    //Refund postpaid payment
+    $(document).on("click", ".btn-refund-modal", function (e) {
+        e.preventDefault();
+        var _self = $(this);
+        var paymentData = _self.data('id');
+        var payment = paymentData.split(":");
+        $('#input-payment-id').val(payment[0]);
+        $('#input-payment-amount').val(payment[1]);
+        $('label#paymentAmount').html(payment[1]);
+        $('#confirmRefundModal').modal('show');
+    }).on("click", ".btn-confirm-refund", function (e){
+        e.preventDefault();
+        var paymentId = $('#input-payment-id').val();
+        var paymentAmount = $('#input-payment-amount').val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/sale/postpaid/refund/" + paymentId,
+                type: "get",
+                async: false,
+                success: function(response){
+                    if(response.error==0){
+                        $('#confirmRefundModal').modal('hide');
+                        $('tr.payment-'+paymentId).remove();
+                        var salePaid = parseInt($('#salePaid').val()) - parseInt(paymentAmount);
+                        var saleTotal = parseInt($('#saleTotal').val());
+                        var saleDiscount = parseInt($('#saleDiscount').val());
+                        //$('#salePaid').val(parseInt(salePaid) - parseInt(paymentAmount));
+                        
+                        alert(salePaid);
+                        $('#label-sale-paid').html(salePaid + ' L.E.');
+                        $('#label-sale-remaining').html( parseInt(saleTotal) - parseInt(saleDiscount) - parseInt(salePaid) + ' L.E.');
+                        $('#alert-refund-message').html(alertSuccessMessage('Payment of '+paymentAmount+' L.E. has been refunded'));
+                    } else {
+                        $('#confirmRefundModal').modal('hide');
+                        $('#alert-refund-message').html(alertDangerMessage('Can not refund '+paymentAmount+' L.E. at this time.'));
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+    }).on('click', '.btn-refund-sale-modal', function(e){
+        e.preventDefault();
+        var _self = $(this);
+        $('#refundSaleId').val(_self.data('id'));
+        $('#refundSaleIdLabel').html(_self.data('id'));
+        $('#refundSaleModal').modal('show');
+    }).on('click', '.btn-refund-sale', function(e){
+        e.preventDefault();
+        var saleId = $('#refundSaleId').val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/sale/refund/" + saleId,
+                type: "get",
+                async: false,
+                success: function(response){
+                    if(response.error==0){
+                        $('#refundSaleModal').modal('hide');
+                        $('tr.sale-'+saleId).remove();
+                        $('#alert-message').html(alertSuccessMessage('Sale #'+saleId+' has been refunded'));
+                    } else {
+                        $('#refundSaleModal').modal('hide');
+                        $('#alert-message').html(alertDangerMessage('Can not refund Sale # '+saleId+' at this time.'));
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+    });
+    
+    function validPostpaidAmount(element){
+        var saleTotal = $('#saleTotal').val();
+        var saleDiscount = $('#saleDiscount').val();
+        var salePaid = $('#salePaid').val();
+        var saleRemaining = saleTotal - saleDiscount - salePaid;
+        var passedValidation = true;
+        
+        if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) > saleRemaining){
+            $('.postpaid-amount-error').html('Amount can not be greater than the remaining value');
+            passedValidation = false;
+        } else if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) <= 0 ){
+            $('.postpaid-amount-error').html('Amount must be greater than zero');
+            passedValidation = false;
+        } else if(!/^\d+$/.test($(element).val())){
+            $('.postpaid-amount-error').html('Amount must be a number');
+            passedValidation = false;
+        } else {
+            $('.postpaid-amount-error').html('');
+        }
+        if(!passedValidation)
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        else
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        return passedValidation;
+    }
+    
     $("#clockbox").flipcountdown({
         size: 'xs',
         showHour:true,
@@ -137,10 +315,14 @@ $(document).ready(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= subtotal && parseInt($(this).val()) >= 0 ){
             discount = parseInt($(this).val());
             $('#total').html(calculateTotal() + ' L.E.');
+            $('#amountPaid').val(0);
+            $('#remainingAmount').html(calculateTotal() + ' L.E.');
         } else {
             $(this).val(discount);
             discount = parseInt($(this).val());
             $('#total').html(calculateTotal() + ' L.E.');
+            $('#amountPaid').val(0);
+            $('#remainingAmount').html(calculateTotal() + ' L.E.');
         }
     })/*.keyup(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= subtotal && parseInt($(this).val()) >= 0 ){
@@ -268,8 +450,9 @@ $(document).ready(function(){
     // Payment method & Amount paid
     $('.table-view-sale').on('change', 'select[name="paymentMethod"]', function(){
         if(this.value === 'postpaid'){
-            $('#amountPaid').prop("disabled", false);
+            $('#amountPaid').prop("disabled", false).val(0);
             $('.input-amount-paid').removeClass('hidden');
+            $('label#remainingAmount').html(calculateTotal() + ' L.E.');
             amountPaid = 0;
         } else {
             $('#amountPaid').prop("disabled", true);
@@ -814,6 +997,8 @@ $(document).ready(function(){
                     $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
                     $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                     $("#itemSerial").focus();
+                } else if(response.error === 'has_no_serial'){
+                    passedValidation = true;
                 }
             }
         }).always(function () {
@@ -822,74 +1007,139 @@ $(document).ready(function(){
         return passedValidation;
     }
     
+    //Validate Category
+    $('#categoryForm input').focusout(function(e){
+        if(!validateCategory($(this))){
+            e.preventDefault();
+            $(this).focus();
+        }
+    });
+    
+    $('#categoryForm').submit(function(e){
+        var element = $('#categoryForm input');
+        if(!validateCategory(element)){
+            e.preventDefault();
+            element.focus();
+        }
+    });
+    
     //Validate Category Name
-    $.validator.addMethod("validcategoryname", function(value, element) {
+    function validateCategory(element){
         var categoryName = $('#categoryName').val();
+        var categoryId = $('#categoryId').val();
+        var action = $('#action').val();
+        var controller = $('#controller').val();
+        var passedValidation = false;
+        //Validate empty category name
+        if(categoryName === ''){
+            $(".category-error").html('Category name can not be empty.');
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+            
+        //Validate letters, numbers and dashes
+        } else if(!/^[a-z0-9\u0600-\u06FF\s]+$/i.test(categoryName)){
+            $(".category-error").html('Please enter a valid name.');
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+        }
+        
+        var btn = $('.btn-categroy-add');
+        btn.button('loading');
         $.ajax({
-            url: "/category/find",
+            url: "/category/validate",
             type: "post",
-            data: {categoryName:categoryName},
+            async: false,
+            data: {
+                categoryName:categoryName,
+                categoryId:categoryId,
+                action:action,
+                controller:controller
+            },
             success: function(response){
-                if(response.category.count===1){
-                    if($('#action').val() === 'edit'){
-                        var categoryId = $('#categoryId').val();
-                        if(categoryId == response.category.c_id){
-                            isValidCategoryName = true;
-                            $(element).text(lang['ok']).addClass('valid')
-                                .closest('.form-group').removeClass('has-error').addClass('has-success');
-                        } else {
-                            isValidCategoryName = false;
-                            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                        }
-                    } else {
-                        isValidCategoryName = false;
-                        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    }
-                } else {
-                    isValidCategoryName = true;
+                if(response.error==='category_exists'){
+                    $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $(".category-error").html('Category' + ' ' + categoryName + ' ' + 'already exists.' );
+                    
+                } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')
                         .closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $(".category-error").html('Category name is valid');
+                    passedValidation = true;
                 }
             }
+        }).always(function () {
+            btn.button('reset');
         });
-        if(isValidCategoryName) return true;
-        else return false;
-    }, "Category already exists.");
+        return passedValidation;
+    }
+    
+    //Validate Warranty
+    $('#warrantyForm input').focusout(function(e){
+        if(!validateWarranty($(this))){
+            e.preventDefault();
+            $(this).focus();
+        }
+    });
+    
+    $('#warrantyForm').submit(function(e){
+        var element = $('#warrantyForm input');
+        if(!validateWarranty(element)){
+            e.preventDefault();
+            element.focus();
+        }
+    });
 
     //Validate Warranty Name
-    $.validator.addMethod("validwarrantyname", function(value, element) {
+    function validateWarranty(element){
         var warrantyName = $('#warrantyName').val();
+        var warrantyId = $('#warrantyId').val();
+        var action = $('#action').val();
+        var controller = $('#controller').val();
+        var passedValidation = false;
+        
+        //Validate empty warranty name
+        if(warrantyName === ''){
+            $(".warranty-error").html('Warranty name can not be empty.');
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+            
+        //Validate letters, numbers and dashes
+        } else if(!/^[a-z0-9\u0600-\u06FF\s]+$/i.test(warrantyName)){
+            $(".warranty-error").html('Please enter a valid name.');
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+        }
+        
+        var btn = $('.btn-warranty-add');
+        btn.button('loading');
         $.ajax({
-            url: "/warranty/find",
+            url: "/warranty/validate",
             type: "post",
-            data: {warrantyName:warrantyName},
+            async: false,
+            data: {
+                warrantyName:warrantyName,
+                warrantyId:warrantyId,
+                action:action,
+                controller:controller
+            },
             success: function(response){
-                if(response.warranty.count===1){
-                    if($('#action').val() === 'edit'){
-                        var warrantyId = $('#warrantyId').val();
-                        if(warrantyId == response.warranty.w_id){
-                            isValidWarrantyName = true;
-                            $(element).text(lang['ok']).addClass('valid')
-                                .closest('.form-group').removeClass('has-error').addClass('has-success');
-                        } else {
-                            isValidWarrantyName = false;
-                            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                        }
-                    } else {
-                        isValidWarrantyName = false;
-                        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    }
-                } else {
-                    isValidWarrantyName = true;
+                if(response.error==='warranty_exists'){
+                    $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $(".warranty-error").html('Warranty' + ' ' + warrantyName + ' ' + 'already exists.' );
+                    
+                } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')
                         .closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $(".warranty-error").html('Warranty name is valid');
+                    passedValidation = true;
                 }
             }
+        }).always(function () {
+            btn.button('reset');
         });
-        if(isValidWarrantyName) return true;
-        else return false;
-    }, "Warranty already exists.");
-
+        return passedValidation;
+    }
+    
     //Validate Alphanumeric with Space and Arabic Characters
     $.validator.addMethod("alphanumericspace", function(value, element) {
         return this.optional(element) || /^[a-z0-9\u0600-\u06FF\-\s]+$/i.test(value);
@@ -903,29 +1153,6 @@ $(document).ready(function(){
     $.validator.addMethod("regexdate", function(value, element) {          
         return this.optional(element) || /^(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])$/.test(value);
     }, "Please enter a valid date. (e.g. 2014-02-16)");
-
-    //Validate Category
-    $('#categoryForm input').keypress(function(){
-        $('#categoryForm').validate({
-            submitHandler: function(form){
-                form.submit();
-            },
-            rules: {
-                categoryName: {
-                    required: true,
-                    alphanumericspace: true,
-                    validcategoryname: true,
-                }
-            },
-            highlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function (element) {
-                $(element).text(lang['ok']).addClass('valid')
-                    .closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        }).element('input#categoryName');
-    });
 
     //Validate Supplier
     var supplierValidator = $('#supplierForm').validate({
@@ -966,29 +1193,6 @@ $(document).ready(function(){
     $('input#supplierGovernorate').keypress(function(){supplierValidator.element('#supplierGovernorate');});
     $('input#supplierAddress').keypress(function(){supplierValidator.element('#supplierAddress');});
 
-    //Validate Warranty
-    $('#warrantyForm input').keypress(function(){
-        $('#warrantyForm').validate({
-                submitHandler: function(form){
-                    form.submit();
-                },
-                rules: {
-                    warrantyName: {
-                        required: true,
-                        alphanumericspace: true,
-                        validwarrantyname: true,
-                    }
-                },
-                highlight: function (element) {
-                    $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                },
-                success: function (element) {
-                    $(element).text(lang['ok']).addClass('valid')
-                        .closest('.form-group').removeClass('has-error').addClass('has-success');
-                }
-        }).element('input#warrantyName');
-    });
-    
     // View Report
     $('#viewReport').click(function(e){
         var models = new Array();
@@ -1023,7 +1227,7 @@ $(document).ready(function(){
             $('#alert-message').html('');
         }
         
-        var url = '/app_dev.php/report/';
+        var url = '/report/';
         if(reportDisplay === 'comfortable')
             url += 'view-comfortable';
         else if (reportDisplay === 'compact')
@@ -1290,7 +1494,7 @@ $(document).ready(function(){
             
             if(paymentMethod === 'postpaid'){
                 amountPaid = $('#amountPaid').val();
-                if( !/^\d+$/.test(amountPaid) || amountPaid>=total || amountPaid<=0){
+                if( !/^\d+$/.test(amountPaid) || amountPaid>=total || amountPaid<0){
                     isValid = false;
                     $('#alert-message').html(alertDangerMessage('Amount Paid is invalid.'));
                     $('#amountPaid').focus();

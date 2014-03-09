@@ -146,4 +146,45 @@ class WarrantyController extends Controller //implements AuthenticatedController
         $warranty[0]['count'] = count($warranty);
         return new JsonResponse(array('warranty' => $warranty[0]));
     }
+    
+    public function validateAction(Request $request)
+    {
+        //var_dump($request);die;
+        $warrantyNew['warrantyId'] = $request->request->get('warrantyId');
+        $warrantyNew['warrantyName'] = $request->request->get('warrantyName');
+        
+        $action = $request->request->get('action');
+        $controller = $request->request->get('controller');
+//echo $controller.'/'.$action;die;
+        $error = null;
+        if($warrantyNew['warrantyName'] == '')
+            $error = 'is_null';
+        
+        $warranty = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('w')
+            ->from('istoregomlaphoneBundle:Warranty', 'w')
+            ->where('w.warranty_name = ?1')
+            ->setParameter(1 , $warrantyNew['warrantyName'])
+            ->getQuery()
+            ->getScalarResult();
+//var_dump($category);die;
+//
+        //Warranty exists
+        if(count($warranty)) {
+            if($action === 'add')
+                $error = 'warranty_exists';
+            
+            elseif($action === 'edit' && $warranty[0]['w_id'] != $warrantyNew['warrantyId'])
+                $error = 'warranty_exists';
+                
+            else 
+                $error = 'not_found';
+        //Warranty does not exist
+        } else {
+            $error = 'not_found';
+        }
+    //var_dump($category);die;
+        return new JsonResponse(array('error' => $error , 'warranty' => $warranty[0]));
+        
+    }
 }

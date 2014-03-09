@@ -281,3 +281,13 @@ div.container a.brand {
 .user-nav{
     padding: 0px 30px 0px 30px;
 }
+.view-payments-modal{
+    width: 750px;
+}
+.table-payments{
+    height: 381px;
+    overflow-x: auto;
+}
+.btn-warning.active{
+    background-color: #EC7F00;
+}

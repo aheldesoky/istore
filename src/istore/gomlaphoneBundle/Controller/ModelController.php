@@ -157,7 +157,7 @@ class ModelController extends Controller //implements AuthenticatedController
                 ->find($request->request->get('modelCategory'));
             $model->setModelCategory($modelCategory);
             $model->setModelSpecs($request->request->get('modelSpecs'));
-            $model->setModelItemHasSerial($request->request->get('modelItemHasSerial'));
+            //$model->setModelItemHasSerial($model->getModelItemHasSerial());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($model);
             $entityManager->flush();

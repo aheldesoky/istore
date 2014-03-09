@@ -1,0 +1,100 @@
+<!-- Postpaid view payment modal -->
+<div class="modal fade bs-modal-sm" tabindex="-1" id="viewPostpaidPayments" role="dialog" aria-labelledby="AddPostpaidPaymentModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm view-payments-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{%trans%}All Payments{%endtrans%}</h4>
+            </div>
+            <div class="modal-body">
+                <input type="hidden" id="saleId" name="saleId" value="{{sale.s_id}}">
+                <input type="hidden" id="saleTotal" name="saleTotal" value="{{sale.s_sale_total}}">
+                <input type="hidden" id="saleDiscount" name="saleDiscount" value="{{sale.s_sale_discount}}">
+                <input type="hidden" id="salePaid" name="salePaid" value="{{sale.po_total_paid}}">
+                <div class="row"><div id="alert-refund-message"></div></div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <table class="table table-bordered">
+                            <tr class="success">
+                                <td>{%trans%}Sale{%endtrans%} #</td>
+                                <td><label id="label-sale-id">{{sale.s_id}}</label></td>
+                            </tr>
+                            <tr class="success">
+                                <td>{%trans%}Date{%endtrans%}</td>
+                                <td><label id="label-sale-date">{{sale.s_sale_date.format('Y-m-d')}}</label></td>
+                            </tr>
+                            <tr class="success">
+                                <td>{%trans%}Time{%endtrans%}</td>
+                                <td><label id="label-sale-time">{{sale.s_sale_date.format('l jS F Y')}}</label></td>
+                            </tr>
+                            <tr class="success">
+                                <td>{%trans%}Customer{%endtrans%}</td>
+                                <td><label id="label-sale-customer">{{sale.c_customer_fname}} {{sale.c_customer_lname}}</label></td>
+                            </tr>
+                            <tr class="warning">
+                                <td>{%trans%}Subtotal{%endtrans%}</td>
+                                <td><label id="label-sale-subtotal">{{sale.s_sale_total}} {%trans%}L.E.{%endtrans%}</label></td>
+                            </tr>
+                            <tr class="warning">
+                                <td>{%trans%}Discount{%endtrans%}</td>
+                                <td><label id="label-sale-discount">{{sale.s_sale_discount}} {%trans%}L.E.{%endtrans%}</label></td>
+                            </tr>
+                            <tr class="warning">
+                                <td>{%trans%}Total Due{%endtrans%}</td>
+                                <td><label id="label-sale-total">{{sale.s_sale_total - sale.s_sale_discount}} {%trans%}L.E.{%endtrans%}</label></td>
+                            </tr>
+                            <tr class="warning">
+                                <td>{%trans%}Total Paid{%endtrans%}</td>
+                                <td><label id="label-sale-paid">{{sale.po_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
+                            </tr>
+                            <tr class="danger">
+                                <th>{%trans%}Remaining{%endtrans%}</th>
+                                <td><label id="label-sale-remaining">{{sale.s_sale_total - sale.s_sale_discount - sale.po_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6 table-payments scrollable">
+                        <table class="table table-bordered">
+                            <tr class="success">
+                                <th colspan="3" class="text-center">{%trans%}Payments{%endtrans%}</th>
+                            </tr>
+                            <tr class="success">
+                                <th>{%trans%}Date{%endtrans%}</th>
+                                <th>{%trans%}Amount{%endtrans%}</th>
+                                <th>{%trans%}Refund{%endtrans%}</th>
+                            </tr>
+                            {% for payment in payments %}
+                            <tr class="payment-{{ payment.po_id }}">
+                                <td>{{ payment.po_postpaid_date.format('Y-m-d') }}</td>
+                                <td>{{ payment.po_postpaid_amount }} {%trans%}L.E.{%endtrans%}</td>
+                                <td><a href="#" class="btn btn-link btn-refund-modal" data-id="{{ payment.po_id }}:{{ payment.po_postpaid_amount }}">{%trans%}refund{%endtrans%}</a></td>
+                            </tr>
+                            {% endfor %}
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" data-dismiss="modal">{%trans%}Close{%endtrans%}</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Refund Confirmation Submodal -->
+<div class="modal fade" id="confirmRefundModal" tabindex="-1" role="dialog" aria-labelledby="confirmRefundModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="input-payment-id" id="input-payment-id" value="">
+                <input type="hidden" name="input-payment-amount" id="input-payment-amount" value="">
+                {%trans%}Are you sure that you want to refund{%endtrans%} <label id="paymentAmount"></label> L.E.?
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
+                <a href="#" class="btn btn-danger btn-confirm-refund">{%trans%}Confirm Refund{%endtrans%}</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Submodal -->

@@ -147,4 +147,44 @@ class CategoryController extends Controller //implements AuthenticatedController
         $category[0]['count'] = count($category);
         return new JsonResponse(array('category' => $category[0]));
     }
+    
+    public function validateAction(Request $request)
+    {
+        //var_dump($request);die;
+        $categoryNew['categoryId'] = $request->request->get('categoryId');
+        $categoryNew['categoryName'] = $request->request->get('categoryName');
+        
+        $action = $request->request->get('action');
+        $controller = $request->request->get('controller');
+//echo $controller.'/'.$action;die;
+        $error = null;
+        if($categoryNew['categoryName'] == '')
+            $error = 'is_null';
+        
+        $category = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('c')
+            ->from('istoregomlaphoneBundle:Category', 'c')
+            ->where('c.category_name = ?1')
+            ->setParameter(1 , $categoryNew['categoryName'])
+            ->getQuery()
+            ->getScalarResult();
+//var_dump($category);die;
+        //Category exists
+        if(count($category)) {
+            if($action === 'add')
+                $error = 'category_exists';
+            
+            elseif($action === 'edit' && $category[0]['c_id'] != $categoryNew['categoryId'])
+                $error = 'category_exists';
+                
+            else 
+                $error = 'not_found';
+        //Category does not exist
+        } else {
+            $error = 'not_found';
+        }
+    //var_dump($category);die;
+        return new JsonResponse(array('error' => $error , 'category' => $category[0]));
+        
+    }
 }

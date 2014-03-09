@@ -113,7 +113,6 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request)
     {
-        
         $warranties = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('w')
             ->from('istoregomlaphoneBundle:Warranty', 'w')
@@ -179,8 +178,8 @@ class ItemController extends Controller //implements AuthenticatedController
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($item);
             $entityManager->flush();
-
-            return $this->redirect($this->generateUrl('istoregomlaphone_item_index'));
+            
+            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $item->getItemBulk()->getId() )));
         }
         
         return $this->render('istoregomlaphoneBundle:Item:edit.html.twig' , array(
@@ -191,7 +190,7 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Item $item)
     {
-        //var_dump($item);die;
+//var_dump($request);die;
         if (!$item) {
             throw $this->createNotFoundException('No item found');
         }
@@ -208,6 +207,7 @@ class ItemController extends Controller //implements AuthenticatedController
             if($bulk->getBulkQuantity() == 1){
                 $entityManager->remove($bulk);
                 $entityManager->flush();
+                return $this->redirect($this->generateUrl('istoregomlaphone_bulk_index'));
             } else {
                 $bulk->setBulkQuantity($bulk->getBulkQuantity() - 1);
                 $entityManager->persist($bulk);
@@ -283,7 +283,7 @@ class ItemController extends Controller //implements AuthenticatedController
 //echo $controller.'/'.$action;die;
         $error = null;
         if($itemNew['itemSerial'] == '')
-            $error = 'is_null';
+            $error = 'has_no_serial';
         
         $item = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('i , b , m , c')

@@ -24,6 +24,10 @@ istoregomlaphone_category_find:
     pattern:  /category/find
     defaults: { _controller: istoregomlaphoneBundle:Category:find }
 
+istoregomlaphone_category_validate:
+    pattern:  /category/validate
+    defaults: { _controller: istoregomlaphoneBundle:Category:validate }
+
 istoregomlaphone_model_index:
     pattern:  /model
     defaults: { _controller: istoregomlaphoneBundle:Model:index }
@@ -120,6 +124,22 @@ istoregomlaphone_sale_postpaid:
     pattern:  /sale/postpaid
     defaults: { _controller: istoregomlaphoneBundle:Sale:postpaid }
 
+istoregomlaphone_sale_postpaid_view:
+    pattern:  /sale/postpaid/view
+    defaults: { _controller: istoregomlaphoneBundle:Sale:viewPayments }
+
+istoregomlaphone_sale_postpaid_refund:
+    pattern:  /sale/postpaid/refund/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:refundPayment }
+
+istoregomlaphone_sale_postpaid_view_add:
+    pattern:  /sale/postpaid/add
+    defaults: { _controller: istoregomlaphoneBundle:Sale:viewAddPayment }
+
+istoregomlaphone_sale_postpaid_add:
+    pattern:  /sale/postpaid/add/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:addPayment }
+
 istoregomlaphone_sale_prepaid:
     pattern:  /sale/prepaid
     defaults: { _controller: istoregomlaphoneBundle:Sale:prepaid }
@@ -136,9 +156,9 @@ istoregomlaphone_sale_bill:
     pattern:  /sale/bill/{id}
     defaults: { _controller: istoregomlaphoneBundle:Sale:bill }
 
-istoregomlaphone_sale_delete:
-    pattern:  /sale/delete/{id}
-    defaults: { _controller: istoregomlaphoneBundle:Sale:delete }
+istoregomlaphone_sale_refund:
+    pattern:  /sale/refund/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:refund }
 
 istoregomlaphone_customer_index:
     pattern:  /customer
@@ -179,6 +199,10 @@ istoregomlaphone_warranty_delete:
 istoregomlaphone_warranty_find:
     pattern:  /warranty/find
     defaults: { _controller: istoregomlaphoneBundle:Warranty:find }
+
+istoregomlaphone_warranty_validate:
+    pattern:  /warranty/validate
+    defaults: { _controller: istoregomlaphoneBundle:Warranty:validate }
 
 istoregomlaphone_report_index:
     pattern:  /report

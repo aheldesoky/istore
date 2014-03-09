@@ -17,11 +17,10 @@
             <div id="header">INVOICE</div>
             <div id="identity">
                 <div id="address">
-                    <div>Chris Coyier</div>
-                    <div>123 Appleseed Street</div>
-                    <div>Appleville, WI 53719</div>
+                    <div>{{sale.st_store_name}}</div>
+                    <div>{{sale.st_store_address}}</div>
 
-                    <div>Phone: (555) 555-5555</div>
+                    <div>Phone: {{sale.st_store_phone}}</div>
                 </div>
                 <div id="logo">
                     <img id="image" src="/bundles/istoregomlaphone/img/logo.png" alt="logo" />
@@ -30,75 +29,99 @@
             <div style="clear:both"></div>
             <div id="customer">
                 <div id="customer-title">
-                    {{ sales[0].c_customer_fname }} {{ sales[0].c_customer_lname }}
+                    {{ sale.c_customer_fname }} {{ sale.c_customer_lname }}
                 </div>
                 <table id="meta">
                     <tr>
                         <td class="meta-head">Invoice #</td>
-                        <td>{{ sales[0].s_id }}</td>
+                        <td>{{ sale.s_id }}</td>
                     </tr>
                     <tr>
                         <td class="meta-head">Date</td>
-                        <td>{{ sales[0].s_sale_date.format('l jS') }} of {{ sales[0].s_sale_date.format('F Y') }}</td>
+                        <td>{{ sale.s_sale_date.format('l jS') }} of {{ sale.s_sale_date.format('F Y') }}</td>
                     </tr>
                     <tr>
                         <td class="meta-head">Time</td>
-                        <td>{{ sales[0].s_sale_date.format('h:i:s A') }}</td>
+                        <td>{{ sale.s_sale_date.format('h:i:s A') }}</td>
                     </tr>
                     <tr>
-                        {% set subtotal = 0 %}
-                        {% set discount = 0 %}
-                        {% for item in sales %}
-                            {% set subtotal = subtotal + item.b_bulk_price %}
-                            {% set discount = discount + item.si_saleitem_discount %}
-                        {% endfor %}
-                        <td class="meta-head">Amount Due</td>
-                        <td><div class="due">{{ subtotal - discount }} L.E.</div></td>
+                        <td class="meta-head">Cashier Name</td>
+                        <td>{{ app.user.name }}</td>
+                    </tr>
+                    <tr>
+                        <td class="meta-head">Total Due</td>
+                        <td><div class="due">{{ sale.s_sale_total - sale.s_sale_discount }} L.E.</div></td>
                     </tr>
                 </table>
             </div>
             <table id="items">
                 <tr>
-                    <th>Item Serial</th>
+                    <th>Serial</th>
                     <th>Description</th>
                     <th>Category</th>
-                    <th>Discount</th>
                     <th>Price</th>
                 </tr>
-                {% for item in sales %}
+                {% for item in sale.items.with_serial %}
                 <tr class="item-row">
                     <td class="item-name">{{ item.i_item_serial }}</td>
                     <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }} {{ item.i_item_color }}</td>
                     <td>{{ item.ca_category_name }}</td>
-                    <td>{{ item.si_saleitem_discount }} L.E.</td>
-                    <td>{{ item.b_bulk_price }} L.E.</td>
+                    <td>{{ item.quantity }} &times; {{ item.b_bulk_price }} L.E.</td>
+                </tr>
+                {% endfor %}
+                {% for item in sale.items.without_serial %}
+                <tr class="item-row">
+                    <td class="item-name">{{ item.m_model_serial }}</td>
+                    <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }}</td>
+                    <td>{{ item.ca_category_name }}</td>
+                    <td>{{ item.quantity }} &times; {{ item.b_bulk_price }} L.E.</td>
                 </tr>
                 {% endfor %}
                 <tr class="last-row">
-                    <td colspan="3" class="blank"> </td>
-                    <td colspan="1" class="total-line">Subtotal</td>
-                    <td class="total-value"><div id="subtotal">{{ subtotal }} L.E.</div></td>
+                    <td colspan="2" class="blank"> </td>
+                    <td class="total-value bold"><b>Subtotal</b></td>
+                    <td class="total-value bold"><div id="subtotal">{{ sale.s_sale_total }} L.E.</div></td>
+                </tr>
+                {# if sale.s_sale_discount #}
+                <tr>
+                    <td colspan="2" class="blank"> </td>
+                    <td class="total-value bold">Discount</td>
+                    <td class="total-value bold"><div id="discount">{{ sale.s_sale_discount }} L.E.</div></td>
+                </tr>
+                {# endif #}
+                <tr>
+                    <td colspan="2" class="blank"></td>
+                    <td class="total-value bold">Total</td>
+                    <td class="total-value bold"><div id="total">{{ sale.s_sale_total - sale.s_sale_discount }} L.E.</div></td>
+                </tr>
+                
+                {% if sale.payments|length %}
+                <tr class="row-separator">
+                    <td colspan="4" class="blank"></td>
                 </tr>
                 <tr>
-                    <td colspan="3" class="blank"> </td>
-                    <td colspan="1" class="total-line">Total Discount</td>
-                    <td class="total-value"><div id="discount">{{ discount }} L.E.</div></td>
+                    <td colspan="2" class="blank"></td>
+                    <th colspan="2">Payments</th>
                 </tr>
                 <tr>
-                    <td colspan="3" class="blank"> </td>
-                    <td colspan="1" class="total-line">Total</td>
-                    <td class="total-value"><div id="total">{{ subtotal - discount }} L.E.</div></td>
+                    <td colspan="2" class="blank"></td>
+                    <th>Date</th>
+                    <th>Amount</th>
                 </tr>
+                    
+                {% for payment in sale.payments %}
                 <tr>
-                    <td colspan="3" class="blank"> </td>
-                    <td colspan="1" class="total-line">Amount Paid</td>
-                    <td class="total-value">{{ subtotal - discount }} L.E.</td>
+                    <td colspan="2" class="blank"></td>
+                    <td class="total-value payment-date">{{ payment.po_postpaid_date.format('Y-m-d') }}</td>
+                    <td class="total-value payment-amount">{{ payment.po_postpaid_amount }} L.E.</td>
                 </tr>
+                {% endfor %}
                 <tr>
-                    <td colspan="3" class="blank"> </td>
-                    <td colspan="1" class="total-line balance">Balance Due</td>
-                    <td class="total-value balance"><div class="due">{{ subtotal - discount }} L.E.</div></td>
+                    <td colspan="2" class="blank"> </td>
+                    <td class="total-value bold">Total Paid</td>
+                    <td class="total-value bold">{{ sale.po_total_paid }} L.E.</td>
                 </tr>
+                {% endif %}
             </table>
             <div id="terms">
               <h5>Terms</h5>
