@@ -12,16 +12,16 @@
                                 <form class="form-horizontal" action="/report/print" method="post" id="reportForm" target="_blank">
                                         <div class="row">
                                                 <div class="col-md-6">
-                                                        <div class="form-group hidden">
-                                                                <label for="reportDisplay" class="col-sm-4 control-label">Display</label>
+                                                        <div class="form-group">
+                                                                <label for="reportType" class="col-sm-4 control-label">Report Type</label>
                                                                 <div class="col-sm-6">
-                                                                        <select class="form-control" id="reportDisplay" name="reportDisplay">
-                                                                                <option value="compact" selected>Compact</option>
-                                                                                <option value="comfortable">Comfortable</option>
+                                                                        <select class="form-control" id="reportType" name="reportType">
+                                                                                <option value="stock" selected>Stock</option>
+                                                                                <option value="sales">Sales</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
-                                                        <div class="form-group">
+                                                        <div class="form-group report-status">
                                                                 <label for="reportStatus" class="col-sm-4 control-label">Status</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportStatus" name="reportStatus">
@@ -31,6 +31,16 @@
                                                                                 <option value="sold">Sold</option>
                                                                                 <option value="warranty">Warranty</option>
                                                                                 <option value="warranty_replaced">Warranty - Replaced</option>
+                                                                        </select>
+                                                                </div>
+                                                        </div>
+                                                        <div class="form-group report-payment hidden">
+                                                                <label for="reportPayment" class="col-sm-4 control-label">Filter By</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="reportPayment" name="reportPayment">
+                                                                                <option value="prepaid" selected>Prepaid</option>
+                                                                                <option value="postpaid">Postpaid</option>
+                                                                                <option value="amount">Amount</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
@@ -49,6 +59,7 @@
                                                                                 <option value="range">Range</option>
                                                                         </select>
                                                                 </div>
+                                                                <label for="reportRange" class="report-range-error control-label"></label>
                                                         </div>
                                                         <div class="form-group report-from-date hidden">
                                                                 <label for="reportFromDate" class="col-sm-4 control-label">From Date</label>
@@ -62,17 +73,6 @@
                                                                         <input type="text" class="form-control" id="reportToDate" name="reportToDate" placeholder="{% trans %}To{% endtrans %}" data-date-format="yyyy-mm-dd" disabled>
                                                                 </div>
                                                         </div>
-                                                        <!--<div class="form-group">
-                                                                <label for="reportSupplier" class="col-sm-4 control-label">Supplier</label>
-                                                                <div class="col-sm-6">
-                                                                        <select class="form-control" id="reportSupplier" name="reportSupplier">
-                                                                                <option value="" selected>Select supplier</option>
-                                                                                {% for supplier in suppliers %}
-                                                                                <option value="{{ supplier.id }}">{{ supplier.supplierName }}</option>
-                                                                                {% endfor %}
-                                                                        </select>
-                                                                </div>
-                                                        </div>-->
                                                 </div>
                                                 <div class="col-md-6">
                                                         <div class="form-group">
@@ -93,6 +93,7 @@
                                                                                 <label class="checkall">
                                                                                     <input type="checkbox" name="" value="" class="checkall"/>{% trans %}(un)check all{% endtrans %}
                                                                                 </label>
+                                                                                <label class="multiselect-divider"></label>
                                                                                 {% for model in models %}
                                                                                 <label class="category-{{model.modelCategory.id}}">
                                                                                     <input type="checkbox" name="model[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}"/>{{ model.modelBrand }} {{ model.modelModel }}
@@ -100,6 +101,7 @@
                                                                                 {% endfor %}
                                                                         </div>
                                                                 </div>
+                                                                <label for="reportModel" class="report-model-error control-label"></label>
                                                         </div>
                                                 </div>
                                         </div>

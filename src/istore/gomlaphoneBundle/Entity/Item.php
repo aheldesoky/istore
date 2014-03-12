@@ -47,6 +47,11 @@ class Item
     /**
      * @ORM\Column(type="string", nullable=false)
      */
+    protected $item_price;
+
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
     protected $item_status;
     
     /**
@@ -228,5 +233,28 @@ class Item
     public function getItemWarrantyId()
     {
         return $this->item_warranty_id;
+    }
+
+    /**
+     * Set item_price
+     *
+     * @param string $itemPrice
+     * @return Item
+     */
+    public function setItemPrice($itemPrice)
+    {
+        $this->item_price = $itemPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get item_price
+     *
+     * @return string 
+     */
+    public function getItemPrice()
+    {
+        return $this->item_price;
     }
 }

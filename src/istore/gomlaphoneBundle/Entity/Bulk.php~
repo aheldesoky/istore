@@ -24,7 +24,7 @@ class Bulk
      *                                         referencedColumnName="id")})
      */
     protected $bulk_model;
-    
+        
     /**
      * @ORM\Column(type="string", nullable=false)
      */

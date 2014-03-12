@@ -53,24 +53,26 @@
                             </tr>
                         </table>
                     </div>
-                    <div class="col-md-6 table-payments scrollable">
-                        <table class="table table-bordered">
-                            <tr class="success">
-                                <th colspan="3" class="text-center">{%trans%}Payments{%endtrans%}</th>
-                            </tr>
-                            <tr class="success">
-                                <th>{%trans%}Date{%endtrans%}</th>
-                                <th>{%trans%}Amount{%endtrans%}</th>
-                                <th>{%trans%}Refund{%endtrans%}</th>
-                            </tr>
-                            {% for payment in payments %}
-                            <tr class="payment-{{ payment.po_id }}">
-                                <td>{{ payment.po_postpaid_date.format('Y-m-d') }}</td>
-                                <td>{{ payment.po_postpaid_amount }} {%trans%}L.E.{%endtrans%}</td>
-                                <td><a href="#" class="btn btn-link btn-refund-modal" data-id="{{ payment.po_id }}:{{ payment.po_postpaid_amount }}">{%trans%}refund{%endtrans%}</a></td>
-                            </tr>
-                            {% endfor %}
-                        </table>
+                    <div class="col-md-6">
+                        <div id="table-payments">
+                            <table class="table table-bordered">
+                                <tr class="success">
+                                    <th colspan="3" class="text-center">{%trans%}Payments{%endtrans%}</th>
+                                </tr>
+                                <tr class="success">
+                                    <th>{%trans%}Date{%endtrans%}</th>
+                                    <th>{%trans%}Amount{%endtrans%}</th>
+                                    <th>{%trans%}Refund{%endtrans%}</th>
+                                </tr>
+                                {% for payment in payments %}
+                                <tr class="payment-{{ payment.po_id }}">
+                                    <td>{{ payment.po_postpaid_date.format('Y-m-d') }}</td>
+                                    <td>{{ payment.po_postpaid_amount }} {%trans%}L.E.{%endtrans%}</td>
+                                    <td><a href="#" class="btn btn-link btn-refund-modal" data-id="{{ payment.po_id }}:{{ payment.po_postpaid_amount }}">{%trans%}refund{%endtrans%}</a></td>
+                                </tr>
+                                {% endfor %}
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

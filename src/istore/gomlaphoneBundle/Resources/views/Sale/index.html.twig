@@ -38,8 +38,10 @@
 			<tr>
 				<th>{% trans %}Bill #{% endtrans %}</th>
 				<th>{% trans %}Customer Name{% endtrans %}</th>
-                                <!--<th>{% trans %}Subtotal{% endtrans %}</th>
-                                <th>{% trans %}Discount{% endtrans %}</th>-->
+                                {% if action == 'discount' %}
+                                <th>{% trans %}Subtotal{% endtrans %}</th>
+                                <th>{% trans %}Discount{% endtrans %}</th>
+                                {% endif %}
                                 <th>{% trans %}Total Due{% endtrans %}</th>
                                 {% if action == 'postpaid' %}
                                     <th>{% trans %}Total Paid{% endtrans %}</th>
@@ -53,8 +55,10 @@
 			<tr class="sale-{{ sale.s_id }} {% if sale.s_sale_total - sale.s_sale_discount - sale.po_total_paid == 0 %}warning{%endif%}">
 				<td>{{ sale.s_id }}</td>
 				<td>{{ sale.cu_customer_fname }} {{ sale.cu_customer_lname }}</td>
-                                <!--<td>{{ sale.s_sale_total }} {% trans %}L.E.{% endtrans %}</td>
-                                <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>-->
+                                {% if action == 'discount' %}
+                                <td>{{ sale.s_sale_total }} {% trans %}L.E.{% endtrans %}</td>
+                                <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
+                                {% endif %}
                                 <td>{{ sale.s_sale_total - sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
                                 {% if action == 'postpaid' %}
                                     <td class="total-paid">{{ sale.po_total_paid }} {% trans %}L.E.{% endtrans %}</td>
@@ -70,7 +74,8 @@
                                             {% endif %}
                                             <a href="#" class="btn btn-primary btn-sm btn-view-payments" data-id="{{sale.s_id}}">{% trans %}View Payments{% endtrans %}</a>
                                         {% elseif action == 'discount' %}
-                                        <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm">{% trans %}Confirm Discount{% endtrans %}</a>
+                                            <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm btn-discount-modal {% if sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}:{{ sale.s_sale_discount }}">{% trans %}Confirm Discount{% endtrans %}</a>
+                                            <a href="#" class="btn btn-default btn-sm disabled btn-discount-confirmed {% if not sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}">{% trans %}Confirmed{% endtrans %}</a>
                                         {% endif %}
                                         <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
                                         <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
@@ -125,6 +130,24 @@
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
                 <a href="#" class="btn btn-danger btn-refund-sale">{%trans%}Confirm Refund{%endtrans%}</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- End of Submodal -->
+
+
+<!-- Confirm Discount Modal -->
+<div class="modal fade" id="confirmDiscountModal" tabindex="-1" role="dialog" aria-labelledby="confirmDiscountModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">
+                <input type="hidden" name="discountSaleId" id="discountSaleId">
+                {%trans%}Are you sure that you want to confirm discount of <label id="discountValueLabel"></label> L.E. for sale #{%endtrans%}<label id="discountSaleIdLabel"></label>?
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
+                <a href="#" class="btn btn-danger btn-confirm-discount">{%trans%}Confirm Discount{%endtrans%}</a>
             </div>
         </div>
     </div>

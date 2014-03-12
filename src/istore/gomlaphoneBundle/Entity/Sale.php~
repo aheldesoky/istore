@@ -42,6 +42,21 @@ class Sale
     protected $sale_discount_confirmed;
     
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $sale_total_price;
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $sale_total_paid;
+    
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $sale_total_count;
+    
+    /**
      * @ORM\Column(nullable=false)
      * @ORM\ManyToOne(targetEntity="Store")
      * @ORM\JoinTable(name="store" , 
@@ -53,6 +68,7 @@ class Sale
     function __construct() {
         $this->sale_date = new \DateTime();
         $this->sale_discount_confirmed = false;
+        $this->sale_total_price = 0;
     }
 
         /**
@@ -178,5 +194,74 @@ class Sale
     public function getSaleDiscountConfirmed()
     {
         return $this->sale_discount_confirmed;
+    }
+
+    /**
+     * Set sale_total_price
+     *
+     * @param integer $saleTotalPrice
+     * @return Sale
+     */
+    public function setSaleTotalPrice($saleTotalPrice)
+    {
+        $this->sale_total_price = $saleTotalPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get sale_total_price
+     *
+     * @return integer 
+     */
+    public function getSaleTotalPrice()
+    {
+        return $this->sale_total_price;
+    }
+
+    /**
+     * Set sale_total_count
+     *
+     * @param integer $saleTotalCount
+     * @return Sale
+     */
+    public function setSaleTotalCount($saleTotalCount)
+    {
+        $this->sale_total_count = $saleTotalCount;
+
+        return $this;
+    }
+
+    /**
+     * Get sale_total_count
+     *
+     * @return integer 
+     */
+    public function getSaleTotalCount()
+    {
+        return $this->sale_total_count;
+    }
+
+    /**
+     * Set sale_total_paid
+     *
+     * @param integer $saleTotalPaid
+     * @return Sale
+     */
+    public function setSaleTotalPaid($saleTotalPaid)
+    {
+        $this->sale_total_paid = $saleTotalPaid;
+
+        return $this;
+    }
+
+    /**
+     * Get sale_total_paid
+     *
+     * @return integer 
+     */
+    public function getSaleTotalPaid()
+    {
+        return $this->sale_total_paid;
     }
 }

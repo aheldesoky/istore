@@ -6,7 +6,6 @@ $(document).ready(function(){
     var itemListRequired = new Array();
     var itemId;
     var passedValidation = false;
-    var isValidWarrantyName;
     var subtotal = 0;
     var discount = 0;
     var total = 0;
@@ -20,6 +19,14 @@ $(document).ready(function(){
         $('#navbar-main ul li.home').addClass('active');
     else
         $('#navbar-main ul li.'+controller).addClass('active');
+    
+    $('div#reportModel').slimScroll({
+        height: '135px',
+        alwaysVisible: false,
+        wheelStep: '10',
+        railVisible: true,
+        allowPageScroll: true,
+    });
     
     //Validator Initialization
     //$('#modelForm , #bulkForm').validate();
@@ -104,6 +111,8 @@ $(document).ready(function(){
     
     $('#addPaymentModalContainer').on('change' , '#postpaidAmount' , function(){
         validPostpaidAmount($(this));
+        
+    //Add payment modal
     }).on('click' , '.btn-add-payment' , function(e){
         e.preventDefault();
         var element = $('#postpaidAmount');
@@ -148,7 +157,7 @@ $(document).ready(function(){
         });
     });
     
-    //View postpaid payment
+    //View payments modal
     $(document).on("click", ".btn-view-payments", function (e) {
             e.preventDefault();
             
@@ -158,14 +167,21 @@ $(document).ready(function(){
             var btn = $(this);
             var data = {saleId:saleId};
             btn.button('loading');
-            $('#viewPaymentsModalContainer').load("/app_dev.php/sale/postpaid/view" , data , function(){
+            $('#viewPaymentsModalContainer').load("/sale/postpaid/view" , data , function(){
                 btn.button('reset');
                 $('#viewPostpaidPayments').modal('show');
+                $('div#table-payments').slimScroll({
+                    height: '381px',
+                    alwaysVisible: true,
+                    wheelStep: '10',
+                    railVisible: true,
+                    allowPageScroll: true,
+                });
             });
             
     });
     
-    //Refund postpaid payment
+    //Refund payment modal
     $(document).on("click", ".btn-refund-modal", function (e) {
         e.preventDefault();
         var _self = $(this);
@@ -194,7 +210,7 @@ $(document).ready(function(){
                         var saleDiscount = parseInt($('#saleDiscount').val());
                         //$('#salePaid').val(parseInt(salePaid) - parseInt(paymentAmount));
                         
-                        alert(salePaid);
+                        //alert(salePaid);
                         $('#label-sale-paid').html(salePaid + ' L.E.');
                         $('#label-sale-remaining').html( parseInt(saleTotal) - parseInt(saleDiscount) - parseInt(salePaid) + ' L.E.');
                         $('#alert-refund-message').html(alertSuccessMessage('Payment of '+paymentAmount+' L.E. has been refunded'));
@@ -206,6 +222,8 @@ $(document).ready(function(){
         }).always(function () {
                 btn.button('reset');
         });
+        
+    //Refund sale modal
     }).on('click', '.btn-refund-sale-modal', function(e){
         e.preventDefault();
         var _self = $(this);
@@ -229,6 +247,40 @@ $(document).ready(function(){
                     } else {
                         $('#refundSaleModal').modal('hide');
                         $('#alert-message').html(alertDangerMessage('Can not refund Sale # '+saleId+' at this time.'));
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+        
+    //Confirm discount modal
+    }).on('click', '.btn-discount-modal', function(e){
+        e.preventDefault();
+        var _self = $(this);
+        var discount = _self.data('id').split(':');
+        $('#discountSaleId').val(discount[0]);
+        $('#discountSaleIdLabel').html(discount[1]);
+        $('#discountValueLabel').html(discount[1]);
+        $('#confirmDiscountModal').modal('show');
+    }).on('click', '.btn-confirm-discount', function(e){
+        e.preventDefault();
+        var saleId = $('#discountSaleId').val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/sale/discount/" + saleId,
+                type: "get",
+                async: false,
+                success: function(response){
+                    if(response.error==0){
+                        console.log($(this));
+                        $('#confirmDiscountModal').modal('hide');
+                        $('tr.sale-'+saleId+' .btn-discount-modal').addClass('hidden');
+                        $('tr.sale-'+saleId+' .btn-discount-confirmed').removeClass('hidden');
+                        $('#alert-message').html(alertSuccessMessage('Discount for Sale #'+saleId+' has been confirmed'));
+                    } else {
+                        $('#confirmDiscountModal').modal('hide');
+                        $('#alert-message').html(alertDangerMessage('Can not confirm discount for Sale # '+saleId+' at this time.'));
                     }
                 }
         }).always(function () {
@@ -288,10 +340,10 @@ $(document).ready(function(){
         $(this).ajaxForm({ 
             //target:        '_blank',   // target element(s) to be updated with server response 
             beforeSubmit:  function(){
-                alert('before submittt');
+                //alert('before submittt');
             },
             success:       function(){ 
-                alert('sdddsddsd')
+                //alert('sdddsddsd')
                 window.location.reload();
                 self.close();
                 return false;
@@ -1195,59 +1247,60 @@ $(document).ready(function(){
 
     // View Report
     $('#viewReport').click(function(e){
+        e.preventDefault();
         var models = new Array();
         $.each($('div#reportModel input:checked') , function(index, value){
             if(value.value)
                 models.push(value.value);
         })
         var reportModel = models;
-        var reportCategory = $('#reportCategory ').val();
+        var reportCategory = $('#reportCategory').val();
+        var reportType = $('#reportType').val();
+        var reportPayment = $('#reportPayment').val();
         var reportStatus = $('#reportStatus').val();
-        var reportSupplier = $('#reportSupplier').val();
         var reportRange = $('#reportRange').val();
         var reportFromDate = $('#reportFromDate').val();
         var reportToDate = $('#reportToDate').val();
-        var reportDisplay = $('#reportDisplay').val();
         var action = $('#action').val();
         var controller = $('#controller').val();
-
-        if(reportModel.length === 0){
-            $('#alert-message').html(alertWarningMessage('Please select model.'));
-            e.preventDefault();
-            return false;
+        
+        var isValid = true;
+        if(reportModel.length === 0 && reportPayment != 'amount'){
+            $('.report-model-error').html('Please select model.');
+            $('div#reportModel').closest('.form-group').removeClass('has-success').addClass('has-error');
+            isValid = false;
         } else {
-            $('#alert-message').html('');
+            $('.report-model-error').html('');
+            $('div#reportModel').closest('.form-group').removeClass('has-error');
         }
         
         if(!$('#reportRange').prop('disabled') && reportRange === ''){
-            $('#alert-message').html(alertWarningMessage('Please select period.'));
-            e.preventDefault();
-            return false;
+            $('.report-range-error').html('Please select period.');
+            $('#reportRange').closest('.form-group').removeClass('has-success').addClass('has-error');
+            isValid = false;
         } else {
-            $('#alert-message').html('');
+            $('.report-range-error').html('');
+            $('#reportRange').closest('.form-group').removeClass('has-error');
         }
         
-        var url = '/report/';
-        if(reportDisplay === 'comfortable')
-            url += 'view-comfortable';
-        else if (reportDisplay === 'compact')
-            url += 'view-compact';
+        if(!isValid) return isValid;
         
+        var url = '/report/view';
         var btn = $(this);
         btn.button('loading');
         $.ajax({
-            async: false,
+            //async: false,
             url: url,
             type: "post",
             data: {
+                reportType:reportType,
+                reportPayment:reportPayment,
                 reportModel:reportModel,
                 reportCategory:reportCategory,
                 reportStatus:reportStatus,
-                reportSupplier:reportSupplier,
                 reportRange:reportRange,
                 reportFromDate:reportFromDate,
                 reportToDate:reportToDate,
-                reportDisplay:reportDisplay,
                 action:action,
                 controller:controller,
             },
@@ -1258,7 +1311,6 @@ $(document).ready(function(){
             btn.button('reset');
             $(".redund-cell").empty();
         });
-        e.preventDefault();
     });
     
     $("#reportPage").on("click", "#exportReportPDF", function(e){
@@ -1542,6 +1594,15 @@ $(document).ready(function(){
             $(".multiselect label").removeClass("multiselect-on");
         }
     });
+    $(".multiselect input").change(function(){
+        if(!$(this).hasClass('checkall')){
+            if(!$(this).prop('checked')){
+                $(".multiselect input.checkall").prop('checked', false);
+                $(".multiselect label.checkall").removeClass("multiselect-on");
+            }
+        }
+    });
+    
     $("select#reportCategory").change(function(){
         if($(this).val()){
             $(".multiselect label").addClass("hidden").removeClass("multiselect-on");
@@ -1553,25 +1614,44 @@ $(document).ready(function(){
             $(".multiselect label").removeClass("hidden").removeClass("multiselect-on");
         }
     });
-    $("select#reportStatus").change(function(){
-        if($(this).val() === "sold"){
-            $(".report-range").removeClass("hidden");
-            $(".report-range select").prop("disabled", false);
-        } else {
-            $(".report-range").addClass("hidden");
-            $(".report-range select").prop("disabled", true).val('');
+    $("select#reportType").change(function(){
+        if($(this).val() === "stock"){
+            $(".report-status").removeClass("hidden");
+            $(".report-status select").prop("disabled", false);
+            $(".report-payment, .report-range, .report-from-date, .report-to-date").addClass("hidden");
+            $(".report-payment select, .report-range select, .report-from-date select, .report-to-date select").prop("disabled", true);
+            //Category & Models
+            $("select#reportCategory").prop("disabled" , false);
+            $(".multiselect input").prop('disabled', false);
+            $('.multiselect').css('background-color', '#fff');
+            $("select#reportPayment").val('prepaid');
+        } else if($(this).val() === "sales") {
+            $(".report-payment, .report-range").removeClass("hidden");
+            $(".report-payment select, .report-range select").prop("disabled", false);
+            $(".report-status, .report-from-date, .report-to-date").addClass("hidden");
+            $(".report-status select, .report-from-date select, .report-to-date select").prop("disabled", true);
         }
     });
     $("select#reportRange").change(function(){
         if($(this).val() === "range"){
-            $(".report-from-date").removeClass("hidden");
-            $(".report-to-date").removeClass("hidden");
+            $(".report-from-date, .report-to-date").removeClass("hidden");
             $(".report-from-date input, .report-to-date input").prop("disabled", false);
         } else {
-            $(".report-from-date").addClass("hidden");
-            $(".report-to-date").addClass("hidden");
+            $(".report-from-date, .report-to-date").addClass("hidden");
             $(".report-from-date input, .report-to-date input").prop("disabled", true);
         }
     });
-    
+    $("select#reportPayment").change(function(){
+        if($(this).val() === "amount"){
+            $("select#reportCategory").prop("disabled" , true);
+            $(".multiselect input").prop('disabled', true);
+            $(".multiselect input").prop('checked', false);
+            $(".multiselect label").removeClass("multiselect-on");
+            $('.multiselect').css('background-color', '#eee');
+        } else {
+            $("select#reportCategory").prop("disabled" , false);
+            $(".multiselect input").prop('disabled', false);
+            $('.multiselect').css('background-color', '#fff');
+        }
+    });
 });

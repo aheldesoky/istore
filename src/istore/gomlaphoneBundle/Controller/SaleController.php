@@ -98,7 +98,7 @@ class SaleController extends Controller //implements AuthenticatedController
             //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->andWhere('s.sale_discount>0 AND s.sale_discount_confirmed=0')
+            ->andWhere('s.sale_discount>0')
             ->setParameter(1, 1)
 //            //->groupBy('s.id')
             ->getQuery()
@@ -115,7 +115,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->andWhere('s.sale_discount>0 AND s.sale_discount_confirmed=0')
+            ->andWhere('s.sale_discount>0')
             ->setParameter(1, 1)
             ->groupBy('s.id')
             ->getQuery()
@@ -314,6 +314,19 @@ class SaleController extends Controller //implements AuthenticatedController
         $postpaid->setPostpaidSaleId($id)
                  ->setPostpaidAmount($request->request->get('amount'));
         $entityManager->persist($postpaid);
+        
+        $sale = $entityManager->createQueryBuilder()
+            ->select('s')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->where('s.id=?1')
+            ->setParameter(1, $id)
+            ->getQuery()
+            ->getSingleResult();
+        
+        $saleTotalPaid = intval($sale->getSaleTotalPaid()) + intval($request->request->get('amount'));
+        $sale->setSaleTotalPaid($saleTotalPaid);
+        $entityManager->persist($sale);
+        
         $entityManager->flush();
         
         $totalDue = $entityManager->createQueryBuilder()
@@ -416,9 +429,14 @@ class SaleController extends Controller //implements AuthenticatedController
                 $entityManager->flush();
             }
             
+            $itemList = json_decode(stripcslashes($request->request->get('itemList')));
+            $saleTotalCount = count($itemList);
+            
             $sale = new Sale();
             $sale->setSaleCustomerId($customer[0]->getId());
             $sale->setSaleDiscount($request->request->get('saleDiscount'));
+            $sale->setSaleTotalCount($saleTotalCount);
+            $sale->setSaleTotalPaid($request->request->get('amountPaid'));
             $sale->setSaleStoreId(1);
             $entityManager->persist($sale);
             $entityManager->flush();
@@ -433,7 +451,9 @@ class SaleController extends Controller //implements AuthenticatedController
             }
             
             //var_dump($customer);die;
-            $itemList = json_decode(stripcslashes($request->request->get('itemList')));
+            
+            
+            $saleTotalPrice = 0;
             
             foreach ($itemList as $item){
                 $soldItem = $entityManager->createQueryBuilder()
@@ -447,16 +467,21 @@ class SaleController extends Controller //implements AuthenticatedController
                     $soldItem->setItemStatus('sold');
                 else
                     $soldItem->setItemStatus('pending_discount');*/
+                $saleTotalPrice += intval($soldItem->getItemPrice());
+                
                 $soldItem->setItemStatus('sold');
                 $entityManager->persist($soldItem);
-                $entityManager->flush();
+                //$entityManager->flush();
                 
                 $saleItem = new SaleItem();
                 $saleItem->setSaleitemSaleId($sale->getId());
                 $saleItem->setSaleitemItemId($item->itemId);
                 $entityManager->persist($saleItem);
-                $entityManager->flush();
+                //$entityManager->flush();
             }
+            $sale->setSaleTotalPrice($saleTotalPrice);
+            $entityManager->persist($sale);
+            $entityManager->flush();
             
             return $this->redirect('/sale/bill/'.$sale->getId() );
             
@@ -628,6 +653,24 @@ class SaleController extends Controller //implements AuthenticatedController
             
         } catch (DBALException $e){
             return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete category that already has models'));
+        }
+    }
+    
+    public function confirmDiscountAction(Request $request , Sale $sale){
+        try{
+            if (!$sale) {
+                throw $this->createNotFoundException('No sale found');
+            }
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            $sale->setSaleDiscountConfirmed(true);
+            $entityManager->persist($sale);
+            $entityManager->flush();
+//var_dump($sale);die;
+            return new JsonResponse(array('error' => 0 , 'message' => 'Discount has been successfully confirmed'));
+            
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not confirm discount at this time.'));
         }
     }
 }

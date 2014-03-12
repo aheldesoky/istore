@@ -1,13 +1,10 @@
 {% if report|length %}
-<table class="table table-hover table-bordered table-report-view-compact">
+<table class="table table-striped table-bordered table-report-view-compact">
         <tr class="active">
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Serial{% endtrans %}</th>
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Name{% endtrans %}</th>
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Category{% endtrans %}</th>
-                <th {% if status == null %}colspan="5"{% endif %} class="text-center">{% trans %}Status{% endtrans %}</th>
-                {% if status == 'sold' %}
-                        <th rowspan="2" class="vertical-middle text-center">{% trans %}Price{% endtrans %}</th>
-                {% endif %}
+                <th {%if status == null%}colspan="5"{%endif%} class="text-center">{% trans %}Status{% endtrans %}</th>
                 {% if status == null %}
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Total{% endtrans %}</th>
                 {% endif %}
@@ -38,51 +35,56 @@
                 {% endif %}
         </tr>
         
-        
         {% set total_pending_info = 0 %}
         {% set total_in_stock = 0 %}
         {% set total_sold = 0 %}
         {% set total_warranty = 0 %}
         {% set total_warranty_replaced = 0 %}
-        {% set total_price = 0 %}
         {% set total = 0 %}
+        
         {% for model in report %}
                 {% set total_pending_info = total_pending_info + model.pending_info %}
                 {% set total_in_stock = total_in_stock + model.in_stock %}
                 {% set total_sold = total_sold + model.sold %}
                 {% set total_warranty = total_warranty + model.warranty %}
                 {% set total_warranty_replaced = total_warranty_replaced + model.warranty_replaced %}
-                {% if status == 'sold' %}
-                        {% set total_price = total_price + model.price %}
-                {% endif %}
                 {% set total = total + model.total_count %}
-                <tr class="warning">
+                        
+                <tr class="text-center">
                         <td >{{ model.m_model_serial }}</td>
                         <td >{{ model.m_model_brand }} {{ model.m_model_model }}</td>
                         <td >{{ model.c_category_name }}</td>
                         {% if status == null %}
-                        <td class="text-center"><span class="label label-primary">{{ model.pending_info }}</span></td>
-                        <td class="text-center"><span class="label label-success">{{ model.in_stock }}</span></td>
-                        <td class="text-center"><span class="label label-default">{{ model.sold }}</span></td>
-                        <td class="text-center"><span class="label label-warning">{{ model.warranty }}</span></td>
-                        <td class="text-center"><span class="label label-danger">{{ model.warranty_replaced }}</span></td>
-                        <th class="text-center">{{ model.total_count }}</th>
+                            <td class="text-center">{{ model.pending_info }}</td>
+                            <td class="text-center">{{ model.in_stock }}</td>
+                            <td class="text-center">{{ model.sold }}</td>
+                            <td class="text-center">{{ model.warranty }}</td>
+                            <td class="text-center">{{ model.warranty_replaced }}</td>
+                            <th class="text-center">{{ model.total_count }}</th>
                         {% elseif status == 'pending_info' %}
-                        <td class="text-center"><span class="label label-primary">{{ model.pending_info }}</span></td>
+                            <td class="text-center">{{ model.pending_info }}</td>
                         {% elseif status == 'in_stock' %}
-                        <td class="text-center"><span class="label label-success">{{ model.in_stock }}</span></td>
+                            <td class="text-center">{{ model.in_stock }}</td>
                         {% elseif status == 'sold' %}
-                        <td class="text-center"><span class="label label-default">{{ model.sold + model.warranty }}</span></td>
-                        <td class="text-center">{{ model.price }} {% trans %}L.E.{% endtrans %}</td>
+                            <td class="text-center">{{ model.sold }}</td>
                         {% elseif status == 'warranty' %}
-                        <td class="text-center"><span class="label label-warning">{{ model.warranty }}</span></td>
+                            <td class="text-center">{{ model.warranty }}</td>
                         {% elseif status == 'warranty_replaced' %}
-                        <td class="text-center"><span class="label label-danger">{{ model.warranty_replaced }}</span></td>
+                            <td class="text-center">{{ model.warranty_replaced }}</td>
                         {% endif %}
                 </tr>
         {% endfor %}
         <tr>
-                <th colspan="3" class="text-center"> {% trans %}Sum{% endtrans %}</th>
+                <th colspan="3" class="text-center"> {% trans %}Total{% endtrans %}</th>
+                
+                {% if status == null %}
+                        <th class="text-center">{{ total_pending_info }}</th>
+                        <th class="text-center">{{ total_in_stock }}</th>
+                        <th class="text-center">{{ total_sold }}</th>
+                        <th class="text-center">{{ total_warranty }}</th>
+                        <th class="text-center">{{ total_warranty_replaced }}</th>
+                        <th class="text-center">{{ total }}</th>
+                {% endif %}
                 
                 {% if status == 'pending_info' %}
                         <th class="text-center">{{ total_pending_info }}</th>
@@ -93,8 +95,7 @@
                 {% endif %}
                             
                 {% if status == 'sold' %}
-                        <th class="text-center">{{ total_sold + total_warranty }}</th>
-                        <th class="text-center">{{ total_price }} {% trans %}L.E.{% endtrans %}</th>
+                        <th class="text-center">{{ total_sold }}</th>
                 {% endif %}
                             
                 {% if status == 'warranty' %}
@@ -103,15 +104,6 @@
                             
                 {% if status == 'warranty_replaced' %}
                         <th class="text-center">{{ total_warranty_replaced }}</th>
-                {% endif %}
-                
-                {% if status == null %}
-                        <th class="text-center">{{ total_pending_info }}</th>
-                        <th class="text-center">{{ total_in_stock }}</th>
-                        <th class="text-center">{{ total_sold }}</th>
-                        <th class="text-center">{{ total_warranty }}</th>
-                        <th class="text-center">{{ total_warranty_replaced }}</th>
-                        <th class="text-center">{{ total }}</th>
                 {% endif %}
         </tr>
         <tr class="text-center">

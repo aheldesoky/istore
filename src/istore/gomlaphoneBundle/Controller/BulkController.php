@@ -115,7 +115,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
-    //var_dump($paginator);die;
+//var_dump($paginator);die;
         
         return $this->render('istoregomlaphoneBundle:Item:index.html.twig', array(
             'bulk' => $bulk,
@@ -162,10 +162,11 @@ class BulkController extends Controller //implements AuthenticatedController
             $entityManager->flush();
             
             $quantity = $request->request->get('bulkQuantity');
+            $itemPrice = $request->request->get('bulkPrice');
             for($i=0 ; $i<$quantity ; $i++)
             {
                 $item = new Item();
-                $item->setItemBulk($bulk)->setItemHasWarranty(0);
+                $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemPrice($itemPrice);
                 if($bulkModel[0]->getModelItemHasSerial())
                     $item->setItemStatus('pending_info');
                 else
@@ -216,6 +217,23 @@ class BulkController extends Controller //implements AuthenticatedController
             //var_dump($bulk);die;
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($bulk);
+            
+            $itemPrice = $request->request->get('bulkPrice');
+            
+            $items = $entityManager->createQueryBuilder()
+                    ->select('i')
+                    ->from('istoregomlaphoneBundle:Item', 'i')
+                    ->where('i.item_bulk = ?1')
+                    ->setParameter(1 , $bulk->getId())
+                    ->getQuery()
+                    ->getResult();
+            
+            foreach ($items as $item){
+                $item->setItemPrice($itemPrice);
+                $entityManager->persist($item);
+            }
+            
+            
             $entityManager->flush();
 
             return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId())));

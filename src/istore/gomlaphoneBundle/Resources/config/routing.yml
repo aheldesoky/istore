@@ -148,6 +148,10 @@ istoregomlaphone_sale_discount:
     pattern:  /sale/discount
     defaults: { _controller: istoregomlaphoneBundle:Sale:discount }
 
+istoregomlaphone_sale_confirm_discount:
+    pattern:  /sale/discount/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:confirmDiscount }
+
 istoregomlaphone_sale_add:
     pattern:  /sale/add
     defaults: { _controller: istoregomlaphoneBundle:Sale:add }
@@ -208,13 +212,9 @@ istoregomlaphone_report_index:
     pattern:  /report
     defaults: { _controller: istoregomlaphoneBundle:Report:index }
 
-istoregomlaphone_report_view_comfortable:
-    pattern:  /report/view-comfortable
-    defaults: { _controller: istoregomlaphoneBundle:Report:viewComfortable }
-
-istoregomlaphone_report_view_compact:
-    pattern:  /report/view-compact
-    defaults: { _controller: istoregomlaphoneBundle:Report:viewCompact }
+istoregomlaphone_report_view:
+    pattern:  /report/view
+    defaults: { _controller: istoregomlaphoneBundle:Report:view }
 
 istoregomlaphone_report_export:
     pattern:  /report/export

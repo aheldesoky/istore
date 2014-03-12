@@ -250,7 +250,7 @@ div.container a.brand {
 }
 
 .multiselect {
-    height: 135px;
+    max-height: 135px;
     border: solid 1px #c0c0c0;
     overflow: auto;
     text-align: left;
@@ -284,10 +284,15 @@ div.container a.brand {
 .view-payments-modal{
     width: 750px;
 }
-.table-payments{
-    height: 381px;
-    overflow-x: auto;
+#table-payments{
+    max-height: 381px;
 }
 .btn-warning.active{
     background-color: #EC7F00;
+}
+.multiselect-divider{
+    border-bottom: 1px solid #eee;
+}
+.total-sold-price{
+    vertical-align: middle !important;
 }

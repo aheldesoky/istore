@@ -1,0 +1,44 @@
+{% if report|length %}
+<table class="table table-striped table-bordered table-report-view-compact">
+        <tr class="active">
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Serial{% endtrans %}</th>
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Name{% endtrans %}</th>
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Category{% endtrans %}</th>
+                <th colspan="1" class="text-center">{% trans %}Postpaid{% endtrans %}</th>
+        </tr>
+        
+        <tr class="active">
+                <td class="text-center"><span class="label label-default">{% trans %}Sold{% endtrans %}</span></td>
+        </tr>
+        
+        {% set postpaid_count_sold = 0 %}
+        
+        {% for model in report %}
+                {% set postpaid_count_sold = postpaid_count_sold + model.postpaid_count_sold %}
+
+                <tr class="text-center">
+                        <td>{{ model.m_model_serial }}</td>
+                        <td>{{ model.m_model_brand }} {{ model.m_model_model }}</td>
+                        <td>{{ model.c_category_name }}</td>
+                        <td class="text-center">{{ model.postpaid_count_sold }}</td>
+                </tr>
+                
+        {% endfor %}
+        <tr class="warning">
+                <th colspan="3" class="text-center">{% trans %}Total{% endtrans %}</th>
+                <th class="text-center">{{ postpaid_count_sold }}</th>
+        </tr>
+        <tr class="text-center">
+                <td colspan="9">
+                        <a href="" class="btn btn-info btn-lg hidden" id="exportReportPDF">Export PDF</a>
+                        <a href="" class="btn btn-info btn-lg" id="printReport" target="_blank">Print</a>
+                </td>
+        </tr>
+</table>
+{% else %}
+<table class="table table-hover table-view">
+        <tr>
+                <td colspan="2">{% trans %}There is no report to display.{% endtrans %}</td>
+        </tr>
+</table>
+{% endif %}
