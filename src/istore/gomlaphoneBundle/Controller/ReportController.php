@@ -535,22 +535,31 @@ class ReportController extends Controller //implements AuthenticatedController
             ->getQuery()
             ->getScalarResult();
         
-        $report['prepaid'] = $prepaidReport[0];
+        $report['prepaid'] = &$prepaidReport[0];
         
-        $postpaidReport = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select("
-                SUM(CASE WHEN po.id IS NOT NULL AND $dateFilter THEN s.sale_total_price ELSE 0 END) AS subtotal ,
-                SUM(CASE WHEN po.id IS NOT NULL AND $dateFilter THEN s.sale_discount ELSE 0 END) AS discount ,
-                SUM(CASE WHEN po.id IS NOT NULL AND $dateFilter THEN s.sale_total_paid ELSE 0 END) AS total_paid")
+        $postpaidTotal = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select("s")
             ->from('istoregomlaphoneBundle:Sale', 's')
-            ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po', 'WITH', 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Postpaid', 'po', 'WITH', 'po.postpaid_sale_id=s.id')
             ->Join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.sale_store_id=st.id')
             ->where("st.id=?1")
+            ->andWhere("$dateFilter")
             ->setParameter(1, 1)
+            ->groupBy('s.id')
             ->getQuery()
             ->getScalarResult();
+//var_dump($postpaidTotal);die;
+        $postpaidReport['subtotal'] = 0;
+        $postpaidReport['discount'] = 0;
+        $postpaidReport['total_paid'] = 0;
         
-        $report['postpaid'] = $postpaidReport[0];
+        foreach ($postpaidTotal as $sale) {
+            $postpaidReport['subtotal'] += $sale['s_sale_total_price'];
+            $postpaidReport['discount'] += $sale['s_sale_discount'];
+            $postpaidReport['total_paid'] += $sale['s_sale_total_paid'];
+        }
+        
+        $report['postpaid'] = &$postpaidReport;
         
 //echo $postpaidQuery->getQuery()->getSQL();die;
 //var_dump($report);die;
