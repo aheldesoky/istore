@@ -1,4 +1,462 @@
 ## YAML Template.
----
-Categories: التصنيفات
-Category Name: أسم الصنف
+
+## login page
+Username: اسم المستخدم
+Enter username: ادخل اسم المستخدم
+Password: كلمة المرور
+Enter password: ادخل كلمة المرور
+Remember me: تذكرنى
+Login: دخول
+Invalid username or password: اسم المستخدم او كلمة المرور غير صحيحه
+Please fill out this field: من فضلك ادخل هذا الحقل
+
+##--------------------------------------------------------------------------------------------------------------------
+
+## Home page
+Gomla Phone: جمله فون
+Home: الرئيسية
+Sales: المبيعات
+Customers: العملاء
+Items: المنتج
+Bulks: مجموعة المنتجات
+Models: الموديلات
+Categories: الفئات
+Supppliers: الموردين
+Warranties: وكلاء الضمان
+Reports: التقارير
+Language: اللغة
+Sales page: صفحة المبيعات
+Item Serial: كود المنتج
+Check: فحص
+Add: إضافه
+Clear: مسح
+Serial can not be empty.: يجب إضافة كود المنتج
+There is no item to be added.: لا يوجد منتج ليتم إضافته
+Check item first.: إضغط على فحص أولاً
+Item added to list.: تم إضافة المنتج
+Brand: الصنف
+Model: الموديل
+Category: الفئه
+Price: السعر
+Serial: الكود
+Item: المنتج
+Qty: الكمية
+of: من
+Action: العمليه
+there is no items.: لا يوجد منتجات مضافه
+Payment: طريقة الدفع
+Prepaid: الدفع الكاش
+Postpaid: الدفع الآجل
+Amount Paid: المبلغ المدفوع
+Amount L.E.: القيمه بالجنية المصرى
+Remaining: المبلغ المتبقى
+ok: تم
+Subtotal: إجمالى المبلغ
+Discount: الخصم
+Total: المطلوب
+Checkout: تابع البيع
+L.E.: جنيه
+The list is empty, Please check items to list.: قائمة المبيعات فارغة , من فضلك أضف المنتجات أولاً
+Please enter a valid serial first.: من فضلك أدخل كود صحيح أولاً
+Item is not found. : المنتج غير موجود
+Item is available. : المنتج موجود
+Customer Data: بيانات العميل
+Phone Number : رقم الهاتف
+Enter Phone Number: أدخل رقم الهاتف
+First Name: الاسم الأول
+Enter First Name: أدخل الأسم الأول
+Last Name: الأسم الأخير
+Enter Last Name: أدخل الأسم الأخير
+Address: العنوان
+Enter Address: أدخل العنوان
+Notes : الملاحظات
+Enter Notes for this item: أدخل ملاحظات لهذا المنتج
+Find: بحث
+Continue: أستمرار
+Close: غلق
+Customer is available.: العميل موجود
+##Customer is not found.:العميل غير موجود
+This field is required.: بيانات مطلوبة
+Loading: تحميل  
+January: يناير
+February: فبراير
+March: مارس 
+April: أبريل
+May: مايو 
+June: يونيو
+July: يوليو
+August: أغسطس
+September: سبتمبر
+October: أكتوبر
+November: نوفمبر
+December: ديسمبر
+Saturday: السبت
+Sunday: الأحد
+Monday: الأثنين
+Tuesday: الثلاثاء
+Wednesday: الأربعاء
+Thursday: الخميس
+Friday: الجمعة
+
+##--------------------------------------------------------------------------------------------------------------------
+
+
+##Bill
+Invoice: الفاتورة
+Invoice#: رقم الفاتورة
+Phone: رقم الهاتف
+44 el arb3een st , suez:  44شارع الأربعين , السويس
+Date: التاريخ
+Time: الوقت
+Cashier Name: اسم البائع
+Item Serial: كود المنتج
+Description: الوصف
+Category: الفئه
+Discount: الخصم
+Price: السعر
+Subtotal: إجمالى المبلغ
+Discount: الخصم
+Total Due : المطلوب بعد الخصم 
+Total : إجمالى المطلوب
+Terms: الشروط
+Print: طباعه
+Back to Home: الرجوع إلى الصفحة الرئيسيه
+Payments: المدفوعات
+Total Paid: إجمالى المدفوع
+Amount: المبلغ
+L.E.: جنية
+Loading: تحميل
+
+##--------------------------------------------------------------------------------------------------------------------
+
+## Bulks
+Serial: الكود
+Brand Name: اسم الصنف
+Model: الموديل
+Category: الفئه
+Price L.E.: السعر بالجنيه
+Quantity: الكميه
+Supplier: المورد
+Date: التاريخ
+Action: الإجراء
+Delete: حذف
+Edit: تعديل
+View: مشاهدة
+Add New Bulk: إضافة مجموعه جديدة
+Bulk list: القائمه
+Bulks: المجموعات
+Serial can not be empty.: يجب إدخال الكود
+Can not delete model that already has bulk: لا يمكن حذف موديل مضاف عليه أجهزة
+Item already exists.: المنتج موجود بالفعل
+Enter Model Serial: أدخل كود الموديل
+Serial is valid.: الكود صالح
+Check: فحص
+Bulk Brand: صنف المجموعة
+Brand: الصنف
+Bulk Model: موديل المجموعة
+Model: الموديل
+Category: الفئة
+Bulk Date: تاريخ إدخال المجموعه
+Select Date: أختر التاريخ
+Price: السعر
+Select Supplier: أختر المورد
+Add Bulk: أضف المجموعه
+This field is required.: بيانات مطلوبة
+ok: تم
+Model exists: الموديل موجود 
+Model does not exist.: الموديل غير موجود
+Quantity must be greater then zero.: الكميه يجب ان تكون اكبر من الصفر
+Edit Item: تعديل المنتج
+Item Serial: كود المنتج
+Cuurent Status: الحالة الأن
+Change Color: تغيير اللون
+Select Color: أختر اللون
+Has Warranty: يوجد ضمان
+Yes: نعم
+No: لا
+Enter notes for this items: أدخل ملاحظات لهذا المنتج
+Model Serial: كود الموديل
+Item Notes: ملاحظات 
+Pending Info: فى إنتظار المعلومات
+Warranty: ضمان
+Warranty - Replaced: مستبدل من الضمان
+In Stock: فى المخزن
+Sold: مباع
+Save Changes: حفظ التغييرات
+Close: غلق
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+
+
+##--------------------------------------------------------------------------------------------------------------------
+
+##Warranties
+Warranty List: القائمه
+Warranties: وكلاء ضمان
+Warranty Name: اسم وكيل الضمان
+Action: الإجراء
+There is no Warranties.:  لا يوجد وكلاء ضمان
+Add new Warranty: إضافة وكيل ضمان جديد
+Add Warranty: أضف الضمان
+Name: الاسم
+Edit: تعديل
+View: مشاهدة
+Delete Confirmation: تأكيد الحذف 
+Are you sure you want to delete : هل تريد حذف
+Cancel: إلغاء
+Edit Warranty: تعديل الضمان
+This field is required.: بيانات مطلوبة
+Warranty already exists.: وكيل الضمان موجود بالفعل
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+##--------------------------------------------------------------------------------------------------------------------
+ 
+## Suppliers
+Supplier List: القائمه
+Supplier Name: اسم المورد
+Name: الاسم
+Supplier Address: عنوان المورد
+Address: العنوان
+Supplier Phone: رقم هاتف المورد
+Phone: رقم الهاتف
+Supplier Email: البريد الإلكترونى للمورد
+Email: البريد الإلكترونى
+Action: الإجراء
+Edit: تعديل
+Delete: حذف
+Add new Supplier: إضافة مورد جديد
+Supplier Governorate: محاظة المورد
+Select Governorate: أختر المحافظة
+Delete Confirmation: تأكيد الحذف
+Are you sure you want to delete : هل تريد حذف
+Cancel: إلغاء
+Edit Supplier : تعديل المورد
+This field is required.: بيانات مطلوبة
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+##--------------------------------------------------------------------------------------------------------------------
+
+##Category
+Category Name: أسم الفئة
+Name: الاسم
+Add New Category: أضف فئة جديدة
+Action: الإجراء
+Edit: تعديل
+Delete: حذف
+Add Category: أضف الفئة
+Delete Confirmation: تأكيد الحذف
+Are you sure you want to delete : هل تريد حذف
+Cancel: إلغاء
+Edit Categoty : تعديل الفئة
+This field is required.: بيانات مطلوبة
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+##--------------------------------------------------------------------------------------------------------------------
+
+##Model
+Enter Model Serial: أدخل كود الموديل
+Serial can not be empty.: يجب إدخال الكود
+Check: فحص
+Serial is valid.: الكود صالح
+Model already exist.: الموديل موجود بالفعل
+Serial: الكود
+Brand: الصنف
+Brand Name:	اسم الصنف
+Model:	الموديل
+Category:	الفئه
+Specifications:	المواصفات
+Show Specifications: مشاهدة المواصفات
+Action: الإجراء
+Model List: القائمه
+Add New Model: أضف موديل جديد
+Edit: تعديل
+Delete: حذف
+Delete Confirmation: تأكيد الحذف
+Are you sure you want to delete : هل تريد حذف
+Cancel: إلغاء
+Edit Model : تعديل الموديل
+This field is required.: بيانات مطلوبة
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+##--------------------------------------------------------------------------------------------------------------------
+
+##ٍReport
+Reports: التقارير
+Status: الحاله
+All status: كل الحالات
+All Category: كل الفئات
+Pending Info: فى إنتظار المعلومات
+Warranty: ضمان
+Warranty - Replaced: مستبدل من الضمان
+In Stock: فى المخزن
+Sold: مباع
+Category: الفئه
+Models: الموديلات
+View Report: مشاهدة التقرير
+Model Serial: كود الموديل
+Model Name: اسم الموديل
+Category: الفئة
+Total: الإجمالى
+Please select model.: من فضلك أختر الموديل
+There is no report to display.: لا يوجد تقارير للعرض
+Please select period.: من فضلك أختر الفترة
+From Date: من تاريخ
+From: من
+To Date: إلى تاريخ
+To: إلى
+Today: اليوم
+This Week: الأسبوع الحالى
+Last Week: الأسبوع السابق
+This Month: الشهر الحالى
+Last Month: الشهر السابق
+This Year: السنة الحالية
+Last Year: السنة السابقة
+Select period : حدد الفترة
+Period: الفترة
+Sum: المجموع
+Price: السعر
+L.E.: جنيه
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+Stock: مخزونات
+Amount: المبالغ 
+Sales: مبيعات
+Filter By: بحث عن
+Please select period.: من فضلك حدد الفترة
+Payment Method: طريقة الدفع
+Total Remaining: إجمالى المتبقى
+Total Due: إجمالى المطلوب
+Subtotal: الإجمالى قبل الخصم
+Total Discount: إجمالى الخصم
+Total Paid: إجمالى المدفوع
+Prepaid: الدفع الكاشً
+Postpaid: الدفع الآجل
+
+
+##--------------------------------------------------------------------------------------------------------------------
+
+##Sales
+All Sales: كل المبيعات
+Prepaid: الكاش
+Postpaid: الآجل
+Discounts: الخصومات
+sales: المبيعات
+Bill Number: رقم الفاتورة
+Customer Name: اسم العميل
+Total Price: الإجمالى بعد الخصم
+Date: التاريخ
+Paid Amount: المبلغ المدفوع
+Subtotal Price: إجمالى السعر قبل الخصم
+Discount: الخصم
+Action: الإجراء
+View Bill: مشاهدة الفاتورة
+Add New Sale: عملية بيع جديدة
+Refund: إعادة المبلغ
+New Payment: دفعة جديدة
+View Payment: مشاهدة المدفوعات
+Completed: تم
+Payments: 	المدفوعات
+Amount: المبلغ
+Sale#: مبيعات رقم
+Time: الوقت
+Customer: العميل
+Total Due: إجمالى المطلوب
+L.E.: جنية
+Remaining: المبلغ المتبقى
+Amount must be a number: المبلغ يجب ان يكون رقم
+Add New Payment: إضافة دفعة جديدة
+Enter payment amount: أدخل المبلغ المدفوع
+Add: إضافة
+Cancel: إلغاء
+Amount must be greater than zero: المبلغ يجب أن يكون أكبر من الصفر
+Amount can not be greater than the remaining value: المبلغ لا يجب أن يكون أكبر من القيمة المطلوبة
+Are you sure that would pay?: هل أنت متأكد أن العميل سوف يقوم بدفع؟ 
+Confirm Payment: تأكيد الدفع
+##Payment of "1000" L.E. is successfully added to bill: الدفعة بقيمة تم إضافتها للفاتورة رقم 
+##Are you sure that you want to refund sale ?: هل تريد فعلاً إعادة المبلغ للمبيعات رقم
+Sale has been refunded: تم إعادة المبلغ للمبيعات رقم 
+##Discount for Sale # has been confirmed : تم تأكيد الخصم للمبيعات رقم
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+##--------------------------------------------------------------------------------------------------------------------
+
+##Customers
+Customer list: قائمة العملاء
+Customers: عملاء
+Phone Number : رقم الهاتف
+First Name: الاسم الأول
+Last Name: الأسم الأخير
+Address: العنوان
+Notes : الملاحظات
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
+
+##--------------------------------------------------------------------------------------------------------------------
+
+##  Items
+Item List: قائمة المنتجات
+Item Serial: كود المنتج
+Brand Name: اسم الصنف
+Model: الموديل
+Category: الفئة
+Price L.E.: السعر بالجنية
+Status: الحالة
+Add date: تاريخ الإدخال
+Action: الإجراء
+Edit: تعديل
+Delete: حذف
+Pending Info: فى إنتظار المعلومات
+Warranty: ضمان
+Warranty - Replaced: مستبدل من الضمان
+In Stock: فى المخزن
+Sold: مباع
+Edit Item: تعديل المنتج
+Check: فحص
+Serial can not be empty.: يجب إدخال الكود
+Item Serial: كود المنتج
+Cuurent Status: الحالة الأن
+Change Color: تغيير اللون
+Select Color: أختر اللون
+Has Warranty: يوجد وكيل ضمان
+Yes: نعم
+No: لا
+Enter notes for this items: أدخل ملاحظات لهذا المنتج
+Item already exists.: المنتج موجود بالفعل
+Serial is valid.: الكود صالح
+Model Serial: كود الموديل
+Item Notes: ملاحظات 
+Pending Info: فى إنتظار المعلومات
+Warranty: ضمان
+Warranty - Replaced: مستبدل من الضمان
+In Stock: فى المخزن
+Sold: مباع
+Save Changes: حفظ التغييرات
+Close: غلق
+Loading: تحميل
+Next: الصفحة التالية
+Last: الصفحة الأخيرة
+First: الصفحة الأولى
+Previuos: الصفحة السابقة
