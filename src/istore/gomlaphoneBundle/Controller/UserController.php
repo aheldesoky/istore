@@ -8,11 +8,11 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
-use istore\gomlaphoneBundle\Entity\Supplier;
+use istore\gomlaphoneBundle\Entity\User;
 use Doctrine\DBAL\DBALException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-class SupplierController extends Controller //implements AuthenticatedController
+class UserController extends Controller //implements AuthenticatedController
 {
     public function __construct() 
     {
@@ -32,28 +32,29 @@ class SupplierController extends Controller //implements AuthenticatedController
         
         $user = $this->getUser();
         
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        if(!in_array('ROLE_SUPER_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
         }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('COUNT(s) AS total_suppliers')
-            ->from('istoregomlaphoneBundle:Supplier', 's')
-            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.supplier_store_id=st.id')
+            ->select('COUNT(u)-1 AS total_users')
+            ->from('FOSUserBundle:User', 'u')
+            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'u.store_id=st.id')
             ->where('st.id = ?1')
             ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , g')
-            ->from('istoregomlaphoneBundle:Supplier', 's')
-            ->join('istoregomlaphoneBundle:Governorate', 'g', 'WITH', 's.supplier_governorate_id=g.id')
-            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.supplier_store_id=st.id')
+            ->select('u')
+            ->from('FOSUserBundle:User', 'u')
+            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'u.store_id=st.id')
             ->where('st.id = ?1')
+            ->andWhere('u.id <> ?2')
             ->setParameter(1, $user->getStoreId())
+            ->setParameter(2, $user->getId())
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -68,13 +69,13 @@ class SupplierController extends Controller //implements AuthenticatedController
         }
         */
         
-        return $this->render('istoregomlaphoneBundle:Supplier:index.html.twig', array(
-            'suppliers'      => $paginator,
-            'total_suppliers'=> $count['total_suppliers'],
-            'total_pages'     => ceil($count['total_suppliers']/10),
+        return $this->render('istoregomlaphoneBundle:User:index.html.twig', array(
+            'users'      => $paginator,
+            'total_users'=> $count['total_users'],
+            'total_pages'     => ceil($count['total_users']/10),
             'current_page'    => $currentPage,
             'action'          => 'index',
-            'controller'      => 'supplier',
+            'controller'      => 'user',
         ));
     }
     

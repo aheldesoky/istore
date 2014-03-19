@@ -30,10 +30,235 @@ class BulkController extends Controller //implements AuthenticatedController
     public function indexAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        $sortType = ($request->query->get('sort') ? $request->query->get('sort') : 'DESC');
+        $sortColumn = ($request->query->get('column') ? $request->query->get('column') : 'id');
+        
+        if($sortType==='unsorted') $sortType='DESC';
+        
+        switch ($sortColumn){
+            case 'id': $column = 'b.id'; break;
+            case 'serial': $column = 'm.model_serial'; break;
+            case 'brand': $column = 'm.model_brand'; break;
+            case 'model': $column = 'm.model_model'; break;
+            case 'category': $column = 'c.category_name'; break;
+            case 'price': $column = 'b.bulk_price'; break;
+            case 'quantity': $column = 'b.bulk_quantity'; break;
+            case 'supplier': $column = 's.supplier_name'; break;
+            case 'date': $column = 'b.bulk_date'; break;
+        }
+        //echo $sortColumn.' by '.$sortType;die;
+        
+        
+        $suppliers = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s')
+            ->from('istoregomlaphoneBundle:Supplier', 's')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.supplier_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->getQuery()
+            ->getResult();
+        
+        $categories = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('c')
+            ->from('istoregomlaphoneBundle:Category', 'c')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.category_store_id=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->getQuery()
+            ->getResult();
+        
+        $models = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('m')
+            ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->orderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getResult();
+        
+        if ($request->getMethod() == 'POST') {
+            //var_dump($request->request);die;
+            
+            //Date Range filter
+            $dateFilter = null;
+            $rangeDate = $request->request->get('filterRange');
+            if ($rangeDate === 'today') {
+                $today = new \DateTime;
+                $today->setTime(0, 0);
+                //var_dump($today);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$today->format("Y-m-d H:i:s").'\'';
+
+            } elseif ($rangeDate === 'this_week') {
+                $first_day_this_week = new \DateTime(date('Y-m-d H:i:s', strtotime('saturday last week')));
+                $first_day_this_week->setTime(0, 0);
+                //var_dump($first_day_this_week);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_this_week->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'last_week') {
+                $first_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 saturday last week')));
+                $first_day_last_week->setTime(0, 0);
+                //var_dump($first_day_last_week);die;
+
+                $last_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 friday this week')));
+                $last_day_last_week->setTime(0, 0);
+                //var_dump($last_day_last_week);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_last_week->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_week->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'this_month') {
+                $first_day_this_month = new \DateTime(date('Y-m-d H:i:s', strtotime('first day of this month')));
+                $first_day_this_month->setTime(0, 0);
+                //var_dump($first_day_this_month);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_this_month->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'last_month') {
+                $first_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('first day of last month')));
+                $first_day_last_month->setTime(0, 0);
+                //var_dump($last_month);die;
+
+                $last_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('last day of last month')));
+                $last_day_last_month->setTime(0, 0);
+                //var_dump($last_day_last_month);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_last_month->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_month->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'this_year') {
+                $first_day_this_year = new \DateTime(date('Y-m-d H:i:s', strtotime('1/1 this year')));
+                $first_day_this_year->setTime(0, 0);
+                //var_dump($first_day_this_year);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_this_year->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'last_year') {
+                $first_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('1/1 last year')));
+                $first_day_last_year->setTime(0, 0);
+                //var_dump($first_day_last_year);die;
+
+                $last_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('12/31 last year')));
+                $last_day_last_year->setTime(0, 0);
+                //var_dump($last_day_last_year);die;
+
+                $dateFilter = 'b.bulk_date >= \''.$first_day_last_year->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_year->format('Y-m-d H-i-s').'\'';
+
+            } elseif ($rangeDate === 'range') {
+                //From Date filter
+                $fromDate = $request->request->get('filterFromDate');
+                if($fromDate){
+                    $dateFilter = 'b.bulk_date >= \''.$fromDate.'\'';
+                }
+
+                //To Date filter
+                $toDate = $request->request->get('filterToDate');
+                if($toDate){
+                    $dateFilter .= ' AND b.bulk_date <= \''.$toDate.'\'';
+                }
+            }
+            
+            //echo $dateFilter;die;
+            $categoryFilter = $request->request->get('filterCategory');
+            $supplierFilter = $request->request->get('filterSupplier');
+            $serialFilter = $request->request->get('filterSerial');
+            $modelFilter = $request->request->get('model');
+            
+            $filter['category'] = $categoryFilter;
+            $filter['supplier'] = $supplierFilter;
+            $filter['serial'] = $serialFilter;
+            $filter['model'] = $modelFilter;
+            $filter['range'] = $rangeDate;
+            if($rangeDate === 'range'){
+                $filter['fromDate'] = $fromDate;
+                $filter['toDate'] = $toDate;
+            }
+            
+            //var_dump($filter);die;
+            $countQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('COUNT(b.id) AS total_bulks')
+                ->from('istoregomlaphoneBundle:Bulk', 'b')
+                ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+                ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 'b.bulk_supplier=s.id')
+                ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                ->where('st.id=?1')
+                ->setParameter(1, $user->getStoreId());
+            
+            if($dateFilter)
+                $countQuery->andWhere($dateFilter);
+            
+            if($categoryFilter)
+                $countQuery->andWhere('c.id=?2')->setParameter(2, $categoryFilter);
+            
+            if($supplierFilter)
+                $countQuery->andWhere('s.id=?3')->setParameter(3, $supplierFilter);
+            
+            if($serialFilter)
+                $countQuery->andWhere('m.model_serial=?4')->setParameter(4, $serialFilter);
+            
+            if($modelFilter)
+                $countQuery->andWhere('m.id IN (:models)')->setParameter('models', $modelFilter);
+                
+            $count = $countQuery->getQuery()->getSingleResult();
+            
+            $paginatorQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('b , m , c , s')
+                ->from('istoregomlaphoneBundle:Bulk', 'b')
+                ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+                ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 'b.bulk_supplier=s.id')
+                ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                ->where('st.id=?1')
+                ->setParameter(1, $user->getStoreId());
+            
+            if($dateFilter)
+                $paginatorQuery->andWhere($dateFilter);
+            
+            if($categoryFilter)
+                $paginatorQuery->andWhere('c.id=?2')->setParameter(2, $categoryFilter);
+            
+            if($supplierFilter)
+                $paginatorQuery->andWhere('s.id=?3')->setParameter(3, $supplierFilter);
+            
+            if($serialFilter)
+                $paginatorQuery->andWhere('m.model_serial=?4')->setParameter(4, $serialFilter);
+            
+            if($modelFilter)
+                $paginatorQuery->andWhere('m.id IN (:models)')->setParameter('models', $modelFilter);
+                
+                
+            $paginator = $paginatorQuery->orderBy($column , $sortType)
+                ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+                ->setMaxResults(10)
+                ->getQuery()
+                ->getScalarResult();
+    //var_dump($paginator);die;
+        
+            return $this->render('istoregomlaphoneBundle:Bulk:index.html.twig', array(
+                'bulks'      => $paginator,
+                'total_bulks'=> $count['total_bulks'],
+                'total_pages'     => ceil($count['total_bulks']/10),
+                'current_page'    => $currentPage,
+                'sort_type'    => $sortType,
+                'sort_column'    => $sortColumn,
+                'suppliers'  => $suppliers,
+                'categories'  => $categories,
+                'models'  => $models,
+                'filter' => $filter,
+                "action" => "index",
+                "controller" => "bulk"
+            ));
+
+        }
         
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(b) AS total_bulks')
@@ -42,7 +267,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
         
@@ -54,8 +279,8 @@ class BulkController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 'b.bulk_supplier=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
-            ->orderBy('b.id', 'ASC')
+            ->setParameter(1, $user->getStoreId())
+            ->orderBy($column , $sortType)
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -72,16 +297,28 @@ class BulkController extends Controller //implements AuthenticatedController
             'total_bulks'=> $count['total_bulks'],
             'total_pages'     => ceil($count['total_bulks']/10),
             'current_page'    => $currentPage,
+            'sort_type'    => $sortType,
+            'sort_column'    => $sortColumn,
+            'suppliers'  => $suppliers,
+            'categories'  => $categories,
+            'models'  => $models,
             "action" => "index",
             "controller" => "bulk"
         ));
         
     }
     
+    public function filterAction(Request $request){
+        
+    }
+
     public function viewAction(Request $request, Bulk $bulk)
     {
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -94,7 +331,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('b.id=?2')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $bulk->getId())
             ->getQuery()
             ->getSingleResult();
@@ -108,7 +345,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('b.id=?2')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $bulk->getId())
             //->orderBy('i.id', 'DESC')
             ->getQuery()
@@ -131,6 +368,12 @@ class BulkController extends Controller //implements AuthenticatedController
     
     public function addAction(Request $request) 
     {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $suppliers = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s')
             ->from('istoregomlaphoneBundle:Supplier', 's')
@@ -190,6 +433,12 @@ class BulkController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request, Bulk $bulk)
     {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $suppliers = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s')
             ->from('istoregomlaphoneBundle:Supplier', 's')
@@ -249,6 +498,12 @@ class BulkController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Bulk $bulk)
     {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         if (!$bulk) {
             throw $this->createNotFoundException('No bulk found');
         }

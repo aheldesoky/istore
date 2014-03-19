@@ -4,7 +4,7 @@
 	<div class="panel-heading">
 		<h4 class="">
 			{% trans %}Supplier List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_suppliers }}) suppliers</span>
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_suppliers }}) {% trans %}suppliers{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
@@ -14,7 +14,7 @@
                                 <th>{% trans %}Supplier Address{% endtrans %}</th>
                                 <th>{% trans %}Supplier Phone{% endtrans %}</th>
                                 <th>{% trans %}Supplier Email{% endtrans %}</th>
-				<th>Action</th>
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if suppliers|length %}
 		{% for supplier in suppliers %}
@@ -24,8 +24,10 @@
                                 <td>{{ supplier.s_supplier_phone }}</td>
                                 <td>{{ supplier.s_supplier_email }}</td>
 				<td>
-					<a href="/supplier/edit/{{supplier.s_id}}" class="btn btn-primary btn-sm">Edit</a> - 
-                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="supplier:{{supplier.s_id}}:{{ supplier.s_supplier_name }}">{% trans %}Delete{% endtrans %}</a>
+					<a href="/supplier/edit/{{supplier.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="supplier:{{supplier.s_id}}:{{ supplier.s_supplier_name }}">{% trans %}Delete{% endtrans %}</a>
+                                        {% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -40,8 +42,8 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/supplier/add" class="btn btn-success btn-lg">+ Add New Supplier</a>
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<a href="/supplier/add" class="btn btn-success btn-lg">+ {% trans %}Add New Supplier{% endtrans %}</a>
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>

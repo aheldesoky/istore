@@ -29,8 +29,11 @@ class CategoryController extends Controller //implements AuthenticatedController
     public function indexAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -39,7 +42,7 @@ class CategoryController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Category', 'c')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.category_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
     
@@ -48,7 +51,7 @@ class CategoryController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Category', 'c')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.category_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -74,6 +77,13 @@ class CategoryController extends Controller //implements AuthenticatedController
     }
     
     public function addAction(Request $request) {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         if ($request->getMethod() == 'POST') {
             $category = new Category();
             $category->setCategoryName($request->request->get('categoryName'));
@@ -94,6 +104,12 @@ class CategoryController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request, $id)
     {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $category = $this->getDoctrine()
             ->getRepository('istoregomlaphoneBundle:Category')
             ->find($id);
@@ -117,6 +133,13 @@ class CategoryController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Category $category)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         //var_dump($category);die;
         try{
             if (!$category) {
@@ -134,6 +157,13 @@ class CategoryController extends Controller //implements AuthenticatedController
     
     public function findAction(Request $request)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         //echo $request->request->get('categoryName');die;
         $category = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
@@ -150,6 +180,13 @@ class CategoryController extends Controller //implements AuthenticatedController
     
     public function validateAction(Request $request)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         //var_dump($request);die;
         $categoryNew['categoryId'] = $request->request->get('categoryId');
         $categoryNew['categoryName'] = $request->request->get('categoryName');

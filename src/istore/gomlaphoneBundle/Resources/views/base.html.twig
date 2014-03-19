@@ -20,7 +20,7 @@
                 <script src="/bundles/istoregomlaphone/js/jquery.fileDownload.js"></script>
                 <script src="/bundles/istoregomlaphone/js/validation-messages.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap-datepicker.js"></script>
-                <script src="/bundles/istoregomlaphone/js/bootstrap.min.js"></script>
+                <script src="/bundles/istoregomlaphone/js/bootstrap.rtl.min.js"></script>
                 <script src="/bundles/istoregomlaphone/js/bootstrap-paginator.min.js"></script>
                 <script src="/bundles/istoregomlaphone/js/tooltipsy.min.js"></script>
                 <script src="/bundles/istoregomlaphone/js/json2.min.js"></script>
@@ -28,8 +28,8 @@
                 <script src="/bundles/istoregomlaphone/js/main.js"></script>
             {% endblock %}
             {% block stylesheets %}
-                <link href="/bundles/istoregomlaphone/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
-                <link href="/bundles/istoregomlaphone/css/bootstrap-theme.min.css" media="screen" rel="stylesheet" type="text/css">
+                <link href="/bundles/istoregomlaphone/css/bootstrap.rtl.min.css" media="screen" rel="stylesheet" type="text/css">
+                <link href="/bundles/istoregomlaphone/css/bootstrap-theme.rtl.min.css" media="screen" rel="stylesheet" type="text/css">
                 <link rel="stylesheet" type="text/css" href="/bundles/istoregomlaphone/css/jquery.flipcountdown.css" />
                 <link rel="stylesheet" href="/bundles/istoregomlaphone/css/datepicker.css">
                 <link rel="stylesheet" href="/bundles/istoregomlaphone/css/jquery-ui.css">
@@ -56,20 +56,22 @@
                                 <li class="home"><a href="/">{% trans %}Home{% endtrans %}</a></li>
                                 <li class="sale"><a href="/sale/prepaid">{% trans %}Sales{% endtrans %}</a></li>
                                 <li class="customer"><a href="/customer">{% trans %}Customers{% endtrans %}</a></li>
-                                {% set admin = 'ROLE_ADMIN' %}
-                                {% if admin in app.user.roles %}
-                                        <li class="item"><a href="/item">{% trans %}Items{% endtrans %}</a></li>
+                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        <!--<li class="item"><a href="/item">{% trans %}Items{% endtrans %}</a></li>-->
+                                        <!--<li class="search"><a href="/search">{% trans %}Search{% endtrans %}</a></li>-->
                                         <li class="bulk"><a href="/bulk">{% trans %}Bulks{% endtrans %}</a></li>
                                         <li class="model"><a href="/model">{% trans %}Models{% endtrans %}</a></li>
                                         <li class="category"><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
                                         <li class="supplier"><a href="/supplier">{% trans %}Suppliers{% endtrans %}</a></li>
                                         <li class="warranty"><a href="/warranty">{% trans %}Warranties{% endtrans %}</a></li>
                                         <li class="report"><a href="/report">{% trans %}Reports{% endtrans %}</a></li>
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                         <li class="user"><a href="/user">{% trans %}Users{% endtrans %}</a></li>
+                                        {% endif %}
                                 {% endif %}
                           </ul>
                           <!-- Language button -->
-                            <div class="btn-group lang-btn {% if lang=='ar' %}left{% else %}right{% endif %}">
+                            <!--<div class="btn-group lang-btn {% if lang=='ar' %}left{% else %}right{% endif %}">
                               <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                                 Language <span class="caret"></span>
                               </button>
@@ -77,7 +79,7 @@
                                 <li><a href="?lang=ar">Arabic</a></li>
                                 <li><a href="?lang=en">English</a></li>
                               </ul>
-                            </div>
+                            </div>-->
                             <div class="">
                                 {% if app.user %}
                                     <ul class="nav navbar-nav navbar-right user-nav">

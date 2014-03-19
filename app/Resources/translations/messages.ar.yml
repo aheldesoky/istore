@@ -18,12 +18,14 @@ Home: الرئيسية
 Sales: المبيعات
 Customers: العملاء
 Items: المنتج
+Search: البحث
 Bulks: مجموعة المنتجات
 Models: الموديلات
 Categories: الفئات
-Supppliers: الموردين
+Suppliers: الموردين
 Warranties: وكلاء الضمان
 Reports: التقارير
+Users: المستخدمين
 Language: اللغة
 Sales page: صفحة المبيعات
 Item Serial: كود المنتج
@@ -102,7 +104,7 @@ Friday: الجمعة
 
 
 ##Bill
-Invoice: الفاتورة
+INVOICE: فاتورة
 Invoice#: رقم الفاتورة
 Phone: رقم الهاتف
 44 el arb3een st , suez:  44شارع الأربعين , السويس
@@ -119,7 +121,7 @@ Discount: الخصم
 Total Due : المطلوب بعد الخصم 
 Total : إجمالى المطلوب
 Terms: الشروط
-Print: طباعه
+Print: طباعة
 Back to Home: الرجوع إلى الصفحة الرئيسيه
 Payments: المدفوعات
 Total Paid: إجمالى المدفوع
@@ -138,9 +140,10 @@ Price L.E.: السعر بالجنيه
 Quantity: الكميه
 Supplier: المورد
 Date: التاريخ
-Action: الإجراء
+Actions: الإجراء
 Delete: حذف
 Edit: تعديل
+Update Info: تحديث البيانات
 View: مشاهدة
 Add New Bulk: إضافة مجموعه جديدة
 Bulk list: القائمه
@@ -159,6 +162,7 @@ Category: الفئة
 Bulk Date: تاريخ إدخال المجموعه
 Select Date: أختر التاريخ
 Price: السعر
+Add Date: تاريخ الإضافة
 Select Supplier: أختر المورد
 Add Bulk: أضف المجموعه
 This field is required.: بيانات مطلوبة
@@ -184,6 +188,7 @@ In Stock: فى المخزن
 Sold: مباع
 Save Changes: حفظ التغييرات
 Close: غلق
+Return to all data: العودة إلى كل البيانات
 Loading: تحميل
 Next: الصفحة التالية
 Last: الصفحة الأخيرة
@@ -194,12 +199,12 @@ Previuos: الصفحة السابقة
 ##--------------------------------------------------------------------------------------------------------------------
 
 ##Warranties
-Warranty List: القائمه
-Warranties: وكلاء ضمان
+Warranty List: قائمة وكلاء الضمان
+warranties: كل وكلاء الضمان 
 Warranty Name: اسم وكيل الضمان
 Action: الإجراء
 There is no Warranties.:  لا يوجد وكلاء ضمان
-Add new Warranty: إضافة وكيل ضمان جديد
+Add New Warranty: إضافة وكيل ضمان جديد
 Add Warranty: أضف الضمان
 Name: الاسم
 Edit: تعديل
@@ -218,7 +223,8 @@ Previuos: الصفحة السابقة
 ##--------------------------------------------------------------------------------------------------------------------
  
 ## Suppliers
-Supplier List: القائمه
+Supplier List: قائمة الموردين
+suppliers: كل الموردين
 Supplier Name: اسم المورد
 Name: الاسم
 Supplier Address: عنوان المورد
@@ -230,9 +236,10 @@ Email: البريد الإلكترونى
 Action: الإجراء
 Edit: تعديل
 Delete: حذف
-Add new Supplier: إضافة مورد جديد
-Supplier Governorate: محاظة المورد
-Select Governorate: أختر المحافظة
+Add New Supplier: إضافة مورد جديد
+Add Supplier: أضف المورد
+Supplier Governorate: محافظة المورد
+Select governorate: أختر المحافظة
 Delete Confirmation: تأكيد الحذف
 Are you sure you want to delete : هل تريد حذف
 Cancel: إلغاء
@@ -247,6 +254,8 @@ Previuos: الصفحة السابقة
 
 ##Category
 Category Name: أسم الفئة
+Category List: قائمة الفئات
+categories: كل الفئات
 Name: الاسم
 Add New Category: أضف فئة جديدة
 Action: الإجراء
@@ -256,7 +265,7 @@ Add Category: أضف الفئة
 Delete Confirmation: تأكيد الحذف
 Are you sure you want to delete : هل تريد حذف
 Cancel: إلغاء
-Edit Categoty : تعديل الفئة
+Edit Category : تعديل الفئة
 This field is required.: بيانات مطلوبة
 Loading: تحميل
 Next: الصفحة التالية
@@ -266,6 +275,8 @@ Previuos: الصفحة السابقة
 ##--------------------------------------------------------------------------------------------------------------------
 
 ##Model
+Model List: قائمة الموديلات
+models: كل الموديلات
 Enter Model Serial: أدخل كود الموديل
 Serial can not be empty.: يجب إدخال الكود
 Check: فحص
@@ -278,9 +289,12 @@ Model:	الموديل
 Category:	الفئه
 Specifications:	المواصفات
 Show Specifications: مشاهدة المواصفات
-Action: الإجراء
-Model List: القائمه
+Actions: الإجراء
 Add New Model: أضف موديل جديد
+Add Model: أضف الموديل
+Item has serial: القطعة لها كود
+Select category: اختر الفئة
+Enter specifications: ادخل مواصفات الموديل
 Edit: تعديل
 Delete: حذف
 Delete Confirmation: تأكيد الحذف
@@ -297,9 +311,10 @@ Previuos: الصفحة السابقة
 
 ##ٍReport
 Reports: التقارير
+Report Type: نوع التقرير
 Status: الحاله
 All status: كل الحالات
-All Category: كل الفئات
+All categories: كل الفئات
 Pending Info: فى إنتظار المعلومات
 Warranty: ضمان
 Warranty - Replaced: مستبدل من الضمان
@@ -307,7 +322,7 @@ In Stock: فى المخزن
 Sold: مباع
 Category: الفئه
 Models: الموديلات
-View Report: مشاهدة التقرير
+View Report: عرض التقرير
 Model Serial: كود الموديل
 Model Name: اسم الموديل
 Category: الفئة
@@ -326,6 +341,7 @@ This Month: الشهر الحالى
 Last Month: الشهر السابق
 This Year: السنة الحالية
 Last Year: السنة السابقة
+Custom Range: فترة مخصصة
 Select period : حدد الفترة
 Period: الفترة
 Sum: المجموع
@@ -336,7 +352,7 @@ Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
 Previuos: الصفحة السابقة
-Stock: مخزونات
+Stock: مخزن
 Amount: المبالغ 
 Sales: مبيعات
 Filter By: بحث عن
@@ -357,6 +373,9 @@ Postpaid: الدفع الآجل
 All Sales: كل المبيعات
 Prepaid: الكاش
 Postpaid: الآجل
+Postpaid Sales: مبيعات الآجل
+Prepaid Sales: مبيعات الكاش
+Sales Discounts: خصومات المبيعات
 Discounts: الخصومات
 sales: المبيعات
 Bill Number: رقم الفاتورة
@@ -367,11 +386,11 @@ Paid Amount: المبلغ المدفوع
 Subtotal Price: إجمالى السعر قبل الخصم
 Discount: الخصم
 Action: الإجراء
-View Bill: مشاهدة الفاتورة
+View Bill: عرض الفاتورة
 Add New Sale: عملية بيع جديدة
 Refund: إعادة المبلغ
 New Payment: دفعة جديدة
-View Payment: مشاهدة المدفوعات
+View Payments: المبالغ المدفوعة
 Completed: تم
 Payments: 	المدفوعات
 Amount: المبلغ

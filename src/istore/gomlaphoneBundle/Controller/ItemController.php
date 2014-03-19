@@ -35,8 +35,11 @@ class ItemController extends Controller //implements AuthenticatedController
     public function indexAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -48,7 +51,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->orderBy('i.id', 'ASC')
             ->getQuery()
             ->getSingleResult();
@@ -61,7 +64,8 @@ class ItemController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId()
+                    )
             //->orderBy('i.id', 'DESC')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
@@ -113,6 +117,13 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $warranties = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('w')
             ->from('istoregomlaphoneBundle:Warranty', 'w')
@@ -190,6 +201,13 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Item $item)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
 //var_dump($request);die;
         if (!$item) {
             throw $this->createNotFoundException('No item found');
@@ -223,6 +241,7 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function findAction(Request $request)
     {
+        $user = $this->getUser();
         //echo $request->request->get('serial');die;
         $item = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('i')
@@ -232,7 +251,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('i.item_serial = ?2')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2 , $request->request->get('serial'))
             ->getQuery()
             ->getScalarResult();
@@ -246,6 +265,8 @@ class ItemController extends Controller //implements AuthenticatedController
     
     public function getAction(Request $request)
     {
+        
+        $user = $this->getUser();
         //echo $request->request->get('serial');die;
         $items = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('i , b , m , c')
@@ -258,7 +279,7 @@ class ItemController extends Controller //implements AuthenticatedController
             ->andWhere('i.item_serial = ?2')
             ->andWhere('i.item_status = ?3')
             ->orWhere('m.model_serial = ?2 AND m.model_item_has_serial = 0 AND i.item_status = ?3')
-            ->setParameter(1 , 1)
+            ->setParameter(1 , $user->getStoreId())
             ->setParameter(2 , $request->request->get('serial'))
             ->setParameter(3 , 'in_stock')
             ->getQuery()

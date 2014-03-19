@@ -1,23 +1,31 @@
 {% extends 'istoregomlaphoneBundle::layout.html.twig' %}
 {% block body %}
+<!--
+<button type="button" class="btn btn-danger toggle-search" data-toggle="button">Search</button>
+<div id="demo" class="collapse">Content</div>
+-->
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
 			{% trans %}Bulk List{% endtrans %}
+                        {% if filter|length %}
+                        <a href="/bulk" class="btn btn-warning btn-sm col-lg-offset-8">{% trans %}Return to all data{% endtrans %}</a>
+                        {% endif %}
+                        <a href="#" class="btn btn-warning btn-sm btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-9{% endif %}">{% trans %}Search{% endtrans %}</a>
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_bulks }}) {% trans %}bulks{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
-		<table class="table table-hover table-view">
+		<table class="table table-striped table-view">
 			<tr>
-				<th>{% trans %}Serial{% endtrans %}</th>
-				<th>{% trans %}Brand Name{% endtrans %}</th>
-				<th>{% trans %}Model{% endtrans %}</th>
-				<th>{% trans %}Category{% endtrans %}</th>
-				<th>{% trans %}Price L.E.{% endtrans %}</th>
-				<th>{% trans %}Quantity{% endtrans %}</th>
-				<th>{% trans %}Supplier{% endtrans %}</th>
-				<th>{% trans %}Date{% endtrans %}</th>
+				<th id="serial" class="{% if sort_column=='serial' and sort_type=='asc' %}sortAsc{% elseif sort_column=='serial' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Serial{% endtrans %}</th>
+				<th id="brand" class="{% if sort_column=='brand' and sort_type=='asc' %}sortAsc{% elseif sort_column=='brand' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Brand Name{% endtrans %}</th>
+				<th id="model" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model{% endtrans %}</th>
+				<th id="category" class="{% if sort_column=='category' and sort_type=='asc' %}sortAsc{% elseif sort_column=='category' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Category{% endtrans %}</th>
+				<th id="price" class="{% if sort_column=='price' and sort_type=='asc' %}sortAsc{% elseif sort_column=='price' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Price L.E.{% endtrans %}</th>
+				<th id="quantity" class="{% if sort_column=='quantity' and sort_type=='asc' %}sortAsc{% elseif sort_column=='quantity' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Quantity{% endtrans %}</th>
+				<th id="supplier" class="{% if sort_column=='supplier' and sort_type=='asc' %}sortAsc{% elseif sort_column=='supplier' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Supplier{% endtrans %}</th>
+				<th id="date" class="{% if sort_column=='date' and sort_type=='asc' %}sortAsc{% elseif sort_column=='date' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Add Date{% endtrans %}</th>
 				<th>{% trans %}Action{% endtrans %}</th>
 			</tr>
                 {% if bulks|length %}
@@ -33,8 +41,10 @@
                                 <td>{{ bulk.b_bulk_date.format('Y-m-d') }}</td>
 				<td>
                                         <a href="/bulk/view/{{bulk.b_id}}" class="btn btn-info btn-sm">{% trans %}View{% endtrans %}</a> - 
-					<a href="/bulk/edit/{{bulk.b_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> - 
-                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="bulk:{{bulk.b_id}}:{{ bulk.m_model_brand }} {{ bulk.m_model_model }}">{% trans %}Delete{% endtrans %}</a>
+					<a href="/bulk/edit/{{bulk.b_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="bulk:{{bulk.b_id}}:{{ bulk.m_model_brand }} {{ bulk.m_model_model }}">{% trans %}Delete{% endtrans %}</a>
+                                        {% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -50,7 +60,7 @@
 	</div>
 	<div class="panel-footer">
 		<a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a>
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>
@@ -73,6 +83,9 @@
         </div>
     </div>
 </div>
+
+<!-- Filtration modal -->
+{% include 'istoregomlaphoneBundle:Bulk:search.html.twig' %}
 <input type="hidden" value="{{ action }}" id="action">
 <input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

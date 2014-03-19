@@ -84,8 +84,11 @@ class SaleController extends Controller //implements AuthenticatedController
     public function discountAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         

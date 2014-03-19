@@ -17,31 +17,31 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="modelSerial" class="col-sm-4 control-label">Model Serial :</label>
+                                <label for="modelSerial" class="col-sm-4 control-label">{% trans %}Model Serial{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelSerial }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelBrand" class="col-sm-4 control-label">Brand :</label>
+                                <label for="modelBrand" class="col-sm-4 control-label">{% trans %}Brand{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelBrand }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelModel" class="col-sm-4 control-label">Model :</label>
+                                <label for="modelModel" class="col-sm-4 control-label">{% trans %}Model{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="modelModel" class="col-sm-12 control-label">{{ bulk.bulkModel.modelModel }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelCategory" class="col-sm-4 control-label">Category :</label>
+                                <label for="modelCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="modelCategory" class="col-sm-12 control-label">{{ bulk.bulkModel.modelCategory.categoryName }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="bulkDate" class="col-sm-4 control-label">Bulk Date :</label>
+                                <label for="bulkDate" class="col-sm-4 control-label">{% trans %}Bulk Date{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkDate.format('Y-m-d') }}</label>
                                 </div>
@@ -49,19 +49,19 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="bulkSupplier" class="col-sm-4 control-label">Supplier :</label>
+                                <label for="bulkSupplier" class="col-sm-4 control-label">{% trans %}Supplier{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkSupplier.supplierName }}</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="modelPrice" class="col-sm-4 control-label">Item Price :</label>
+                                <label for="modelPrice" class="col-sm-4 control-label">{% trans %}Item Price{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="modelCategory" class="col-sm-12 control-label">{{ bulk.bulkPrice }} L.E.</label>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label for="bulkQuantity" class="col-sm-4 control-label">Quantity :</label>
+                                <label for="bulkQuantity" class="col-sm-4 control-label">{% trans %}Quantity{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label id="bulkQuantity" class="col-sm-12 control-label">{{ bulk.bulkQuantity }}</label>
                                 </div>
@@ -82,7 +82,7 @@
 				<th>{% trans %}Price L.E.{% endtrans %}</th>
 				<th>{% trans %}Status{% endtrans %}</th>
                                 <th>{% trans %}Add Date{% endtrans %}</th>
-				<th>{% trans %}Action{% endtrans %}</th>
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if items|length %}
 		{% for item in items %}
@@ -118,17 +118,17 @@
 				<td>{{ item.i_item_price }}</td>
 				<td>
                                     {% if item.i_item_status=='pending_info' %}
-                                    <span class="label label-primary">Pending Info</span>
+                                    <span class="label label-primary">{% trans %}Pending Info{% endtrans %}</span>
                                     {% elseif item.i_item_status=='in_stock' %}
-                                    <span class="label label-success">In Stock</span>
+                                    <span class="label label-success">{% trans %}In Stock{% endtrans %}</span>
                                     {% elseif item.i_item_status=='pending_discount' %}
-                                    <span class="label label-info">Pending Discount</span>
+                                    <span class="label label-info">{% trans %}Pending Discount{% endtrans %}</span>
                                     {% elseif item.i_item_status=='sold' %}
-                                    <span class="label label-default">Sold</span>
+                                    <span class="label label-default">{% trans %}Sold{% endtrans %}</span>
                                     {% elseif item.i_item_status=='warranty' %}
-                                    <span class="label label-warning">Warranty</span>
+                                    <span class="label label-warning">{% trans %}Warranty{% endtrans %}</span>
                                     {% elseif item.i_item_status=='warranty_replaced' %}
-                                    <span class="label label-danger">Warranty - Replaced</span>
+                                    <span class="label label-danger">{% trans %}Warranty - Replaced{% endtrans %}</span>
                                     {% endif %}
                                 </td>
                                 <td>{{ item.b_bulk_date.format('Y-m-d') }}</td>
@@ -140,8 +140,10 @@
                                         {% trans %}Edit{% endtrans %}
                                         {% endif %}
                                         <input type="hidden" value="{{ item.i_id }}" id="item-{{ item.i_id }}">
-                                    </button> - 
-                                    <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.m_model_brand }} {{ item.m_model_model }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a>
+                                    </button>
+                                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                     - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.m_model_brand }} {{ item.m_model_model }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a>
+                                    {% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -162,7 +164,7 @@
                 <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Items{% endtrans %}</a>
                 {% endif %}
                 <div id="editModalContainer"></div>
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>
@@ -172,14 +174,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
+                <h4 class="modal-title">{% trans %}Delete Confirmation{% endtrans %}</h4>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete <label id="entityName"></label>?
+                {% trans %}Are you sure you want to delete{% endtrans %} <label id="entityName"></label>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">{% trans %}Delete{% endtrans %}</a>
                 <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>

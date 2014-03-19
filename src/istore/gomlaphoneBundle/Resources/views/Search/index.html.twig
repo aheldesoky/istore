@@ -3,72 +3,75 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Reports{% endtrans %}
+			{% trans %}Search{% endtrans %}
 		</h4>
 	</div>
 	<div class="panel-body">
-                <div id="reportPage">
-                        <div class="report-criteria form-container">
-                                <form class="form-horizontal" action="/report/print" method="post" id="reportForm" target="_blank">
+		<div id="searchPage">
+                        <div class="search-criteria form-container">
+                                <form class="form-horizontal" action="/search" method="post" id="reportForm">
                                         <div class="row">
                                                 <div class="col-md-6">
                                                         <div class="form-group">
-                                                                <label for="reportType" class="col-sm-4 control-label">{% trans %}Report Type{% endtrans %}</label>
+                                                                <label for="searchModule" class="col-sm-4 control-label">{%trans%}Module{%endtrans%}</label>
                                                                 <div class="col-sm-6">
-                                                                        <select class="form-control" id="reportType" name="reportType">
-                                                                                <option value="stock" selected>{% trans %}Stock{% endtrans %}</option>
-                                                                                <option value="sales">{% trans %}Sales{% endtrans %}</option>
+                                                                        <select class="form-control" id="searchModule" name="searchModule">
+                                                                                <option value="item" selected>{%trans%}Item{%endtrans%}</option>
+                                                                                <option value="bulk">{%trans%}Bulk{%endtrans%}</option>
+                                                                                <option value="model">{%trans%}Model{%endtrans%}</option>
+                                                                                <option value="category">{%trans%}Category{%endtrans%}</option>
+                                                                                <option value="supplier">{%trans%}Supplier{%endtrans%}</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
                                                         <div class="form-group report-status">
-                                                                <label for="reportStatus" class="col-sm-4 control-label">{% trans %}Status{% endtrans %}</label>
+                                                                <label for="reportStatus" class="col-sm-4 control-label">Status</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportStatus" name="reportStatus">
-                                                                                <option value="" selected>{% trans %}All status{% endtrans %}</option>
-                                                                                <option value="pending_info">{% trans %}Pending Info{% endtrans %}</option>
-                                                                                <option value="in_stock">{% trans %}In Stock{% endtrans %}</option>
-                                                                                <option value="sold">{% trans %}Sold{% endtrans %}</option>
-                                                                                <option value="warranty">{% trans %}Warranty{% endtrans %}</option>
-                                                                                <option value="warranty_replaced">{% trans %}Warranty - Replaced{% endtrans %}</option>
+                                                                                <option value="" selected>All status</option>
+                                                                                <option value="pending_info">Pending Info</option>
+                                                                                <option value="in_stock">In Stock</option>
+                                                                                <option value="sold">Sold</option>
+                                                                                <option value="warranty">Warranty</option>
+                                                                                <option value="warranty_replaced">Warranty - Replaced</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
                                                         <div class="form-group report-payment hidden">
-                                                                <label for="reportPayment" class="col-sm-4 control-label">{% trans %}Filter By{% endtrans %}</label>
+                                                                <label for="reportPayment" class="col-sm-4 control-label">Filter By</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportPayment" name="reportPayment">
-                                                                                <option value="prepaid" selected>{% trans %}Prepaid{% endtrans %}</option>
-                                                                                <option value="postpaid">{% trans %}Postpaid{% endtrans %}</option>
-                                                                                <option value="amount">{% trans %}Amount{% endtrans %}</option>
+                                                                                <option value="prepaid" selected>Prepaid</option>
+                                                                                <option value="postpaid">Postpaid</option>
+                                                                                <option value="amount">Amount</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
                                                         <div class="form-group report-range hidden">
-                                                                <label for="reportRange" class="col-sm-4 control-label">{% trans %}Period{% endtrans %}</label>
+                                                                <label for="reportRange" class="col-sm-4 control-label">Period</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportRange" name="reportRange" disabled>
-                                                                                <option value="" selected>{% trans %}Select period{% endtrans %}</option>
-                                                                                <option value="today">{% trans %}Today{% endtrans %}</option>
-                                                                                <option value="this_week">{% trans %}This Week{% endtrans %}</option>
-                                                                                <option value="last_week">{% trans %}Last Week{% endtrans %}</option>
-                                                                                <option value="this_month">{% trans %}This Month{% endtrans %}</option>
-                                                                                <option value="last_month">{% trans %}Last Month{% endtrans %}</option>
-                                                                                <option value="this_year">{% trans %}This Year{% endtrans %}</option>
-                                                                                <option value="last_year">{% trans %}Last Year{% endtrans %}</option>
-                                                                                <option value="range">{% trans %}Custom Range{% endtrans %}</option>
+                                                                                <option value="" selected>Select period</option>
+                                                                                <option value="today">Today</option>
+                                                                                <option value="this_week">This Week</option>
+                                                                                <option value="last_week">Last Week</option>
+                                                                                <option value="this_month">This Month</option>
+                                                                                <option value="last_month">Last Month</option>
+                                                                                <option value="this_year">This Year</option>
+                                                                                <option value="last_year">Last Year</option>
+                                                                                <option value="range">Range</option>
                                                                         </select>
                                                                 </div>
                                                                 <label for="reportRange" class="report-range-error control-label"></label>
                                                         </div>
                                                         <div class="form-group report-from-date hidden">
-                                                                <label for="reportFromDate" class="col-sm-4 control-label">{% trans %}From Date{% endtrans %}</label>
+                                                                <label for="reportFromDate" class="col-sm-4 control-label">From Date</label>
                                                                 <div class="col-sm-6">
                                                                         <input type="text" class="form-control" id="reportFromDate" name="reportFromDate" placeholder="{% trans %}From{% endtrans %}" data-date-format="yyyy-mm-dd" disabled>
                                                                 </div>
                                                         </div>
                                                         <div class="form-group report-to-date hidden">
-                                                                <label for="reportToDate" class="col-sm-4 control-label">{% trans %}To Date{% endtrans %}</label>
+                                                                <label for="reportToDate" class="col-sm-4 control-label">To Date</label>
                                                                 <div class="col-sm-6">
                                                                         <input type="text" class="form-control" id="reportToDate" name="reportToDate" placeholder="{% trans %}To{% endtrans %}" data-date-format="yyyy-mm-dd" disabled>
                                                                 </div>
@@ -76,10 +79,10 @@
                                                 </div>
                                                 <div class="col-md-6">
                                                         <div class="form-group">
-                                                                <label for="reportCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %}</label>
+                                                                <label for="reportCategory" class="col-sm-4 control-label">Category</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportCategory" name="reportCategory">
-                                                                                <option value="" selected>{% trans %}All categories{% endtrans %}</option>
+                                                                                <option value="" selected>All categories</option>
                                                                                 {% for category in categories %}
                                                                                 <option value="{{ category.id }}">{{ category.categoryName }}</option>
                                                                                 {% endfor %}
@@ -87,7 +90,7 @@
                                                                 </div>
                                                         </div>
                                                         <div class="form-group">
-                                                                <label for="reportModel" class="col-sm-4 control-label">{% trans %}Models{% endtrans %}</label>
+                                                                <label for="reportModel" class="col-sm-4 control-label">Models</label>
                                                                 <div class="col-sm-6">
                                                                         <div class="multiselect" id="reportModel" name="reportModel">
                                                                                 <label class="checkall">
@@ -109,22 +112,15 @@
                                                 <div class="col-md-12">
                                                         <div class="form-group">
                                                                 <div class="col-sm-12">
-                                                                        <a href="" class="btn btn-primary btn-lg" id="viewReport">{% trans %}View Report{% endtrans %}</a>
+                                                                        <a href="" class="btn btn-primary btn-lg" id="viewReport">View Report</a>
                                                                 </div>
                                                         </div>
                                                 </div>
                                         </div>
                                 </form>
                         </div>
-                        <div class="report-view">
-                                <table class="table table-hover table-view">
-                                        <tr>
-                                                <td colspan="2">{% trans %}There is no report to display.{% endtrans %}</td>
-                                        </tr>
-                                </table>
-                        </div>
                 </div>
-        </div>
+	</div>
 </div>
 <input type="hidden" value="{{ action }}" id="action">
 <input type="hidden" value="{{ controller }}" id="controller">

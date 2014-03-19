@@ -4,18 +4,18 @@
 	<div class="panel-heading">
 		<h4 class="">
 			{% trans %}Model List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_models }}) models</span>
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_models }}) {% trans %}models{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
-		<table class="table table-hover table-view">
+		<table class="table table-striped table-view">
 			<tr>
-				<th>Serial</th>
-				<th>Brand</th>
-				<th>Model</th>
-				<th>Category</th>
-				<th>Specifications</th>
-				<th>Action</th>
+				<th id="serial" class="{% if sort_column=='serial' and sort_type=='asc' %}sortAsc{% elseif sort_column=='serial' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Serial{% endtrans %}</th>
+				<th id="brand" class="{% if sort_column=='brand' and sort_type=='asc' %}sortAsc{% elseif sort_column=='brand' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Brand{% endtrans %}</th>
+				<th id="model" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model{% endtrans %}</th>
+				<th id="category" class="{% if sort_column=='category' and sort_type=='asc' %}sortAsc{% elseif sort_column=='category' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Category{% endtrans %}</th>
+				<th>{% trans %}Specifications{% endtrans %}</th>
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if models|length %}
 		{% for model in models %}
@@ -26,8 +26,10 @@
 				<td>{{ model.c_category_name }}</td>
 				<td><button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ model.m_model_specs }}" data-title="{{ model.m_model_brand }} {{ model.m_model_model }}">Show Specifications</button></td>
 				<td>
-					<a href="/model/edit/{{model.m_id}}" class="btn btn-primary btn-sm">Edit</a> - 
-                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="model:{{model.m_id}}:{{ model.m_model_brand }} {{ model.m_model_model }} #{{ model.m_model_serial }}">{% trans %}Delete{% endtrans %}</a>
+					<a href="/model/edit/{{model.m_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="model:{{model.m_id}}:{{ model.m_model_brand }} {{ model.m_model_model }} #{{ model.m_model_serial }}">{% trans %}Delete{% endtrans %}</a>
+                                        {% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -42,8 +44,8 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/model/add" class="btn btn-success btn-lg">+ Add New Model</a>
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<a href="/model/add" class="btn btn-success btn-lg">+ {% trans %}Add New Model{% endtrans %}</a>
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>

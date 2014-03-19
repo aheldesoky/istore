@@ -29,8 +29,11 @@ class WarrantyController extends Controller //implements AuthenticatedController
     public function indexAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -39,7 +42,7 @@ class WarrantyController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Warranty', 'w')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'w.warranty_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
     
@@ -48,7 +51,7 @@ class WarrantyController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Warranty', 'w')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'w.warranty_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -74,6 +77,13 @@ class WarrantyController extends Controller //implements AuthenticatedController
     }
     
     public function addAction(Request $request) {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         if ($request->getMethod() == 'POST') {
             $warranty = new Warranty();
             $warranty->setWarrantyName($request->request->get('warrantyName'));
@@ -94,6 +104,13 @@ class WarrantyController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request, $id)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $warranty = $this->getDoctrine()
             ->getRepository('istoregomlaphoneBundle:Warranty')
             ->find($id);
@@ -117,6 +134,13 @@ class WarrantyController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Warranty $warranty)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         try{
             if (!$warranty) {
                 throw $this->createNotFoundException('No warranty found');

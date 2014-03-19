@@ -24,9 +24,11 @@
                         <div class="col-lg-1">
                             <a {% if action!='postpaid' %}href="/sale/postpaid"{% endif %} class="btn btn-warning btn-md {% if action=='postpaid' %}active{% endif %}">{% trans %}Postpaid{% endtrans %}</a>
                         </div>
+                        {% if 'ROLE_ADMIN' in app.user.roles %}
                         <div class="col-lg-1">
                             <a {% if action!='discount' %}href="/sale/discount"{% endif %} class="btn btn-warning btn-md {% if action=='discount' %}active{% endif %}">{% trans %}Discounts{% endtrans %}</a>
                         </div>
+                        {% endif %}
                         <div class="col-lg-1 padding-top-7">
                             <span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_sales }}) {% trans %}sales{% endtrans %}</span>
                         </div>
@@ -78,7 +80,9 @@
                                             <a href="#" class="btn btn-default btn-sm disabled btn-discount-confirmed {% if not sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}">{% trans %}Confirmed{% endtrans %}</a>
                                         {% endif %}
                                         <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                         <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
+                                        {% endif %}
                                         <!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:bill #{{sale.s_id}}">{% trans %}Delete{% endtrans %}</a>-->
 				</td>
 			</tr>
@@ -94,7 +98,7 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>

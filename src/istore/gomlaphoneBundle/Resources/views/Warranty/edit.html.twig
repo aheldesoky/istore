@@ -3,7 +3,7 @@
 <form class="form-horizontal" role="form" method="post" id="warrantyForm">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>Edit Warranty</h4>
+			<h4>{% trans %}Edit Warranty{% endtrans %}</h4>
 		</div>
 		<div class="panel-body">
 			<div class="form-container">
@@ -11,7 +11,7 @@
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="warrantyName" class="col-sm-4 control-label">Warranty Name</label>
+								<label for="warrantyName" class="col-sm-4 control-label">{% trans %}Warranty Name{% endtrans %}</label>
 								<div class="col-sm-6">
                                                                         <input type="hidden" id="warrantyId" name="warrantyId" value="{{ warranty.id }}">
 									<input type="text" class="form-control" id="warrantyName" name="warrantyName" placeholder="Name" value="{{ warranty.warrantyName }}">
@@ -24,7 +24,7 @@
 			</div>
 		</div>
 		<div class="panel-footer">
-			<button type="submit" class="btn btn-success btn-lg">Edit Warranty</button>
+			<button type="submit" class="btn btn-success btn-lg">{% trans %}Edit Warranty{% endtrans %}</button>
 		</div>
 	</div>
 </form>

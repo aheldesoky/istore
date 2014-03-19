@@ -3,7 +3,7 @@
 <form class="form-horizontal" role="form" method="post" id="categoryForm">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>Edit Category</h4>
+			<h4>{% trans %}Edit Category{% endtrans %}</h4>
 		</div>
 		<div class="panel-body">
 			<div class="form-container">
@@ -11,10 +11,10 @@
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="categoryName" class="col-sm-4 control-label">Category Name</label>
+								<label for="categoryName" class="col-sm-4 control-label">{% trans %}Category Name{% endtrans %}</label>
 								<div class="col-sm-6">
                                                                         <input type="hidden" id="categoryId" name="categoryId" value="{{ category.id }}">
-									<input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="Name" value="{{ category.categoryName }}">
+									<input type="text" class="form-control" id="categoryName" name="categoryName" placeholder="{% trans %}Name{% endtrans %}" value="{{ category.categoryName }}">
                                                                         <label for="categoryName" class="category-error"></label>
 								</div>
 							</div>
@@ -24,7 +24,7 @@
 			</div>
 		</div>
 		<div class="panel-footer">
-			<button type="submit" class="btn btn-success btn-lg">Edit Category</button>
+			<button type="submit" class="btn btn-success btn-lg">{% trans %}Edit Category{% endtrans %}</button>
 		</div>
 	</div>
 </form>

@@ -4,22 +4,24 @@
 	<div class="panel-heading">
 		<h4 class="">
 			{% trans %}Category List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_categories }}) categories</span>
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_categories }}) {% trans %}categories{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
 				<th>{% trans %}Category Name{% endtrans %}</th>
-				<th>Action</th>
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if categories|length %}
 		{% for category in categories %}
 			<tr class="category_{{category.c_id}}">
 				<td>{{ category.c_category_name }}</td>
 				<td>
-					<a href="/category/edit/{{category.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
-					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="category:{{category.c_id}}:{{category.c_category_name}}">{% trans %}Delete{% endtrans %}</a>
+					<a href="/category/edit/{{category.c_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %} 
+					- <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="category:{{category.c_id}}:{{category.c_category_name}}">{% trans %}Delete{% endtrans %}</a>
+                                        {% endif %}
 				</td>
 			</tr>
 		{% endfor %}
@@ -34,8 +36,8 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/category/add" class="btn btn-success btn-lg">+ Add New Category</a>
-		<input type="hidden" value="{{ total_pages }}" id="total_pages">
+		<a href="/category/add" class="btn btn-success btn-lg">+ {% trans %}Add New Category{% endtrans %}</a>
+		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
 </div>
@@ -45,7 +47,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
+                <h4 class="modal-title">{% trans %}Delete Confirmation{% endtrans %}</h4>
             </div>
             <div class="modal-body">
                 Are you sure you want to delete <label id="entityName"></label>?

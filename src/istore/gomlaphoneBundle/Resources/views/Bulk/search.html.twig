@@ -1,0 +1,100 @@
+<div class="modal fade bs-modal-sm" tabindex="-1" id="filtrationBulk" role="dialog" aria-labelledby="FiltrationBulkModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm filter-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans %}Search{% endtrans %}</h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" action="/bulk" method="post" id="filterForm">
+                    <div class="row">
+                            <div class="col-md-6">
+                                    <div class="form-group filter-serial">
+                                            <label for="filterSerial" class="col-sm-4 control-label">{%trans%}Serial{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <input type="text" class="form-control" id="filterSerial" name="filterSerial" placeholder="{% trans %}Model Serial{% endtrans %}" value="{{filter.serial}}">
+                                            </div>
+                                    </div>
+                                    <div class="form-group filter-range">
+                                            <label for="filterRange" class="col-sm-4 control-label">{%trans%}Period{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <select class="form-control" id="filterRange" name="filterRange">
+                                                            <option value="">Select period</option>
+                                                            <option value="today" {% if filter.range == 'today' %}selected{% endif %}>Today</option>
+                                                            <option value="this_week" {% if filter.range == 'this_week' %}selected{% endif %}>This Week</option>
+                                                            <option value="last_week" {% if filter.range == 'last_week' %}selected{% endif %}>Last Week</option>
+                                                            <option value="this_month" {% if filter.range == 'this_month' %}selected{% endif %}>This Month</option>
+                                                            <option value="last_month" {% if filter.range == 'last_month' %}selected{% endif %}>Last Month</option>
+                                                            <option value="this_year" {% if filter.range == 'this_year' %}selected{% endif %}>This Year</option>
+                                                            <option value="last_year" {% if filter.range == 'last_year' %}selected{% endif %}>Last Year</option>
+                                                            <option value="range" {% if filter.range == 'range' %}selected{% endif %}>Range</option>
+                                                    </select>
+                                            </div>
+                                            <label for="filterRange" class="filter-range-error control-label"></label>
+                                    </div>
+                                    <div class="form-group filter-from-date {% if filter.range != 'range' %}hidden{% endif %}">
+                                            <label for="filterFromDate" class="col-sm-4 control-label">{%trans%}From Date{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                <input type="text" class="form-control" id="filterFromDate" name="filterFromDate" placeholder="{% trans %}From{% endtrans %}" data-date-format="yyyy-mm-dd" value="{{filter.fromDate}}" {% if filter.range != 'range' %}disabled{% endif %}>
+                                            </div>
+                                    </div>
+                                    <div class="form-group filter-to-date {% if filter.range != 'range' %}hidden{% endif %}">
+                                            <label for="filterToDate" class="col-sm-4 control-label">{%trans%}To Date{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <input type="text" class="form-control" id="filterToDate" name="filterToDate" placeholder="{% trans %}To{% endtrans %}" data-date-format="yyyy-mm-dd" value="{{filter.toDate}}" {% if filter.range != 'range' %}disabled{% endif %}>
+                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="filterSupplier" class="col-sm-4 control-label">{%trans%}Supplier{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <select class="form-control" id="filterSupplier" name="filterSupplier">
+                                                            <option value="" selected>All suppliers</option>
+                                                            {% for supplier in suppliers %}
+                                                            <option value="{{ supplier.id }}" {% if filter.supplier == supplier.id %}selected{% endif %}>{{ supplier.supplierName }}</option>
+                                                            {% endfor %}
+                                                    </select>
+                                            </div>
+                                    </div>
+                            </div>
+                            <div class="col-md-6">
+                                    <div class="form-group">
+                                            <label for="filterCategory" class="col-sm-3 control-label">{%trans%}Category{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <select class="form-control" id="filterCategory" name="filterCategory">
+                                                            <option value="">{%trans%}All categories{%endtrans%}</option>
+                                                            {% for category in categories %}
+                                                            <option value="{{ category.id }}" {% if filter.category == category.id %}selected{% endif %}>{{ category.categoryName }}</option>
+                                                            {% endfor %}
+                                                    </select>
+                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                            <label for="filterModel" class="col-sm-3 control-label">{%trans%}Models{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <div class="multiselect" id="filterModel" name="filterModel">
+                                                            <label class="checkall {% if models|length == filter.model|length %}multiselect-on{% endif %}">
+                                                                <input type="checkbox" name="" value="" class="checkall" {% if models|length == filter.model|length %}checked{% endif %}/>{% trans %}(un)check all{% endtrans %}
+                                                            </label>
+                                                            <label class="multiselect-divider"></label>
+                                                            {% for model in models %}
+                                                            <label class="category-{{model.modelCategory.id}} {% if model.id in filter.model %}multiselect-on{% endif %} {% if filter.category and model.modelCategory.id != filter.category %}hidden{% endif %}">
+                                                                <input type="checkbox" name="model[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}" {% if model.id in filter.model %}checked{% endif %}/>{{ model.modelBrand }} {{ model.modelModel }}
+                                                            </label>
+                                                            {% endfor %}
+                                                    </div>
+                                            </div>
+                                            <label for="filterModel" class="filter-model-error control-label"></label>
+                                    </div>
+                            </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</button>
+                <a href="#" class="btn btn-success btn-sm btn-bulk-filter">{%trans%}Filter{%endtrans%}</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
+            </div>
+            
+        </div>
+    </div>
+</div>

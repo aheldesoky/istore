@@ -223,3 +223,27 @@ istoregomlaphone_report_export:
 istoregomlaphone_report_print:
     pattern:  /report/print
     defaults: { _controller: istoregomlaphoneBundle:Report:print }
+
+istoregomlaphone_user_index:
+    pattern:  /user
+    defaults: { _controller: istoregomlaphoneBundle:User:index }
+
+istoregomlaphone_user_add:
+    pattern:  /user/add
+    defaults: { _controller: FOSUserBundle:Registration:register }
+
+istoregomlaphone_user_edit:
+    pattern:  /user/edit/{id}
+    defaults: { _controller: FOSUserBundle:Registration:register }
+
+istoregomlaphone_user_delete:
+    pattern:  /user/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:User:delete }
+
+istoregomlaphone_user_change_password:
+    pattern:  /user/changepassword/{id}
+    defaults: { _controller: FOSUserBundle:ChangePassword:changePassword }
+
+istoregomlaphone_search:
+    pattern:  /search
+    defaults: { _controller: istoregomlaphoneBundle:Search:index }

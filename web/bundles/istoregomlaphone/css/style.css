@@ -250,6 +250,7 @@ div.container a.brand {
 }
 
 .multiselect {
+    height: 135px;
     max-height: 135px;
     border: solid 1px #c0c0c0;
     overflow: auto;
@@ -295,4 +296,38 @@ div.container a.brand {
 }
 .total-sold-price{
     vertical-align: middle !important;
+}
+
+.unsorted {
+    background-image: url(../img/icon-unsorted.gif);
+    background-position: center right;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    white-space: normal;
+    padding: 4px 20px 4px 4px;
+}
+
+.sortAsc {
+    background-image: url(../img/icon-sorted-asc.gif);
+    background-position: center right;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    white-space: normal;
+    padding: 4px 20px 4px 4px;
+}
+
+.sortDesc {
+    background-image: url(../img/icon-sorted-desc.gif);
+    background-position: center right;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    white-space: normal;
+    padding: 4px 20px 4px 4px;
+}
+
+.filter-modal{
+    width: 70%;
+}
+.dropdown-menu{
+    z-index: 11000 !important;
 }

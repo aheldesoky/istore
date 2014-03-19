@@ -3,44 +3,44 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Customer List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_customers }}) customers</span>
+			{% trans %}Users List{% endtrans %}
+			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_users }}) users</span>
 		</h4>
 	</div>
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
-                                <th>{% trans %}Phone Number{% endtrans %}</th>
-				<th>{% trans %}Full Name{% endtrans %}</th>
-                                <th>{% trans %}Address{% endtrans %}</th>
-                                <th>{% trans %}Notes{% endtrans %}</th>
-				<!--<th>{% trans %}Action{% endtrans %}</th>-->
+				<th>{% trans %}Username{% endtrans %}</th>
+                                <th>{% trans %}Email{% endtrans %}</th>
+                                <th>{% trans %}Full Name{% endtrans %}</th>
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
-                {% if customers|length %}
-		{% for customer in customers %}
-			<tr>
-                                <td>{{ customer.c_customer_phone }}</td>
-				<td>{{ customer.c_customer_fname }} {{ customer.c_customer_lname }}</td>
-                                <td>{{ customer.c_customer_address }}</td>
-                                <td>{{ customer.c_customer_notes }}</td>
-				<!--<td>
-					<a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
-					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="customer:{{customer.c_id}}:{{ customer.c_customer_fname }} {{ customer.c_customer_lname }}">{% trans %}Delete{% endtrans %}</a>
-				</td>-->
+                {% if users|length %}
+		{% for user in users %}
+			<tr class="user_{{user.u_id}}">
+				<td>{{ user.u_username }}</td>
+                                <td>{{ user.u_email }}</td>
+                                <td>{{ user.u_name }}</td>
+				<td>
+					<a href="/user/edit/{{user.u_id}}" class="btn btn-primary btn-sm">Edit</a> 
+                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="user:{{user.u_id}}:{{ user.u_name }}">{% trans %}Delete{% endtrans %}</a>
+                                        {% endif %}
+				</td>
 			</tr>
 		{% endfor %}
                 {% else %}
                         <tr>
-                            <td colspan="6">{% trans %}There are no customers.{% endtrans %}</td>
+                            <td colspan="5">{% trans %}There are no users.{% endtrans %}</td>
 			</tr>
                 {% endif %}
 			<tr>
-				<td colspan="6"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+				<td colspan="5"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
 			</tr>
 		</table>
 	</div>
 	<div class="panel-footer">
-		<!--<a href="/customer/add" class="btn btn-success btn-lg">+ Add New Customer</a>-->
+		<a href="/user/add" class="btn btn-success btn-lg">+ {% trans %}Add New User{% endtrans %}</a>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
@@ -58,7 +58,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
     </div>

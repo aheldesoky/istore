@@ -1,4 +1,5 @@
 $(document).ready(function(){
+    var currentPage;
     var item = new Array();
     var bulk = new Array();
     var itemList = new Array();
@@ -11,6 +12,38 @@ $(document).ready(function(){
     var total = 0;
     var amountPaid = 0;
     var bulkQty;
+    
+    // Table Sorting
+    $('.unsorted, .sortAsc, .sortDesc').click(function() {
+        $(this).removeClass('active');
+        this.className = {
+            unsorted: 'sortAsc',
+            sortAsc: 'sortDesc',
+            sortDesc: 'unsorted'
+        }[this.className];
+        
+        var sortColumn = $(this).attr('id');
+        var sortType = 'unsorted';
+        switch(this.className){
+            case 'sortAsc' : sortType = 'asc'; break;
+            case 'sortDesc' : sortType = 'desc'; break;
+        }
+        
+        var controller = $('#controller').val();
+        var url = '/'+controller;
+        
+        if(currentPage>0)
+            url += '?page='+currentPage;
+        
+        if(sortType !== 'unsorted')
+            url += '&column='+sortColumn+'&sort='+sortType;
+        
+        //alert(url);
+        window.location = url;
+    });
+    $('.sortAsc, .sortDesc').addClass('active');
+    var columnIndex = $('.sortAsc, .sortDesc').index() + 1;
+    $('table tr td:nth-child('+columnIndex+')').addClass('active');
     
     //Highlight Modules
     var controller = $('#controller').val();
@@ -43,7 +76,7 @@ $(document).ready(function(){
     
     //$('#alert-message').html(alertDangerMessage($('#validationMessage').val()));
     $('.btn-popover').popover();
-    $('#bulkDate, #reportFromDate, #reportToDate').datepicker({endDate: new Date}).on('changeDate', function(){
+    $('#bulkDate, #reportFromDate, #reportToDate, #filterFromDate, #filterToDate').datepicker({endDate: new Date}).on('changeDate', function(){
         $(this).focus().datepicker('hide');
     });
     // Entity Delete Confirmation
@@ -60,8 +93,7 @@ $(document).ready(function(){
             $('a.btn-delete-confirm').attr('href' , '/'+entityType+'/delete/'+entityId);
             $('label#entityName').html(entityName);
             $('#deleteConfirmation').modal('show');
-    });
-    $(document).on("click", "a.btn-delete-confirm", function (e) {
+    }).on("click", "a.btn-delete-confirm", function (e) {
             e.preventDefault();
             var controller = $('#controller').val();
             var action = $('#action').val();
@@ -89,10 +121,9 @@ $(document).ready(function(){
             }).always(function () {
                         btn.button('reset');
             });
-    });
-
+            
     //Add new postpaid payment
-    $(document).on("click", ".btn-payment-modal", function (e) {
+    }).on("click", ".btn-payment-modal", function (e) {
             e.preventDefault();
             
             var _self = $(this);
@@ -107,6 +138,13 @@ $(document).ready(function(){
                 $('#addPostpaidPayment').modal('show');
             });
             
+    }).on("click", ".btn-bulk-filter-modal", function(e){
+            e.preventDefault();
+            $('#filtrationBulk').modal('show');
+            
+    }).on("click", ".btn-bulk-filter", function(e){
+            //e.preventDefault();
+            $('#filterForm').submit();
     });
     
     $('#addPaymentModalContainer').on('change' , '#postpaidAmount' , function(){
@@ -522,7 +560,11 @@ $(document).ready(function(){
         totalPages: total_pages,
                 useBootstrapTooltip:true,
         pageUrl: function(type, page, current){
-            return "?page="+page;
+            currentPage = page;
+            if(getQueryVariable('sort'))
+                return "?page="+page+'&column='+getQueryVariable('column')+'&sort='+getQueryVariable('sort');
+            else
+                return "?page="+page;
         },
         itemTexts: function (type, page, current) {
             switch (type) {
@@ -1603,7 +1645,7 @@ $(document).ready(function(){
         }
     });
     
-    $("select#reportCategory").change(function(){
+    $("select#reportCategory, select#filterCategory").change(function(){
         if($(this).val()){
             $(".multiselect label").addClass("hidden").removeClass("multiselect-on");
             $(".multiselect input").prop('checked', false);
@@ -1641,6 +1683,15 @@ $(document).ready(function(){
             $(".report-from-date input, .report-to-date input").prop("disabled", true);
         }
     });
+    $("select#filterRange").change(function(){
+        if($(this).val() === "range"){
+            $(".filter-from-date, .filter-to-date").removeClass("hidden");
+            $(".filter-from-date input, .filter-to-date input").prop("disabled", false);
+        } else {
+            $(".filter-from-date, .filter-to-date").addClass("hidden");
+            $(".filter-from-date input, .filter-to-date input").prop("disabled", true);
+        }
+    });
     $("select#reportPayment").change(function(){
         if($(this).val() === "amount"){
             $("select#reportCategory").prop("disabled" , true);
@@ -1654,4 +1705,14 @@ $(document).ready(function(){
             $('.multiselect').css('background-color', '#fff');
         }
     });
+    function getQueryVariable(variable)
+    {
+        var query = window.location.search.substring(1);
+        var vars = query.split("&");
+        for (var i=0;i<vars.length;i++) {
+                var pair = vars[i].split("=");
+                if(pair[0] == variable){return pair[1];}
+        }
+        return(false);
+    }
 });

@@ -12,34 +12,48 @@ use Symfony\Component\HttpFoundation\Response;
 use DOMPDF;
 use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\ORM\Query\ResultSetMappingBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class ReportController extends Controller //implements AuthenticatedController
 {
-    public function __construct() 
+    public function ReportController(/*ContainerInterface $container*/) 
     {
-        //$session = new Session();
-        //$session->start();
+        
+        //$user = $session->get('user');
 
-        //$request = new Request();
-        //echo $request->query->get('lang');
-        //$language = (null == $request->query->get('lang')) ? $request->query->get('lang') : 'en';
-        //echo $language;die;
-        //$session->set('language', $language);
-        //echo $request->setLocale($language);
+        //$user = $this->get('security.context')->getToken()->getUser();
+        //$user = $this->getUser();
+        //$this->container = $container;
+        
+        //$userManager = $this->container;//->get('fos_user.user_manager');
+        //var_dump($userManager);die;
+        
     }
+    
+    /**
+    * Get a service from the container
+    *
+    * @param string The service to get
+    * /
+    protected function get($service)
+    {
+        return $this->container->get($service);
+    }*/
 
     public function indexAction(Request $request)
     {
+        $user = $this->getUser();
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $categories = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
             ->from('istoregomlaphoneBundle:Category', 'c')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.category_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getResult();
         
@@ -49,7 +63,7 @@ class ReportController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->orderBy('m.id', 'ASC')
             ->getQuery()
             ->getResult();
@@ -64,6 +78,12 @@ class ReportController extends Controller //implements AuthenticatedController
     }
     
     public function viewAction(Request $request) {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         if ($request->getMethod() == 'POST') {
             
             $type = $request->request->get('reportType');
@@ -99,6 +119,11 @@ class ReportController extends Controller //implements AuthenticatedController
     {
         
 //var_dump($request->request);die;
+            $user = $this->getUser();
+        
+            if(!in_array('ROLE_ADMIN', $user->getRoles())){
+                return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+            }
             
             $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('m , i , b , c , 
@@ -114,7 +139,7 @@ class ReportController extends Controller //implements AuthenticatedController
                 ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
                 ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
                 ->where('st.id=?1')
-                ->setParameter(1, 1)
+                ->setParameter(1, $user->getStoreId())
                 ->groupBy('m.id');
             
             //Model filter
@@ -140,6 +165,11 @@ class ReportController extends Controller //implements AuthenticatedController
     public function getPrepaidReport(Request $request)
     {
 //var_dump($request->request);die;
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $status = $request->request->get('reportStatus');
 
@@ -234,7 +264,7 @@ class ReportController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('m.id');
 
         //Model filter
@@ -261,6 +291,12 @@ class ReportController extends Controller //implements AuthenticatedController
     public function getPostpaidReport(Request $request)
     {
 //var_dump($request->request);die;
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $status = $request->request->get('reportStatus');
 
@@ -355,7 +391,7 @@ class ReportController extends Controller //implements AuthenticatedController
             ->leftJoin('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->Join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
             ->where("st.id=?1")
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('m.id');
 
         //Model filter
@@ -419,6 +455,12 @@ class ReportController extends Controller //implements AuthenticatedController
     public function getAmountReport(Request $request)
     {
 //var_dump($request->request);die;
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         //Date Range filter
         $rangeDate = $request->request->get('reportRange');
@@ -531,7 +573,7 @@ class ReportController extends Controller //implements AuthenticatedController
             ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po', 'WITH', 'po.postpaid_sale_id=s.id')
             ->Join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.sale_store_id=st.id')
             ->where("st.id=?1")
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
@@ -544,7 +586,7 @@ class ReportController extends Controller //implements AuthenticatedController
             ->Join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.sale_store_id=st.id')
             ->where("st.id=?1")
             ->andWhere("$dateFilter")
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('s.id')
             ->getQuery()
             ->getScalarResult();
@@ -606,6 +648,12 @@ class ReportController extends Controller //implements AuthenticatedController
     
     public function exportAction(Request $request)
     {   
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $pdf_path = $request->query->get('file');
         //print the pdf file to the screen for saving
         header('Content-type: application/pdf');
@@ -638,6 +686,13 @@ class ReportController extends Controller //implements AuthenticatedController
     }
     
     public function printAction(Request $request) {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         if ($request->getMethod() == 'POST') {
 //var_dump($request->request);die;
             
@@ -656,7 +711,7 @@ class ReportController extends Controller //implements AuthenticatedController
                 //->join('istoregomlaphoneBundle:Supplier', 'sp', 'WITH', 'b.bulk_supplier=sp.id')
                 ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
                 ->where('st.id=?1')
-                ->setParameter(1, 1)
+                ->setParameter(1, $user->getStoreId())
                 ->groupBy('m.id');
             
             //Status filter

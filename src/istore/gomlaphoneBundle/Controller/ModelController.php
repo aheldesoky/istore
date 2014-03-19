@@ -30,17 +30,33 @@ class ModelController extends Controller //implements AuthenticatedController
 
     public function indexAction(Request $request)
     {
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        $sortType = ($request->query->get('sort') ? $request->query->get('sort') : 'DESC');
+        $sortColumn = ($request->query->get('column') ? $request->query->get('column') : 'id');
+        
+        if($sortType==='unsorted') $sortType='DESC';
+        
+        switch ($sortColumn){
+            case 'id': $column = 'm.id'; break;
+            case 'serial': $column = 'm.model_serial'; break;
+            case 'brand': $column = 'm.model_brand'; break;
+            case 'model': $column = 'm.model_model'; break;
+            case 'category': $column = 'c.category_name'; break;
+        }
+        //echo $sortColumn.' by '.$sortType;die;
         
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(m) AS total_models')
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
         
@@ -50,8 +66,8 @@ class ModelController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
-            ->setParameter(1, 1)
-            ->orderBy('m.id', 'ASC')
+            ->setParameter(1, $user->getStoreId())
+            ->orderBy($column, $sortType)
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -68,6 +84,8 @@ class ModelController extends Controller //implements AuthenticatedController
             'total_models'=> $count['total_models'],
             'total_pages'     => ceil($count['total_models']/10),
             'current_page'    => $currentPage,
+            'sort_type'    => $sortType,
+            'sort_column'    => $sortColumn,
             "action" => "index",
             "controller" => "model"
         ));
@@ -102,6 +120,13 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function addAction(Request $request) 
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $categories = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
             ->from('istoregomlaphoneBundle:Category', 'c')
@@ -137,6 +162,13 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function editAction(Request $request, $id)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $model = $this->getDoctrine()
             ->getRepository('istoregomlaphoneBundle:Model')
             ->find($id);
@@ -175,6 +207,13 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function deleteAction(Request $request, Model $model)
     {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         try{
             if (!$model) {
                 throw $this->createNotFoundException('No model found');
