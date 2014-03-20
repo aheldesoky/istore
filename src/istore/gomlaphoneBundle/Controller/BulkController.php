@@ -111,7 +111,7 @@ class BulkController extends Controller //implements AuthenticatedController
                 //var_dump($first_day_last_week);die;
 
                 $last_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 friday this week')));
-                $last_day_last_week->setTime(0, 0);
+                $last_day_last_week->setTime(24, 0);
                 //var_dump($last_day_last_week);die;
 
                 $dateFilter = 'b.bulk_date >= \''.$first_day_last_week->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_week->format('Y-m-d H-i-s').'\'';
@@ -129,7 +129,7 @@ class BulkController extends Controller //implements AuthenticatedController
                 //var_dump($last_month);die;
 
                 $last_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('last day of last month')));
-                $last_day_last_month->setTime(0, 0);
+                $last_day_last_month->setTime(24, 0);
                 //var_dump($last_day_last_month);die;
 
                 $dateFilter = 'b.bulk_date >= \''.$first_day_last_month->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_month->format('Y-m-d H-i-s').'\'';
@@ -147,22 +147,23 @@ class BulkController extends Controller //implements AuthenticatedController
                 //var_dump($first_day_last_year);die;
 
                 $last_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('12/31 last year')));
-                $last_day_last_year->setTime(0, 0);
+                $last_day_last_year->setTime(24, 0);
                 //var_dump($last_day_last_year);die;
 
                 $dateFilter = 'b.bulk_date >= \''.$first_day_last_year->format('Y-m-d H-i-s').'\' AND b.bulk_date <= \''.$last_day_last_year->format('Y-m-d H-i-s').'\'';
 
             } elseif ($rangeDate === 'range') {
                 //From Date filter
-                $fromDate = $request->request->get('filterFromDate');
+                $fromDate = new \DateTime($request->request->get('reportFromDate'));
                 if($fromDate){
-                    $dateFilter = 'b.bulk_date >= \''.$fromDate.'\'';
+                    $dateFilter = 'b.bulk_date >= \''.$fromDate->format('Y-m-d H:i:s').'\'';
                 }
 
                 //To Date filter
-                $toDate = $request->request->get('filterToDate');
+                $toDate = new \DateTime($request->request->get('reportToDate'));
+                $toDate->setTime(23, 59, 59);
                 if($toDate){
-                    $dateFilter .= ' AND b.bulk_date <= \''.$toDate.'\'';
+                    $dateFilter .= ' AND b.bulk_date <= \''.$toDate->format('Y-m-d H:i:s').'\'';
                 }
             }
             

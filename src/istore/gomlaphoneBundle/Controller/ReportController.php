@@ -197,7 +197,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_week);die;
 
             $last_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 friday this week')));
-            $last_day_last_week->setTime(0, 0);
+            $last_day_last_week->setTime(23, 59, 59);
             //var_dump($last_day_last_week);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_week->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_week->format('Y-m-d H-i-s').'\'';
@@ -212,10 +212,10 @@ class ReportController extends Controller //implements AuthenticatedController
         } elseif ($rangeDate === 'last_month') {
             $first_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('first day of last month')));
             $first_day_last_month->setTime(0, 0);
-            //var_dump($last_month);die;
+            //var_dump($first_day_last_month);die;
             
             $last_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('last day of last month')));
-            $last_day_last_month->setTime(0, 0);
+            $last_day_last_month->setTime(23, 59, 59);
             //var_dump($last_day_last_month);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_month->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_month->format('Y-m-d H-i-s').'\'';
@@ -233,22 +233,23 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_year);die;
 
             $last_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('12/31 last year')));
-            $last_day_last_year->setTime(0, 0);
+            $last_day_last_year->setTime(23, 59, 59);
             //var_dump($last_day_last_year);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_year->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_year->format('Y-m-d H-i-s').'\'';
 
         } elseif ($rangeDate === 'range') {
             //From Date filter
-            $fromDate = $request->request->get('reportFromDate');
+            $fromDate = new \DateTime($request->request->get('reportFromDate'));
             if($fromDate){
-                $dateFilter = 's.sale_date >= \''.$fromDate.'\'';
+                $dateFilter = 's.sale_date >= \''.$fromDate->format('Y-m-d H:i:s').'\'';
             }
 
             //To Date filter
-            $toDate = $request->request->get('reportToDate');
+            $toDate = new \DateTime($request->request->get('reportToDate'));
+            $toDate->setTime(23, 59, 59);
             if($toDate){
-                $dateFilter = 's.sale_date <= \''.$toDate.'\'';
+                $dateFilter .= ' AND s.sale_date <= \''.$toDate->format('Y-m-d H:i:s').'\'';
             }
         }
         
@@ -324,7 +325,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_week);die;
 
             $last_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 friday this week')));
-            $last_day_last_week->setTime(0, 0);
+            $last_day_last_week->setTime(23, 59, 59);
             //var_dump($last_day_last_week);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_week->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_week->format('Y-m-d H-i-s').'\'';
@@ -342,7 +343,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($last_month);die;
             
             $last_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('last day of last month')));
-            $last_day_last_month->setTime(0, 0);
+            $last_day_last_month->setTime(23, 59, 59);
             //var_dump($last_day_last_month);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_month->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_month->format('Y-m-d H-i-s').'\'';
@@ -360,22 +361,23 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_year);die;
 
             $last_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('12/31 last year')));
-            $last_day_last_year->setTime(0, 0);
+            $last_day_last_year->setTime(23, 59, 59);
             //var_dump($last_day_last_year);die;
             
             $dateFilter = 's.sale_date >= \''.$first_day_last_year->format('Y-m-d H-i-s').'\' AND s.sale_date <= \''.$last_day_last_year->format('Y-m-d H-i-s').'\'';
 
         } elseif ($rangeDate === 'range') {
             //From Date filter
-            $fromDate = $request->request->get('reportFromDate');
+            $fromDate = new \DateTime($request->request->get('reportFromDate'));
             if($fromDate){
-                $dateFilter = 's.sale_date >= \''.$fromDate.'\'';
+                $dateFilter = 's.sale_date >= \''.$fromDate->format('Y-m-d H:i:s').'\'';
             }
 
             //To Date filter
-            $toDate = $request->request->get('reportToDate');
+            $toDate = new \DateTime($request->request->get('reportToDate'));
+            $toDate->setTime(23, 59, 59);
             if($toDate){
-                $dateFilter = 's.sale_date <= \''.$toDate.'\'';
+                $dateFilter .= ' AND s.sale_date <= \''.$toDate->format('Y-m-d H:i:s').'\'';
             }
         }
         
@@ -491,7 +493,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_week);die;
 
             $last_day_last_week = new \DateTime(date('Y-m-d H:i:s', strtotime('-1 friday this week')));
-            $last_day_last_week->setTime(0, 0);
+            $last_day_last_week->setTime(23, 59, 59);
             //var_dump($last_day_last_week);die;
             
             $report['from_date'] = $first_day_last_week->format("Y-m-d");
@@ -515,7 +517,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($last_month);die;
             
             $last_day_last_month = new \DateTime(date('Y-m-d H:i:s', strtotime('last day of last month')));
-            $last_day_last_month->setTime(0, 0);
+            $last_day_last_month->setTime(23, 59, 59);
             //var_dump($last_day_last_month);die;
             
             $report['from_date'] = $first_day_last_month->format("Y-m-d");
@@ -539,7 +541,7 @@ class ReportController extends Controller //implements AuthenticatedController
             //var_dump($first_day_last_year);die;
 
             $last_day_last_year = new \DateTime(date('Y-m-d H:i:s', strtotime('12/31 last year')));
-            $last_day_last_year->setTime(0, 0);
+            $last_day_last_year->setTime(23, 59, 59);
             //var_dump($last_day_last_year);die;
             
             $report['from_date'] = $first_day_last_year->format("Y-m-d");
@@ -549,19 +551,20 @@ class ReportController extends Controller //implements AuthenticatedController
 
         } elseif ($rangeDate === 'range') {
             //From Date filter
-            $fromDate = $request->request->get('reportFromDate');
+            $fromDate = new \DateTime($request->request->get('reportFromDate'));
             if($fromDate){
-                $dateFilter = 's.sale_date >= \''.$fromDate.'\'';
+                $dateFilter = 's.sale_date >= \''.$fromDate->format('Y-m-d H:i:s').'\'';
             }
 
             //To Date filter
-            $toDate = $request->request->get('reportToDate');
+            $toDate = new \DateTime($request->request->get('reportToDate'));
+            $toDate->setTime(23, 59, 59);
             if($toDate){
-                $dateFilter = 's.sale_date <= \''.$toDate.'\'';
+                $dateFilter .= ' AND s.sale_date <= \''.$toDate->format('Y-m-d H:i:s').'\'';
             }
             
-            $report['from_date'] = $fromDate;
-            $report['to_date'] = $toDate;
+            $report['from_date'] = $fromDate->format('Y-m-d');
+            $report['to_date'] = $toDate->format('Y-m-d');
         }
         
         // Doctrine Query Language DQL

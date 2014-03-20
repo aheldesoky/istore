@@ -9,9 +9,9 @@
 		<h4 class="">
 			{% trans %}Bulk List{% endtrans %}
                         {% if filter|length %}
-                        <a href="/bulk" class="btn btn-warning btn-sm col-lg-offset-8">{% trans %}Return to all data{% endtrans %}</a>
+                        <a href="/bulk" class="btn btn-warning btn-md col-lg-offset-8">{% trans %}Return to all data{% endtrans %}</a>
                         {% endif %}
-                        <a href="#" class="btn btn-warning btn-sm btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-9{% endif %}">{% trans %}Search{% endtrans %}</a>
+                        <a href="#" class="btn btn-warning btn-md btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-9{% endif %}">{% trans %}Search{% endtrans %}</a>
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_bulks }}) {% trans %}bulks{% endtrans %}</span>
 		</h4>
 	</div>
