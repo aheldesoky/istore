@@ -456,10 +456,14 @@ Edit Item: تعديل المنتج
 Check: فحص
 Serial can not be empty.: يجب إدخال الكود
 Item Serial: كود المنتج
-Cuurent Status: الحالة الأن
+Current Status: الحالة الأن
+Change Status: تغيير الحالة
 Change Color: تغيير اللون
-Select Color: أختر اللون
+Change Warranty: تغيير وكيل الضمان
+Select color: أختر اللون
+Select status: أختر الحالة
 Has Warranty: يوجد وكيل ضمان
+Enter notes for this item: أدخل ملاحظات على هذا المنتج
 Yes: نعم
 No: لا
 Enter notes for this items: أدخل ملاحظات لهذا المنتج
@@ -472,10 +476,17 @@ Warranty: ضمان
 Warranty - Replaced: مستبدل من الضمان
 In Stock: فى المخزن
 Sold: مباع
-Save Changes: حفظ التغييرات
+Save changes: حفظ التغييرات
 Close: غلق
 Loading: تحميل
 Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
 Previuos: الصفحة السابقة
+Black: أسود
+White: أبيض
+Red: أحمر
+Blue: أزرق
+Gray: رمادى
+Yellow: أصفر
+Silver: فضى
