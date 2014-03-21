@@ -11,7 +11,7 @@
                         {% if filter|length %}
                         <a href="/bulk" class="btn btn-warning btn-md col-lg-offset-8">{% trans %}Return to all data{% endtrans %}</a>
                         {% endif %}
-                        <a href="#" class="btn btn-warning btn-md btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-9{% endif %}">{% trans %}Search{% endtrans %}</a>
+                        <a href="#" class="btn btn-warning btn-md btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-8{% endif %}">{% trans %}Search{% endtrans %}</a>
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_bulks }}) {% trans %}bulks{% endtrans %}</span>
 		</h4>
 	</div>
@@ -71,16 +71,12 @@
 <div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
-            </div>
             <div class="modal-body">
-                Are you sure you want to delete <label id="entityName"></label>?
+                {%trans%}Are you sure you want to delete{%endtrans%}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">{% trans %}Delete{% endtrans %}</a>
                 <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>

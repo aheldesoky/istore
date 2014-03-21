@@ -38,7 +38,7 @@
 	<div class="panel-body">
 		<table class="table table-hover table-view">
 			<tr>
-				<th>{% trans %}Bill #{% endtrans %}</th>
+				<th>{% trans %}Bill#{% endtrans %}</th>
 				<th>{% trans %}Customer Name{% endtrans %}</th>
                                 {% if action == 'discount' %}
                                 <th>{% trans %}Subtotal{% endtrans %}</th>
@@ -129,7 +129,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <input type="hidden" name="refundSaleId" id="refundSaleId">
-                {%trans%}Are you sure that you want to refund sale #{%endtrans%}<label id="refundSaleIdLabel"></label>?
+                {%trans%}Are you sure that you want to refund sale#{%endtrans%} <label id="_refundSaleIdLabel"></label>
             </div>
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
@@ -147,7 +147,7 @@
         <div class="modal-content">
             <div class="modal-body">
                 <input type="hidden" name="discountSaleId" id="discountSaleId">
-                {%trans%}Are you sure that you want to confirm discount of <label id="discountValueLabel"></label> L.E. for sale #{%endtrans%}<label id="discountSaleIdLabel"></label>?
+                {%trans%}Are you sure that you want to confirm discount{%endtrans%}
             </div>
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>

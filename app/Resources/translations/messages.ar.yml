@@ -18,7 +18,7 @@ Elgaish st, Elarb3een, Suez: شارع الجيش بجوار مسجد الأرب�
 Home: الرئيسية
 Sales: المبيعات
 Customers: العملاء
-Items: المنتج
+items: المنتجات
 Search: البحث
 Bulks: مجموعة المنتجات
 Models: الموديلات
@@ -147,8 +147,9 @@ Edit: تعديل
 Update Info: تحديث البيانات
 View: مشاهدة
 Add New Bulk: إضافة مجموعة جديدة
-Bulk list: القائمه
-Bulks: المجموعات
+Bulk List: قائمة المجموعات
+bulks: المجموعات
+Bulk#: مجموعة منتجات رقم
 Serial can not be empty.: يجب إدخال الكود
 Can not delete model that already has bulk: لا يمكن حذف موديل مضاف عليه أجهزة
 Item already exists.: المنتج موجود بالفعل
@@ -211,7 +212,7 @@ Name: الاسم
 Edit: تعديل
 View: مشاهدة
 Delete Confirmation: تأكيد الحذف 
-Are you sure you want to delete : هل تريد حذف
+Are you sure you want to delete : هل تريد الحذف
 Cancel: إلغاء
 Edit Warranty: تعديل الضمان
 This field is required.: بيانات مطلوبة
@@ -242,7 +243,7 @@ Add Supplier: أضف المورد
 Supplier Governorate: محافظة المورد
 Select governorate: أختر المحافظة
 Delete Confirmation: تأكيد الحذف
-Are you sure you want to delete : هل تريد حذف
+Are you sure you want to delete : هل تريد الحذف
 Cancel: إلغاء
 Edit Supplier : تعديل المورد
 This field is required.: بيانات مطلوبة
@@ -264,7 +265,7 @@ Edit: تعديل
 Delete: حذف
 Add Category: أضف الفئة
 Delete Confirmation: تأكيد الحذف
-Are you sure you want to delete : هل تريد حذف
+Are you sure you want to delete : هل تريد الحذف
 Cancel: إلغاء
 Edit Category : تعديل الفئة
 This field is required.: بيانات مطلوبة
@@ -277,7 +278,7 @@ Previuos: الصفحة السابقة
 
 ##Model
 Model List: قائمة الموديلات
-models: كل الموديلات
+models:  الموديلات
 Enter Model Serial: أدخل كود الموديل
 Serial can not be empty.: يجب إدخال الكود
 Check: فحص
@@ -299,7 +300,7 @@ Enter specifications: ادخل مواصفات الموديل
 Edit: تعديل
 Delete: حذف
 Delete Confirmation: تأكيد الحذف
-Are you sure you want to delete : هل تريد حذف
+Are you sure you want to delete : هل تريد الحذف
 Cancel: إلغاء
 Edit Model : تعديل الموديل
 This field is required.: بيانات مطلوبة
@@ -379,7 +380,7 @@ Prepaid Sales: مبيعات الكاش
 Sales Discounts: خصومات المبيعات
 Discounts: الخصومات
 sales: المبيعات
-Bill Number: رقم الفاتورة
+Bill#: رقم الفاتورة
 Customer Name: اسم العميل
 Total Price: الإجمالى بعد الخصم
 Date: التاريخ
@@ -410,8 +411,11 @@ Amount must be greater than zero: المبلغ يجب أن يكون أكبر م�
 Amount can not be greater than the remaining value: المبلغ لا يجب أن يكون أكبر من القيمة المطلوبة
 Are you sure that would pay?: هل أنت متأكد أن العميل سوف يقوم بدفع؟ 
 Confirm Payment: تأكيد الدفع
+Confirm Refund: تأكيد إعادة المبلغ
+Confirm Discount: تأكيد الخصم
+Are you sure that you want to confirm discount: هل تريد بالفعل تأكيد الخصم
 ##Payment of "1000" L.E. is successfully added to bill: الدفعة بقيمة تم إضافتها للفاتورة رقم 
-##Are you sure that you want to refund sale ?: هل تريد فعلاً إعادة المبلغ للمبيعات رقم
+Are you sure that you want to refund sale#: هل تريد فعلا إعادة المبلغ 
 Sale has been refunded: تم إعادة المبلغ للمبيعات رقم 
 ##Discount for Sale # has been confirmed : تم تأكيد الخصم للمبيعات رقم
 Loading: تحميل
@@ -422,8 +426,9 @@ Previuos: الصفحة السابقة
 ##--------------------------------------------------------------------------------------------------------------------
 
 ##Customers
-Customer list: قائمة العملاء
-Customers: عملاء
+Customer List: قائمة العملاء
+customers: العملاء
+Full Name: الأسم بالكامل
 Phone Number : رقم الهاتف
 First Name: الاسم الأول
 Last Name: الأسم الأخير
@@ -442,6 +447,7 @@ Item Serial: كود المنتج
 Brand Name: اسم الصنف
 Model: الموديل
 Category: الفئة
+Item Price : سعر المنتج
 Price L.E.: السعر بالجنية
 Status: الحالة
 Add date: تاريخ الإدخال
@@ -491,3 +497,6 @@ Blue: أزرق
 Gray: رمادى
 Yellow: أصفر
 Silver: فضى
+(un)check all: تحديد الكل 
+Profile: الملف الشخصى
+Logout: تسجيل خروج

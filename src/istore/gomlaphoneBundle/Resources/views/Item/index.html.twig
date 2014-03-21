@@ -4,7 +4,7 @@
 	<div class="panel-heading">
 		<h4 class="">
                         {% if bulk|length %}
-			{% trans %}Bulk{% endtrans %} #{{ bulk.id }}
+			{% trans %}Bulk#{% endtrans %} {{ bulk.id }}
                         {% else %}
                         {% trans %}Item List{% endtrans %}
                         {% endif %}
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="form-group">
-                                <button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{% if bulk.bulkModel.modelSpecs == '' %}{%trans%}empty{%endtrans%}{% else %}{{ bulk.bulkModel.modelSpecs }}{% endif %}" data-title="{{ bulk.bulkModel.modelBrand }} {{ bulk.bulkModel.modelModel }}">Show Specifications</button>
+                                <button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{% if bulk.bulkModel.modelSpecs == '' %}{%trans%}empty{%endtrans%}{% else %}{{ bulk.bulkModel.modelSpecs }}{% endif %}" data-title="{{ bulk.bulkModel.modelBrand }} {{ bulk.bulkModel.modelModel }}">{% trans %}Show Specifications{% endtrans %}</button>
                             </div>
                         </div>
                     </div>

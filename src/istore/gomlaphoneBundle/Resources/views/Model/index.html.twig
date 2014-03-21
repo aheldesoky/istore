@@ -14,7 +14,7 @@
 				<th id="brand" class="{% if sort_column=='brand' and sort_type=='asc' %}sortAsc{% elseif sort_column=='brand' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Brand{% endtrans %}</th>
 				<th id="model" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model{% endtrans %}</th>
 				<th id="category" class="{% if sort_column=='category' and sort_type=='asc' %}sortAsc{% elseif sort_column=='category' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Category{% endtrans %}</th>
-				<th>{% trans %}Specifications{% endtrans %}</th>
+				<th>{% trans %}Show Specifications{% endtrans %}</th>
 				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if models|length %}
@@ -53,16 +53,12 @@
 <div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
-            </div>
             <div class="modal-body">
-                Are you sure you want to delete <label id="entityName"></label>?
+                {% trans %}Are you sure you want to delete{% endtrans %} <label id="entityName"></label>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">{% trans %}Delete{% endtrans %}</a>
                 <input type="hidden" id="entityId" name="entityId" val="">
             </div>
         </div>
