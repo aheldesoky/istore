@@ -21,6 +21,7 @@ var lang = {
     "Please select model.": "من فضلك أختر الموديل",
     "Please select period.": "من فضلك أختر الفترة",
     "Item already added to list.": "هذا المنتج مضاف مسبقا فى القائمة",
+    "Item removed from list.": "تم حذف المنتج من القائمة",
     " L.E.": " جنية",
 
 };
