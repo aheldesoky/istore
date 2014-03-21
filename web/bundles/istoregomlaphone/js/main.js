@@ -365,11 +365,11 @@ $(document).ready(function(){
     // Item Warranty Field
     $('#editModalContainer').on('change', 'select[name="itemHasWarranty"]', function(){
         if(this.value === '1'){
-            $('#warranty-field select').prop("disabled", false);
-            $('#warranty-field').removeClass('hidden');
+            $('#warranty-field select, #change-status-field select').prop("disabled", false);
+            $('#warranty-field, #change-status-field').removeClass('hidden');
         } else {
-            $('#warranty-field select').prop("disabled", true);
-            $('#warranty-field').addClass('hidden');
+            $('#warranty-field select, #change-status-field select').prop("disabled", true);
+            $('#warranty-field, #change-status-field').addClass('hidden');
         }
     });
     

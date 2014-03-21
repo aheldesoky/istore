@@ -12,7 +12,7 @@
             <div class="modal-content">
                 <div class="modal-header edit-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title">Edit Item</h4>
+                    <h4 class="modal-title">{%trans%}Edit Item{%endtrans%}</h4>
                 </div>
                 <div class="modal-body">
                     <div class="form-container">
@@ -25,19 +25,19 @@
                                 <div class="col-lg-6 col-lg-offset-2">
                                     <div class="form-group">
                                         <input type="hidden" value="{{ item.i_id }}" id="itemId">
-                                        <input type="text" class="form-control input-lg input-item-serial" id="itemSerial" name="itemSerial" placeholder="Item Serial" value="{{ item.i_item_serial }}">
+                                        <input type="text" class="form-control input-lg input-item-serial" id="itemSerial" name="itemSerial" placeholder="{%trans%}Item Serial{%endtrans%}" value="{{ item.i_item_serial }}">
                                         <label for="itemSerial" class="serial-error"></label>
                                     </div>
                                 </div>
                                 <div class="col-lg-1">
-                                    <button data-loading-text="Loading..." class="btn btn-warning btn-lg btn-item-serial" type="button">Check</button>
+                                    <button data-loading-text="{%trans%}Loading{%endtrans%}..." class="btn btn-warning btn-lg btn-item-serial" type="button">{%trans%}Check{%endtrans%}</button>
                                 </div>
                             </div>
                             {% endif %}
                             <div class="row item-details-container">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="itemCurrentStatus" class="col-sm-4 control-label">Current Status:</label>
+                                        <label for="itemCurrentStatus" class="col-sm-4 control-label">{%trans%}Current Status{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <span for="itemCurrentStatus" class="col-sm-7 item-current-status label
                                                    {% if item.i_item_status=='pending_info' %}
@@ -55,65 +55,36 @@
                                                     {% endif %}
                                                    ">
                                                 {% if item.i_item_status=='pending_info' %}
-                                                Pending Info
+                                                {%trans%}Pending Info{%endtrans%}
                                                 {% elseif item.i_item_status=='in_stock' %}
-                                                In Stock
+                                                {%trans%}In Stock{%endtrans%}
                                                 {% elseif item.i_item_status=='pending_discount' %}
-                                                Pending Discount
+                                                {%trans%}Pending Discount{%endtrans%}
                                                 {% elseif item.i_item_status=='sold' %}
-                                                Sold
+                                                {%trans%}Sold{%endtrans%}
                                                 {% elseif item.i_item_status=='warranty' %}
-                                                Warranty
-                                                {% elseif item.i_item_status=='returned' %}
-                                                Returned
+                                                {%trans%}Warranty{%endtrans%}
+                                                {% elseif item.i_item_status=='warranty_replaced' %}
+                                                {%trans%}Warranty - Replaced{%endtrans%}
                                                 {% endif %}
                                             </span>
                                         </div>
                                     </div>
-                                    {% if item.i_item_status!='pending_info' %}
                                     <div class="form-group">
-                                        <label for="itemStatus" class="col-sm-4 control-label">Change Status:</label>
-                                        <div class="col-sm-6">
-                                            <select class="form-control" id="itemStatus" name="itemStatus">
-                                                <option value="{{ item.i_item_status }}">Select Status</option>
-                                                {% if item.i_item_status=='warranty' %}
-                                                <option value="warranty_replaced">Warranty - Replaced</option>
-                                                {% else %}
-                                                <option value="warranty">Warranty</option>
-                                                {% endif %}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    {% endif %}
-                                    <div class="form-group">
-                                        <label for="itemColor" class="col-sm-4 control-label">Change Color:</label>
-                                        <div class="col-sm-6">
-                                            <select class="form-control required" id="itemColor" name="itemColor">
-                                                <option value="" {% if item.i_item_color==null%}selected{% endif %}>Select color</option>
-                                                <option value="White" {% if item.i_item_color=='White'%}selected{% endif %}>White</option>
-                                                <option value="Black" {% if item.i_item_color=='Black'%}selected{% endif %}>Black</option>
-                                                <option value="Silver" {% if item.i_item_color=='Silver'%}selected{% endif %}>Silver</option>
-                                                <option value="Gray" {% if item.i_item_color=='Gray'%}selected{% endif %}>Gray</option>
-                                                <option value="Red" {% if item.i_item_color=='Red'%}selected{% endif %}>Red</option>
-                                                <option value="Yellow" {% if item.i_item_color=='Yellow'%}selected{% endif %}>Yellow</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="itemHasWarranty" class="col-sm-4 control-label">Has Warranty:</label>
+                                        <label for="itemHasWarranty" class="col-sm-4 control-label">{%trans%}Has Warranty{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <select class="form-control" id="itemHasWarranty" name="itemHasWarranty">
-                                                <option value="0" {% if item.i_item_has_warranty==0 %}selected{% endif %}>No</option>
-                                                <option value="1" {% if item.i_item_has_warranty==1 %}selected{% endif %}>Yes</option>
+                                                <option value="0" {% if item.i_item_has_warranty==0 %}selected{% endif %}>{%trans%}No{%endtrans%}</option>
+                                                <option value="1" {% if item.i_item_has_warranty==1 %}selected{% endif %}>{%trans%}Yes{%endtrans%}</option>
                                             </select>
                                         </div>
                                     </div>
                                     <div class="{% if item.i_item_has_warranty==0 %}hidden{% endif %}" id="warranty-field">
                                         <div class="form-group">
-                                            <label for="itemWarranty" class="col-sm-4 control-label">Change Warranty:</label>
+                                            <label for="itemWarranty" class="col-sm-4 control-label">{%trans%}Change Warranty{%endtrans%}:</label>
                                             <div class="col-sm-6">
                                                 <select class="form-control required" id="itemWarranty" name="itemWarranty" {% if item.i_item_has_warranty==0 %}disabled{% endif %}>
-                                                    <option value="" {% if item.i_item_warranty_id==null%}selected{% endif %}>Select warranty</option>
+                                                    <option value="" {% if item.i_item_warranty_id==null%}selected{% endif %}>{%trans%}Select warranty{%endtrans%}</option>
                                                     {% for warranty in warranties %}
                                                     <option value="{{ warranty.w_id }}" {% if item.i_item_warranty_id==warranty.w_id %}selected{% endif %}>{{ warranty.w_warranty_name }}</option>
                                                     {% endfor %}
@@ -121,44 +92,77 @@
                                             </div>
                                         </div>
                                     </div>
+                                    {% if item.i_item_status!='pending_info' %}
+                                    <div class="{% if item.i_item_has_warranty==0 %}hidden{% endif %}" id="change-status-field">
+                                        <div class="form-group">
+                                            <label for="itemStatus" class="col-sm-4 control-label">{%trans%}Change Status{%endtrans%}:</label>
+                                            <div class="col-sm-6">
+                                                <select class="form-control" id="itemStatus" name="itemStatus">
+                                                    <option value="{{ item.i_item_status }}">{%trans%}Select status{%endtrans%}</option>
+                                                    {% if item.i_item_status=='warranty' %}
+                                                    <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                    {% else %}
+                                                    <option value="warranty">{%trans%}Warranty{%endtrans%}</option>
+                                                    <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                    {% endif %}
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% endif %}
                                     <div class="form-group">
-                                        <label for="itemNotes" class="col-sm-4 control-label">Item Notes:</label>
+                                        <label for="itemColor" class="col-sm-4 control-label">{%trans%}Change Color{%endtrans%}:</label>
+                                        <div class="col-sm-6">
+                                            <select class="form-control required" id="itemColor" name="itemColor">
+                                                <option value="" {% if item.i_item_color==null%}selected{% endif %}>{%trans%}Select color{%endtrans%}</option>
+                                                <option value="White" {% if item.i_item_color=='White'%}selected{% endif %}>{%trans%}White{%endtrans%}</option>
+                                                <option value="Black" {% if item.i_item_color=='Black'%}selected{% endif %}>{%trans%}Black{%endtrans%}</option>
+                                                <option value="Silver" {% if item.i_item_color=='Silver'%}selected{% endif %}>{%trans%}Silver{%endtrans%}</option>
+                                                <option value="Gray" {% if item.i_item_color=='Gray'%}selected{% endif %}>{%trans%}Gray{%endtrans%}</option>
+                                                <option value="Red" {% if item.i_item_color=='Red'%}selected{% endif %}>{%trans%}Red{%endtrans%}</option>
+                                                <option value="Blue" {% if item.i_item_color=='Blue'%}selected{% endif %}>{%trans%}Blue{%endtrans%}</option>
+                                                <option value="Yellow" {% if item.i_item_color=='Yellow'%}selected{% endif %}>{%trans%}Yellow{%endtrans%}</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="itemNotes" class="col-sm-4 control-label">{%trans%}Item Notes{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <div class="col-sm-12">
-                                                <textarea class="form-control" rows="4" id="itemNotes" name="itemNotes" placeholder="Enter notes for this item ....">{{ item.i_item_notes }}</textarea>
+                                                <textarea class="form-control" rows="3" id="itemNotes" name="itemNotes" placeholder="{%trans%}Enter notes for this item{%endtrans%} ....">{{ item.i_item_notes }}</textarea>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="col-md-6 immutable-data">
                                     <div class="form-group">
-                                        <label for="modelSerial" class="col-sm-4 control-label">Model Serial:</label>
+                                        <label for="modelSerial" class="col-sm-4 control-label">{%trans%}Model Serial{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <label for="modelBrand" class="col-sm-10 control-label">{{ item.m_model_serial }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelBrand" class="col-sm-4 control-label">Brand:</label>
+                                        <label for="modelBrand" class="col-sm-4 control-label">{%trans%}Brand{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <label for="modelBrand" class="col-sm-10 control-label">{{ item.m_model_brand }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelModel" class="col-sm-4 control-label">Model:</label>
+                                        <label for="modelModel" class="col-sm-4 control-label">{%trans%}Model{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <label for="modelModel" class="col-sm-10 control-label">{{ item.m_model_model }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelCategory" class="col-sm-4 control-label">Category:</label>
+                                        <label for="modelCategory" class="col-sm-4 control-label">{%trans%}Category{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <label for="modelCategory" class="col-sm-10 control-label">{{ item.c_category_name }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
-                                        <label for="modelPrice" class="col-sm-4 control-label">Price:</label>
+                                        <label for="modelPrice" class="col-sm-4 control-label">{%trans%}Price{%endtrans%}:</label>
                                         <div class="col-sm-6">
-                                            <label for="modelCategory" class="col-sm-10 control-label">{{ item.b_bulk_price }} L.E.</label>
+                                            <label for="modelCategory" class="col-sm-10 control-label">{{ item.b_bulk_price }} {%trans%}L.E.{%endtrans%}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -179,8 +183,8 @@
                     </div>
                 </div>
                 <div class="modal-footer modal-footer-override">
-                    <button type="button" class="btn btn-default btn-item-edit-close" data-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success btn-item-edit-save">Save changes</button>
+                    <button type="button" class="btn btn-default btn-item-edit-close" data-dismiss="modal">{%trans%}Close{%endtrans%}</button>
+                    <button type="submit" class="btn btn-success btn-item-edit-save">{%trans%}Save changes{%endtrans%}</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->

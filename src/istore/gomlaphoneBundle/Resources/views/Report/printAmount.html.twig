@@ -1,0 +1,91 @@
+{% block body %}
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv='Content-Type' content='text/html; charset=UTF-8' />
+        <title>Gomla Phone</title>
+        <link href="/bundles/istoregomlaphone/css/bootstrap.min.css" media="screen" rel="stylesheet" type="text/css">
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/style-bill.css' />
+        <link rel='stylesheet' type='text/css' href='/bundles/istoregomlaphone/css/print.css' media="print" />
+        <link rel="stylesheet" href="/bundles/istoregomlaphone/css/style.css">
+    </head>
+    <body>
+        <div id="page-wrap" class="page-border">
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">{% trans %}Print{% endtrans %}</a>
+            </div>
+            <div id="header">{% trans %}REPORT{% endtrans %}</div>
+            <div id="identity">
+                <div id="address">
+                    <div>Chris Coyier</div>
+                    <div>123 Appleseed Street</div>
+                    <div>Appleville, WI 53719</div>
+
+                    <div>Phone: (555) 555-5555</div>
+                </div>
+                <div id="logo">
+                    <img id="image" src="/bundles/istoregomlaphone/img/logo.png" alt="logo" />
+                </div>
+            </div>
+            <div style="clear:both"></div>
+            <div id="customer">
+                
+                
+            </div>
+
+{% if report|length %}
+<table class="table table-bordered table-report-view-compact">
+        <tr class="active">
+                <th class="text-center">{% trans %}From{% endtrans %}</th>
+                <th class="text-center">{% trans %}To{% endtrans %}</th>
+                <th class="text-center">{% trans %}Payment Method{% endtrans %}</th>
+                <th class="text-center">{% trans %}Subtotal{% endtrans %}</th>
+                <th class="text-center">{% trans %}Total Discount{% endtrans %}</th>
+                <th class="text-center">{% trans %}Total Due{% endtrans %}</th>
+                <th class="text-center">{% trans %}Total Paid{% endtrans %}</th>
+                <th class="text-center">{% trans %}Total Remaining{% endtrans %}</th>
+        </tr>
+        <tr class="">
+                <td rowspan="2" class="vertical-middle text-center">{{ report.from_date }}</td>
+                <td rowspan="2" class="vertical-middle text-center">{{ report.to_date }}</td>
+                <td class="text-center">{% trans %}Prepaid{% endtrans %}</td>
+                <td class="text-center">{{ report.prepaid.subtotal }}</td>
+                <td class="text-center">{{ report.prepaid.discount }}</td>
+                <td class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount }}</td>
+                <td class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount }}</td>
+                <td class="text-center">-</td>
+        </tr>
+        <tr class="">
+                
+                <td class="text-center">{% trans %}Postpaid{% endtrans %}</td>
+                <td class="text-center">{{ report.postpaid.subtotal }}</td>
+                <td class="text-center">{{ report.postpaid.discount }}</td>
+                <td class="text-center">{{ report.postpaid.subtotal - report.postpaid.discount }}</td>
+                <td class="text-center">{{ report.postpaid.total_paid }}</td>
+                <td class="text-center">{{ report.postpaid.subtotal - report.postpaid.discount - report.postpaid.total_paid }}</td>
+        </tr>
+        <tr class="">
+                <th colspan="3" class="text-center">{% trans %}Sum{% endtrans %}</th>
+                <th class="text-center">{{ report.prepaid.subtotal + report.postpaid.subtotal }}</th>
+                <th class="text-center">{{ report.prepaid.discount + report.postpaid.discount }}</th>
+                <th class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount + report.postpaid.subtotal - report.postpaid.discount }}</th>
+                <th class="text-center success">{{ report.prepaid.subtotal - report.prepaid.discount + report.postpaid.total_paid }}</th>
+                <th class="text-center danger">{{ report.postpaid.subtotal - report.postpaid.discount - report.postpaid.total_paid }}</th>
+        </tr>
+</table>
+{% else %}
+<table class="table table-hover table-view">
+        <tr>
+                <td colspan="2">{% trans %}There is no report to display.{% endtrans %}</td>
+        </tr>
+</table>
+{% endif %}
+            
+            
+            <div class="print-control">
+                <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">{% trans %}Print{% endtrans %}</a>
+            </div>
+        </div>
+    </body>
+</html>
+{% endblock %}

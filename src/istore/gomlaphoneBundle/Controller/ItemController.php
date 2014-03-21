@@ -133,6 +133,8 @@ class ItemController extends Controller //implements AuthenticatedController
         $item = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('i , b , m , c , w')
             ->from('istoregomlaphoneBundle:Item', 'i')
+            ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_item_id=i.id')
+            ->leftJoin('istoregomlaphoneBundle:Bulk', 's' , 'WITH' , 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->leftJoin('istoregomlaphoneBundle:Warranty', 'w' , 'WITH' , 'i.item_warranty_id=w.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
@@ -147,16 +149,22 @@ class ItemController extends Controller //implements AuthenticatedController
         {
             //var_dump($request->request);die;
             $itemId = $request->request->get('itemId');
-            $item = $this->getDoctrine()
-                ->getRepository('istoregomlaphoneBundle:Item')
-                ->find($itemId);
+            $item = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('i, si, s')
+                ->from('istoregomlaphoneBundle:Item', 'i')
+                ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_item_id=i.id')
+                ->leftJoin('istoregomlaphoneBundle:Sale', 's' , 'WITH' , 'si.saleitem_sale_id=s.id')
+                ->where('i.id= ?1')
+                ->setParameter(1 , $itemId)
+                ->getQuery()
+                ->getResult();
             
-            //var_dump($item);die;
-        
-            $item->setItemSerial($request->request->get('itemSerial'));
+//var_dump($item);die;
             
-            if ($item->getItemStatus() == 'pending_info')
-                $item->setItemStatus('in_stock');
+            $item[0]->setItemSerial($request->request->get('itemSerial'));
+            
+            if ($item[0]->getItemStatus() == 'pending_info')
+                $item[0]->setItemStatus('in_stock');
             elseif ($request->request->get('itemStatus') == 'warranty'){
                 $warrantyItem = new WarrantyItem();
                 $warrantyItem->setWarrantyitemItemId($itemId);
@@ -165,32 +173,48 @@ class ItemController extends Controller //implements AuthenticatedController
                 $entityManager->persist($warrantyItem);
                 $entityManager->flush();
                 
-                $item->setItemStatus($request->request->get('itemStatus'));
+                $item[0]->setItemStatus($request->request->get('itemStatus'));
+            } elseif ($request->request->get('itemStatus') == 'warranty_replaced') {
+                $warrantyItem = new WarrantyItem();
+                $warrantyItem->setWarrantyitemItemId($itemId);
+//var_dump($warrantyItem);die;
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($warrantyItem);
+                
+                if($item[0]->getItemStatus() != 'warranty_replaced' && $item[2] != null){
+                    $saleNewPrice = $item[2]->getSaleTotalPrice() - $item[0]->getItemPrice();
+                    $item[2]->setSaleTotalPrice($saleNewPrice);
+                    $entityManager->persist($item[2]);
+                }
+                
+                $entityManager->flush();
+                
+                $item[0]->setItemStatus($request->request->get('itemStatus'));
             }
             
-            $item->setItemColor($request->request->get('itemColor'));
-            $item->setItemNotes($request->request->get('itemNotes'));
+            $item[0]->setItemColor($request->request->get('itemColor'));
+            $item[0]->setItemNotes($request->request->get('itemNotes'));
             
             if($request->request->get('itemHasWarranty')){
                 $warranty = $this->getDoctrine()
                     ->getRepository('istoregomlaphoneBundle:Warranty')
                     ->find($request->request->get('itemWarranty'));
             
-                $item->setItemHasWarranty($request->request->get('itemHasWarranty'));
-                $item->setItemWarrantyId($warranty);
+                $item[0]->setItemHasWarranty($request->request->get('itemHasWarranty'));
+                $item[0]->setItemWarrantyId($warranty);
             } else {
                 $warranty = new Warranty();
             
-                $item->setItemHasWarranty($request->request->get('itemHasWarranty'));
-                $item->setItemWarrantyId($warranty);
+                $item[0]->setItemHasWarranty($request->request->get('itemHasWarranty'));
+                $item[0]->setItemWarrantyId($warranty);
             }
             
             //var_dump($item);die;
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($item);
+            $entityManager->persist($item[0]);
             $entityManager->flush();
             
-            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $item->getItemBulk()->getId() )));
+            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $item[0]->getItemBulk()->getId() )));
         }
         
         return $this->render('istoregomlaphoneBundle:Item:edit.html.twig' , array(

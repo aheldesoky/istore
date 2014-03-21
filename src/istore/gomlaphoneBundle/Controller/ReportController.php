@@ -115,6 +115,56 @@ class ReportController extends Controller //implements AuthenticatedController
         }
     }
     
+        public function printAction(Request $request) {
+
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        if ($request->getMethod() == 'POST') {
+            
+            $type = $request->request->get('reportType');
+            
+            if($type === 'stock'){
+                $status = $request->request->get('reportStatus');
+                $report = $this->getStockReport($request);
+                return $this->render('istoregomlaphoneBundle:Report:printStock.html.twig', array(
+                    'report' => $report,
+                    'status' => $status,
+                    'criteria' => $request->request,
+                ));
+                
+            } elseif($type === 'sales'){
+                $payment = $request->request->get('reportPayment');
+                if($payment === 'prepaid'){
+                    $report = $this->getPrepaidReport($request);
+                    return $this->render('istoregomlaphoneBundle:Report:printPrepaid.html.twig', array(
+                        'report' => $report,
+                        'criteria' => $request->request,
+                    ));
+                    
+                } elseif ($payment === 'postpaid') {
+                    $report = $this->getPostpaidReport($request);
+                    return $this->render('istoregomlaphoneBundle:Report:printPostpaid.html.twig', array(
+                        'report' => $report,
+                        'criteria' => $request->request,
+                    ));
+                    
+                } elseif ($payment === 'amount') {
+                    $report = $this->getAmountReport($request);
+                    return $this->render('istoregomlaphoneBundle:Report:printAmount.html.twig', array(
+                        'report' => $report,
+                        'criteria' => $request->request,
+                    ));
+                    
+                }
+            }
+        }
+        
+    }
+    
     public function getStockReport(Request $request)
     {
         
@@ -255,7 +305,7 @@ class ReportController extends Controller //implements AuthenticatedController
         
         //SUM(CASE WHEN i.item_status='warranty' AND po.id IS NULL AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_warranty
         $prepaidQuery = $queryBuilder->select("m , i , b , c , s ,
-                SUM(CASE WHEN po.id IS NULL AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_sold")
+                SUM(CASE WHEN po.id IS NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_sold")
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
             ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
@@ -383,7 +433,7 @@ class ReportController extends Controller //implements AuthenticatedController
         
         // Doctrine Query Language DQL
         $postpaidQuery = $queryBuilder->select("DISTINCT(po.id) AS temp , m , i , b , c , s , si , po ,
-            SUM(CASE WHEN po.id IS NOT NULL AND $dateFilter THEN 1 ELSE 0 END) AS postpaid_count_sold")
+            SUM(CASE WHEN po.id IS NOT NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS postpaid_count_sold")
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
             ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
@@ -686,88 +736,6 @@ class ReportController extends Controller //implements AuthenticatedController
         //save the pdf file on the server
             file_put_contents($file_to_save, $dompdf->output());
         */
-    }
-    
-    public function printAction(Request $request) {
-        
-        $user = $this->getUser();
-        
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
-            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-        }
-        
-        if ($request->getMethod() == 'POST') {
-//var_dump($request->request);die;
-            
-            $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
-                ->select('m , i , b , c , 
-                    SUM(CASE WHEN i.item_status=\'pending_info\' THEN 1 ELSE 0 END) AS pending_info ,
-                    SUM(CASE WHEN i.item_status=\'in_stock\' THEN 1 ELSE 0 END) AS in_stock ,
-                    SUM(CASE WHEN i.item_status=\'sold\' THEN 1 ELSE 0 END) AS sold ,
-                    SUM(CASE WHEN i.item_status=\'warranty\' THEN 1 ELSE 0 END) AS warranty ,
-                    SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN 1 ELSE 0 END) AS warranty_replaced ,
-                    SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count')
-                ->from('istoregomlaphoneBundle:Model', 'm')
-                ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
-                ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
-                ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
-                //->join('istoregomlaphoneBundle:Supplier', 'sp', 'WITH', 'b.bulk_supplier=sp.id')
-                ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
-                ->where('st.id=?1')
-                ->setParameter(1, $user->getStoreId())
-                ->groupBy('m.id');
-            
-            //Status filter
-            $status = $request->request->get('reportStatus');
-            if($status){
-                if($status === 'sold'){
-                    $reportQuery->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')    
-                                ->join('istoregomlaphoneBundle:Sale', 's', 'WITH', 'si.saleitem_sale_id=s.id');
-                }
-                $reportQuery->andWhere('i.item_status=?2')->setParameter(2, $status);
-            }
-            
-            //Model filter
-            $models = $request->request->get('reportModel');
-            if($models){
-                $reportQuery->andWhere('m.id IN (:models)')->setParameter('models', $models);
-            }
-            
-            //Category filter
-            $category = $request->request->get('reportCategory');
-            if($category){
-                $reportQuery->andWhere('c.id=:category')->setParameter('category', $category);
-            }
-            
-            //Supplier filter
-            $supplier = $request->request->get('reportSupplier');
-            if($supplier){
-                $reportQuery->andWhere('sp.id=:supplier')->setParameter('supplier', $supplier);
-            }
-            
-            //From Date filter
-            $fromDate = $request->request->get('reportFromDate');
-            if($fromDate){
-                $reportQuery->andWhere('s.sale_date >= :fromdate')->setParameter('fromdate', $fromDate);
-            }
-            
-            //To Date filter
-            $toDate = $request->request->get('reportToDate');
-            if($toDate){
-                $reportQuery->andWhere('s.sale_date BETWEEN :fromdate AND :todate')->setParameter('todate', $toDate);
-            }
-            
-            $report = $reportQuery->orderBy('m.id', 'ASC')
-                ->getQuery()
-                ->getScalarResult();
-//echo $reportQuery->getQuery()->getSQL();die;
-//var_dump($report);die;
-        }
-        
-        return $this->render('istoregomlaphoneBundle:Report:print.html.twig', array(
-            'report' => $report,
-        ));
-        
     }
     
 }
