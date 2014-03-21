@@ -13,7 +13,7 @@ Please fill out this field: من فضلك ادخل هذا الحقل
 ##--------------------------------------------------------------------------------------------------------------------
 
 ## Home page
-Gomla Phone: جمله فون
+Gomla Phone: جملة فون
 Home: الرئيسية
 Sales: المبيعات
 Customers: العملاء
@@ -27,7 +27,7 @@ Warranties: وكلاء الضمان
 Reports: التقارير
 Users: المستخدمين
 Language: اللغة
-Sales page: صفحة المبيعات
+Sales Page: عملية البيع
 Item Serial: كود المنتج
 Check: فحص
 Add: إضافه
@@ -45,12 +45,12 @@ Item: المنتج
 Qty: الكمية
 of: من
 Action: العمليه
-there is no items.: لا يوجد منتجات مضافه
+There is no items.: لا يوجد منتجات مضافة
 Payment: طريقة الدفع
 Prepaid: الدفع الكاش
 Postpaid: الدفع الآجل
 Amount Paid: المبلغ المدفوع
-Amount L.E.: القيمه بالجنية المصرى
+Amount L.E.: القيمة بالجنية المصرى
 Remaining: المبلغ المتبقى
 ok: تم
 Subtotal: إجمالى المبلغ
@@ -145,7 +145,7 @@ Delete: حذف
 Edit: تعديل
 Update Info: تحديث البيانات
 View: مشاهدة
-Add New Bulk: إضافة مجموعه جديدة
+Add New Bulk: إضافة مجموعة جديدة
 Bulk list: القائمه
 Bulks: المجموعات
 Serial can not be empty.: يجب إدخال الكود
@@ -169,7 +169,7 @@ This field is required.: بيانات مطلوبة
 ok: تم
 Model exists: الموديل موجود 
 Model does not exist.: الموديل غير موجود
-Quantity must be greater then zero.: الكميه يجب ان تكون اكبر من الصفر
+Quantity must be greater then zero.: الكمية يجب ان تكون اكبر من الصفر
 Edit Item: تعديل المنتج
 Item Serial: كود المنتج
 Cuurent Status: الحالة الأن

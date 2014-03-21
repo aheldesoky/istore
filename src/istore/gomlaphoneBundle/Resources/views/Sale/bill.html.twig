@@ -50,7 +50,7 @@
                     </tr>
                     <tr>
                         <td class="meta-head">{%trans%}Total Due{%endtrans%}</td>
-                        <td><div class="due">{{ sale.s_sale_total - sale.s_sale_discount }} {%trans%}L.E.{%endtrans%}</div></td>
+                        <td><div class="due">{{ sale.s_sale_total_price - sale.s_sale_discount }} {%trans%}L.E.{%endtrans%}</div></td>
                     </tr>
                 </table>
             </div>
@@ -62,25 +62,29 @@
                     <th>{%trans%}Price L.E.{%endtrans%}</th>
                 </tr>
                 {% for item in sale.items.with_serial %}
-                <tr class="item-row">
-                    <td class="item-name">{{ item.i_item_serial }}</td>
-                    <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }} {{ item.i_item_color }}</td>
-                    <td>{{ item.ca_category_name }}</td>
-                    <td>{{ item.quantity }} &times; {{ item.b_bulk_price }}</td>
-                </tr>
+                    {% if item.i_item_status != 'warranty_replaced' %}
+                    <tr class="item-row">
+                        <td class="item-name">{{ item.i_item_serial }}</td>
+                        <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }} {{ item.i_item_color }}</td>
+                        <td>{{ item.ca_category_name }}</td>
+                        <td>{{ item.quantity }} &times; {{ item.b_bulk_price }}</td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
                 {% for item in sale.items.without_serial %}
-                <tr class="item-row">
-                    <td class="item-name">{{ item.m_model_serial }}</td>
-                    <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }}</td>
-                    <td>{{ item.ca_category_name }}</td>
-                    <td>{{ item.quantity }} &times; {{ item.b_bulk_price }}</td>
-                </tr>
+                    {% if item.i_item_status != 'warranty_replaced' %}
+                    <tr class="item-row">
+                        <td class="item-name">{{ item.m_model_serial }}</td>
+                        <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }}</td>
+                        <td>{{ item.ca_category_name }}</td>
+                        <td>{{ item.quantity }} &times; {{ item.b_bulk_price }}</td>
+                    </tr>
+                    {% endif %}
                 {% endfor %}
                 <tr class="last-row">
                     <td colspan="2" class="blank"></td>
                     <td class="total-value bold"><b>{%trans%}Subtotal{%endtrans%}</b></td>
-                    <td class="total-value bold"><div id="subtotal">{{ sale.s_sale_total }}</div></td>
+                    <td class="total-value bold"><div id="subtotal">{{ sale.s_sale_total_price }}</div></td>
                 </tr>
                 {# if sale.s_sale_discount #}
                 <tr>
@@ -92,7 +96,7 @@
                 <tr>
                     <td colspan="2" class="blank"></td>
                     <td class="total-value bold">{%trans%}Total{%endtrans%}</td>
-                    <td class="total-value bold"><div id="total">{{ sale.s_sale_total - sale.s_sale_discount }}</div></td>
+                    <td class="total-value bold"><div id="total">{{ sale.s_sale_total_price - sale.s_sale_discount }}</div></td>
                 </tr>
                 
                 {% if sale.payments|length %}
@@ -123,7 +127,7 @@
                         <tr>
                             <td colspan="2" class="blank"></td>
                             <td class="total-value bold">{%trans%}Remaining{%endtrans%}</td>
-                            <td class="total-value bold">{{ sale.s_sale_total - sale.s_sale_discount - sale.po_total_paid }}</td>
+                            <td class="total-value bold">{{ sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid }}</td>
                         </tr>
                 {% endif %}
             </table>

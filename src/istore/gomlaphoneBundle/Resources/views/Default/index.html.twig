@@ -3,7 +3,7 @@
 <div class="form-horizontal">
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h4 class="panel-heading-sale">Sales Page</h4>
+            <h4 class="panel-heading-sale">{% trans %}Sales Page{% endtrans %}</h4>
             <span id="datetime">
                 {{ datetime.format('l jS F Y') }}
             </span>
@@ -137,7 +137,7 @@
                             </div>
                             <div class="row">
                                 <div class="col-sm-3 col-lg-offset-4">
-                                    <a class="col-lg-12 btn btn-danger btn-lg btn-checkout">Checkout</a>
+                                    <a class="col-lg-12 btn btn-danger btn-lg btn-checkout">{%trans%}Checkout{%endtrans%}</a>
                                     {% include('istoregomlaphoneBundle:Default:addCustomer.html.twig') %}
                                 </div>
                             </div>

@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header edit-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Customer Data</h4>
+                <h4 class="modal-title">{%trans%}Customer Data{%endtrans%}</h4>
             </div>
             <div class="modal-body">
                 <div class="form-container">
@@ -14,35 +14,35 @@
                         <div class="row item-details-container">
                             <div class="col-md-12">
                                 <div class="form-group">
-                                    <label for="customerPhone" class="col-sm-4 control-label">Phone Number : </label>
+                                    <label for="customerPhone" class="col-sm-4 control-label">{%trans%}Phone Number{%endtrans%} : </label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="customerPhone" name="customerPhone" placeholder="Enter Phone Number">
+                                        <input type="text" class="form-control" id="customerPhone" name="customerPhone" placeholder="{%trans%}Enter Phone Number{%endtrans%}">
                                     </div>
-                                    <a class="btn btn-info btn-sm btn-find-phone">Find</a>
+                                    <a class="btn btn-info btn-sm btn-find-phone">{%trans%}Find{%endtrans%}</a>
                                 </div>
                                 <div class="form-group">
-                                    <label for="customerFirstName" class="col-sm-4 control-label">First Name : </label>
+                                    <label for="customerFirstName" class="col-sm-4 control-label">{%trans%}First Name{%endtrans%} : </label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="customerFirstName" name="customerFirstName" placeholder="Enter First Name">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label for="customerLastName" class="col-sm-4 control-label">Last Name : </label>
-                                    <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="customerLastName" name="customerLastName" placeholder="Enter Last Name">
+                                        <input type="text" class="form-control" id="customerFirstName" name="customerFirstName" placeholder="{%trans%}Enter First Name{%endtrans%}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="customerAddress" class="col-sm-4 control-label">Address : </label>
+                                    <label for="customerLastName" class="col-sm-4 control-label">{%trans%}Last Name{%endtrans%} : </label>
                                     <div class="col-sm-6">
-                                        <input type="text" class="form-control" id="customerAddress" name="customerAddress" placeholder="Enter Address">
+                                        <input type="text" class="form-control" id="customerLastName" name="customerLastName" placeholder="{%trans%}Enter Last Name{%endtrans%}">
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label for="customerNotes" class="col-sm-4 control-label">Notes : </label>
+                                    <label for="customerAddress" class="col-sm-4 control-label">{%trans%}Address{%endtrans%} : </label>
+                                    <div class="col-sm-6">
+                                        <input type="text" class="form-control" id="customerAddress" name="customerAddress" placeholder="{%trans%}Enter Address{%endtrans%}">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customerNotes" class="col-sm-4 control-label">{%trans%}Notes{%endtrans%} : </label>
                                     <div class="col-sm-6">
                                         <div class="col-sm-12">
-                                            <textarea class="form-control" rows="4" id="customerNotes" name="customerNotes" placeholder="Enter notes for this item ...."></textarea>
+                                            <textarea class="form-control" rows="4" id="customerNotes" name="customerNotes" placeholder="{%trans%}Enter notes for this item{%endtrans%} ...."></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -53,8 +53,8 @@
                 </div>
             </div>
             <div class="modal-footer modal-footer-override">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <button type="submit" class="btn btn-danger btn-continue">Continue</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">{%trans%}Close{%endtrans%}</button>
+                <button type="submit" class="btn btn-danger btn-continue">{%trans%}Continue{%endtrans%}</button>
             </div>
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->

@@ -176,18 +176,18 @@ $(document).ready(function(){
                 success: function(response){
                     if(response.error==0){
                         $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
-                        $('.postpaid-amount-error').html('Amount successfully added');
-                        $('#alert-message').html(alertSuccessMessage('Payment of '+ amount +' L.E. is successfully added to bill #'+saleId));
+                        $('.postpaid-amount-error').html(lang['Amount successfully added']);
+                        $('#alert-message').html(alertSuccessMessage(lang['Payment of ']+ amount +lang[' L.E. is successfully added to bill #']+saleId));
                         $(element).val(0);
                         $('#label-sale-paid').html(response.total_paid + ' ' + 'L.E.');
-                        $('#label-sale-remaining').html(response.total_due - response.total_paid + ' ' + 'L.E.');
-                        $('tr.sale-'+saleId+' td.total-paid').html(response.total_paid + ' ' + 'L.E.');
-                        $('tr.sale-'+saleId+' td.total-remaining').html(response.total_due - response.total_paid + ' ' + 'L.E.');
+                        $('#label-sale-remaining').html(response.total_due - response.total_paid + ' ' + lang['L.E.']);
+                        $('tr.sale-'+saleId+' td.total-paid').html(response.total_paid + ' ' + lang['L.E.']);
+                        $('tr.sale-'+saleId+' td.total-remaining').html(response.total_due - response.total_paid + ' ' + lang['L.E.']);
                         $('#confirmPaymentModal').modal('hide');
                         $('#addPostpaidPayment').modal('hide');
                     } else {
                         $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                        $('.postpaid-amount-error').html('Amount can not be added');
+                        $('.postpaid-amount-error').html(lang['Amount can not be added']);
                     }
                 }
         }).always(function () {
@@ -251,10 +251,10 @@ $(document).ready(function(){
                         //alert(salePaid);
                         $('#label-sale-paid').html(salePaid + ' L.E.');
                         $('#label-sale-remaining').html( parseInt(saleTotal) - parseInt(saleDiscount) - parseInt(salePaid) + ' L.E.');
-                        $('#alert-refund-message').html(alertSuccessMessage('Payment of '+paymentAmount+' L.E. has been refunded'));
+                        $('#alert-refund-message').html(alertSuccessMessage(lang['Payment of ']+paymentAmount+lang[' L.E. has been refunded']));
                     } else {
                         $('#confirmRefundModal').modal('hide');
-                        $('#alert-refund-message').html(alertDangerMessage('Can not refund '+paymentAmount+' L.E. at this time.'));
+                        $('#alert-refund-message').html(alertDangerMessage(lang['Can not refund ']+paymentAmount+lang[' L.E. at this time.']));
                     }
                 }
         }).always(function () {
@@ -281,10 +281,10 @@ $(document).ready(function(){
                     if(response.error==0){
                         $('#refundSaleModal').modal('hide');
                         $('tr.sale-'+saleId).remove();
-                        $('#alert-message').html(alertSuccessMessage('Sale #'+saleId+' has been refunded'));
+                        $('#alert-message').html(alertSuccessMessage(lang['Sale #']+saleId+lang[' has been refunded']));
                     } else {
                         $('#refundSaleModal').modal('hide');
-                        $('#alert-message').html(alertDangerMessage('Can not refund Sale # '+saleId+' at this time.'));
+                        $('#alert-message').html(alertDangerMessage(lang['Can not refund Sale # ']+saleId+lang[' at this time.']));
                     }
                 }
         }).always(function () {
@@ -315,10 +315,10 @@ $(document).ready(function(){
                         $('#confirmDiscountModal').modal('hide');
                         $('tr.sale-'+saleId+' .btn-discount-modal').addClass('hidden');
                         $('tr.sale-'+saleId+' .btn-discount-confirmed').removeClass('hidden');
-                        $('#alert-message').html(alertSuccessMessage('Discount for Sale #'+saleId+' has been confirmed'));
+                        $('#alert-message').html(alertSuccessMessage(lang['Discount for Sale #']+saleId+lang[' has been confirmed']));
                     } else {
                         $('#confirmDiscountModal').modal('hide');
-                        $('#alert-message').html(alertDangerMessage('Can not confirm discount for Sale # '+saleId+' at this time.'));
+                        $('#alert-message').html(alertDangerMessage(lang['Can not confirm discount for Sale # ']+saleId+lang[' at this time.']));
                     }
                 }
         }).always(function () {
@@ -334,13 +334,13 @@ $(document).ready(function(){
         var passedValidation = true;
         
         if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) > saleRemaining){
-            $('.postpaid-amount-error').html('Amount can not be greater than the remaining value');
+            $('.postpaid-amount-error').html(lang['Amount can not be greater than the remaining value']);
             passedValidation = false;
         } else if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) <= 0 ){
-            $('.postpaid-amount-error').html('Amount must be greater than zero');
+            $('.postpaid-amount-error').html(lang['Amount must be greater than zero']);
             passedValidation = false;
         } else if(!/^\d+$/.test($(element).val())){
-            $('.postpaid-amount-error').html('Amount must be a number');
+            $('.postpaid-amount-error').html(lang['Amount must be a number']);
             passedValidation = false;
         } else {
             $('.postpaid-amount-error').html('');
@@ -404,15 +404,15 @@ $(document).ready(function(){
     $('#saleDiscount').change(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= subtotal && parseInt($(this).val()) >= 0 ){
             discount = parseInt($(this).val());
-            $('#total').html(calculateTotal() + ' L.E.');
+            $('#total').html(calculateTotal() + lang[' L.E.']);
             $('#amountPaid').val(0);
-            $('#remainingAmount').html(calculateTotal() + ' L.E.');
+            $('#remainingAmount').html(calculateTotal() + lang[' L.E.']);
         } else {
             $(this).val(discount);
             discount = parseInt($(this).val());
-            $('#total').html(calculateTotal() + ' L.E.');
+            $('#total').html(calculateTotal() + lang[' L.E.']);
             $('#amountPaid').val(0);
-            $('#remainingAmount').html(calculateTotal() + ' L.E.');
+            $('#remainingAmount').html(calculateTotal() + lang[' L.E.']);
         }
     })/*.keyup(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= subtotal && parseInt($(this).val()) >= 0 ){
@@ -428,19 +428,19 @@ $(document).ready(function(){
     $('#amountPaid').change(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= total && parseInt($(this).val()) >= 0){
             amountPaid = parseInt($(this).val())
-            $('#remainingAmount').html(total-amountPaid + ' L.E.');
+            $('#remainingAmount').html(total-amountPaid + lang[' L.E.']);
         } else if(/^\d+$/.test($(this).val()) && parseInt($(this).val()) > total){
             $(this).val(total);
             amountPaid = parseInt($(this).val())
-            $('#remainingAmount').html(total-parseInt($(this).val()) + ' L.E.');
+            $('#remainingAmount').html(total-parseInt($(this).val()) + lang[' L.E.']);
         } else if( parseInt($(this).val()) < 0 ){
             $(this).val(0);
             amountPaid = parseInt($(this).val())
-            $('#remainingAmount').html(total-parseInt($(this).val()) + ' L.E.');
+            $('#remainingAmount').html(total-parseInt($(this).val()) + lang[' L.E.']);
         } else {
             $(this).val(0);
             amountPaid = parseInt($(this).val())
-            $('#remainingAmount').html(total-parseInt($(this).val()) + ' L.E.');
+            $('#remainingAmount').html(total-parseInt($(this).val()) + lang[' L.E.']);
         } 
     });/*.keyup(function(){
         if(!/^\d+$/.test($(this).val()))
@@ -503,13 +503,13 @@ $(document).ready(function(){
                         $('#customerLastName').val(response.customer.c_customer_lname);
                         $('#customerAddress').val(response.customer.c_customer_address);
                         $('#customerNotes').val(response.customer.c_customer_notes);
-                        $('.alert-message-modal').html(alertInfoMessage('Customer is available.'));
+                        $('.alert-message-modal').html(alertInfoMessage(lang['Customer is available.']));
                     } else {
                         $('#customerFirstName').val('');
                         $('#customerLastName').val('');
                         $('#customerAddress').val('');
                         $('#customerNotes').val('');
-                        $('.alert-message-modal').html(alertDangerMessage('Customer is not found.'));
+                        $('.alert-message-modal').html(alertDangerMessage(lang['Customer is not found.']));
                     }
                     customerValidator.element('#customerPhone');
                     customerValidator.element('#customerFirstName');
@@ -542,7 +542,7 @@ $(document).ready(function(){
         if(this.value === 'postpaid'){
             $('#amountPaid').prop("disabled", false).val(0);
             $('.input-amount-paid').removeClass('hidden');
-            $('label#remainingAmount').html(calculateTotal() + ' L.E.');
+            $('label#remainingAmount').html(calculateTotal() + lang[' L.E.']);
             amountPaid = 0;
         } else {
             $('#amountPaid').prop("disabled", true);
@@ -569,13 +569,13 @@ $(document).ready(function(){
         itemTexts: function (type, page, current) {
             switch (type) {
             case "first":
-                return "First";
+                return lang["First"];
             case "prev":
-                return "Previous";
+                return lang["Previous"];
             case "next":
-                return "Next";
+                return lang["Next"];
             case "last":
-                return "Last";
+                return lang["Last"];
             case "page":
                 return page;
             }
@@ -606,11 +606,11 @@ $(document).ready(function(){
         var itemSerial = $('#itemSerial').val();
         var itemBrand = $('#itemBrand').html();
         if(itemSerial == ''){
-            $('#alert-message').html(alertDangerMessage('There is no item to be added.'));
-            $('.serial-error').html('Check item first.')
+            $('#alert-message').html(alertDangerMessage(lang['There is no item to be added.']));
+            $('.serial-error').html(lang['Check item first.'])
             $('#itemSerial').focus();
         } else if(itemBrand == '') {
-            $('#alert-message').html(alertInfoMessage('Check item first.'));
+            $('#alert-message').html(alertInfoMessage(lang['Check item first.']));
             $('#itemSerial').focus();
         } else if(itemList.length > 0){
             var flag = false;
@@ -631,7 +631,7 @@ $(document).ready(function(){
                 }
             });
             if(flag === true){
-                $('#alert-message').html(alertInfoMessage('Item already added to list.'));
+                $('#alert-message').html(alertInfoMessage(lang['Item already added to list.']));
                 //$(".table-view-sale tr:eq("+ itemIndex +")").effect("highlight", {}, 1500);
                 clearItem();
             } else {
@@ -646,7 +646,7 @@ $(document).ready(function(){
     $('.table-view-sale').on('click' , 'a.btn-remove-item' , function(){
         var itemSerial = $(this).closest('tr').children()[0].innerHTML;
         removeItem(itemSerial);
-        $('#alert-message').html(alertInfoMessage('Item removed from list.'));
+        $('#alert-message').html(alertInfoMessage(lang['Item removed from list.']));
         $(this).closest('tr').remove();
     });
     
@@ -663,7 +663,7 @@ $(document).ready(function(){
         
         //Validate empty serial
         if(itemSerial === ''){
-            $(".serial-error").html('Serial can not be empty.');
+            $(".serial-error").html(lang['Serial can not be empty.']);
             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
@@ -671,7 +671,7 @@ $(document).ready(function(){
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-zA-Z0-9-]+$/.test(itemSerial)){
-            $(".serial-error").html('Please enter a valid serial first.');
+            $(".serial-error").html(lang['Please enter a valid serial first.']);
             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
@@ -692,14 +692,14 @@ $(document).ready(function(){
                             $('#itemBrand').html(item.m_model_brand);
                             $('#itemModel').html(item.m_model_model);
                             $('#itemCategory').html(item.c_category_name);
-                            $('#itemPrice').html(item.b_bulk_price+' L.E.');
+                            $('#itemPrice').html(item.b_bulk_price+lang[' L.E.']);
                             $('#alert-message').html('');
-                            $(".serial-error").html('Item is available.');
+                            $(".serial-error").html(lang['Item is available.']);
                             $('#itemSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
                             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
                             if(!item.m_model_item_has_serial){
                                 $('.quantity-field').removeClass('hidden');
-                                $('#bulkQuantity').html(' of ' + response.count);
+                                $('#bulkQuantity').html(lang[' of '] + response.count);
                                 $('#bulk-qty').val(response.count);
                                 bulkQty = response.count;
                             } else {
@@ -709,7 +709,7 @@ $(document).ready(function(){
                             
                         } else {
                             $('#alert-message').html('');
-                            $(".serial-error").html('Item is not found.');
+                            $(".serial-error").html(lang['Item is not found.']);
                             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
                             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                         }
@@ -813,7 +813,7 @@ $(document).ready(function(){
         
         //Validate empty serial
         if(modelSerial === ''){
-            $(".serial-error").html('Serial can not be empty.');
+            $(".serial-error").html(lang['Serial can not be empty.']);
             $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#modelSerial").focus();
@@ -821,7 +821,7 @@ $(document).ready(function(){
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-zA-Z0-9-]+$/.test(modelSerial)){
-            $(".serial-error").html('Please enter a valid serial first.');
+            $(".serial-error").html(lang['Please enter a valid serial first.']);
             $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#modelSerial").focus();
@@ -848,7 +848,7 @@ $(document).ready(function(){
                 if(response.error === null) {  
                     // Good result, allow the submission
                     $('#alert-message').html('');
-                    $(".serial-error").html('Serial is valid.');
+                    $(".serial-error").html(lang['Serial is valid.']);
                     $('#modelSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
                     $('.alert-serial-model').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
                     $('#modelBrand').focus();
@@ -856,7 +856,7 @@ $(document).ready(function(){
                     
                     // Show an error message
                 } else if(response.error === 'model_exists'){
-                    $(".serial-error").html('Model already exists.');
+                    $(".serial-error").html(lang['Model already exists.']);
                     $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
                     $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                     $("#modelSerial").focus();
@@ -910,7 +910,7 @@ $(document).ready(function(){
     //Quantity not less than 1
     $.validator.addMethod("greaterThan", function(value, element, param) {
         return this.optional(element) || value > param;
-    }, "Quantity must be greater than zero.");
+    }, lang["Quantity must be greater than zero."]);
     
     function validateBulkSerial() {
         var action = $("#action").val();
@@ -928,7 +928,7 @@ $(document).ready(function(){
         
         //Validate empty serial
         if(modelSerial === ''){
-            $(".serial-error").html('Serial can not be empty.');
+            $(".serial-error").html(lang['Serial can not be empty.']);
             $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             //Clear Model Data
@@ -940,7 +940,7 @@ $(document).ready(function(){
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-zA-Z0-9-]+$/.test(modelSerial)){
-            $(".serial-error").html('Please enter a valid serial.');
+            $(".serial-error").html(lang['Please enter a valid serial.']);
             $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             //Clear Model Data
@@ -971,7 +971,7 @@ $(document).ready(function(){
                 if(response.error === null) {  
                     // Good result, allow the submission
                     $('#alert-message').html('');
-                    $(".serial-error").html('Model does not exist.');
+                    $(".serial-error").html(lang['Model does not exist.']);
                     $('#modelSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
                     $('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                     $('#bulkBrand').val('');
@@ -981,7 +981,7 @@ $(document).ready(function(){
                     
                     // Show an error message
                 } else if(response.error === 'model_exists'){
-                    $(".serial-error").html('Model exists.');
+                    $(".serial-error").html(lang['Model exists.']);
                     $('#modelSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
                     $('.alert-serial-model').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
                     $('#bulkBrand').val(response.model.m_model_brand);
@@ -1044,7 +1044,7 @@ $(document).ready(function(){
         
         //Validate empty serial
         if(itemSerial === ''){
-            $(".serial-error").html('Serial can not be empty.');
+            $(".serial-error").html(lang['Serial can not be empty.']);
             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
@@ -1052,7 +1052,7 @@ $(document).ready(function(){
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-zA-Z0-9-]+$/.test(itemSerial)){
-            $(".serial-error").html('Please enter a valid serial first.');
+            $(".serial-error").html(lang['Please enter a valid serial first.']);
             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
@@ -1079,7 +1079,7 @@ $(document).ready(function(){
                 if(response.error === null) {  
                     // Good result, allow the submission
                     $('#alert-message').html('');
-                    $(".serial-error").html('Serial is valid.');
+                    $(".serial-error").html(lang['Serial is valid.']);
                     $('#itemSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
                     $('.alert-serial-item').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
                     $('#itemColor').focus();
@@ -1087,7 +1087,7 @@ $(document).ready(function(){
                     
                     // Show an error message
                 } else if(response.error === 'item_exists'){
-                    $(".serial-error").html('Item already exists.');
+                    $(".serial-error").html(lang['Item already exists.']);
                     $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
                     $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                     $("#itemSerial").focus();
@@ -1126,13 +1126,13 @@ $(document).ready(function(){
         var passedValidation = false;
         //Validate empty category name
         if(categoryName === ''){
-            $(".category-error").html('Category name can not be empty.');
+            $(".category-error").html(lang['Category name can not be empty.']);
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
             return passedValidation;
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-z0-9\u0600-\u06FF\s]+$/i.test(categoryName)){
-            $(".category-error").html('Please enter a valid name.');
+            $(".category-error").html(lang['Please enter a valid name.']);
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
             return passedValidation;
         }
@@ -1152,12 +1152,12 @@ $(document).ready(function(){
             success: function(response){
                 if(response.error==='category_exists'){
                     $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $(".category-error").html('Category' + ' ' + categoryName + ' ' + 'already exists.' );
+                    $(".category-error").html(lang['Category'] + ' ' + categoryName + ' ' + lang['already exists.'] );
                     
                 } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')
                         .closest('.form-group').removeClass('has-error').addClass('has-success');
-                    $(".category-error").html('Category name is valid');
+                    $(".category-error").html(lang['Category name is valid']);
                     passedValidation = true;
                 }
             }
@@ -1193,13 +1193,13 @@ $(document).ready(function(){
         
         //Validate empty warranty name
         if(warrantyName === ''){
-            $(".warranty-error").html('Warranty name can not be empty.');
+            $(".warranty-error").html(lang['Warranty name can not be empty.']);
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
             return passedValidation;
             
         //Validate letters, numbers and dashes
         } else if(!/^[a-z0-9\u0600-\u06FF\s]+$/i.test(warrantyName)){
-            $(".warranty-error").html('Please enter a valid name.');
+            $(".warranty-error").html(lang['Please enter a valid name.']);
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
             return passedValidation;
         }
@@ -1219,12 +1219,12 @@ $(document).ready(function(){
             success: function(response){
                 if(response.error==='warranty_exists'){
                     $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $(".warranty-error").html('Warranty' + ' ' + warrantyName + ' ' + 'already exists.' );
+                    $(".warranty-error").html(lang['Warranty'] + ' ' + warrantyName + ' ' + lang['already exists.'] );
                     
                 } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')
                         .closest('.form-group').removeClass('has-error').addClass('has-success');
-                    $(".warranty-error").html('Warranty name is valid');
+                    $(".warranty-error").html(lang['Warranty name is valid']);
                     passedValidation = true;
                 }
             }
@@ -1237,16 +1237,16 @@ $(document).ready(function(){
     //Validate Alphanumeric with Space and Arabic Characters
     $.validator.addMethod("alphanumericspace", function(value, element) {
         return this.optional(element) || /^[a-z0-9\u0600-\u06FF\-\s]+$/i.test(value);
-    }, "The field must contain only letters, numbers, or dashes.");
+    }, lang["The field must contain only letters, numbers, or dashes."]);
     
     $.validator.addMethod("alphanumericspacecomma", function(value, element) {
         return this.optional(element) || /^[a-z0-9\u0600-\u06FF\-,\s]+$/i.test(value);
-    }, "The field must contain only letters, numbers, dashes or commas.");
+    }, lang["The field must contain only letters, numbers, dashes or commas."]);
 
     //Validate Date to YYYY-MM-DD format
     $.validator.addMethod("regexdate", function(value, element) {          
         return this.optional(element) || /^(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])$/.test(value);
-    }, "Please enter a valid date. (e.g. 2014-02-16)");
+    }, lang["Please enter a valid date. (e.g. 2014-02-16)"]);
 
     //Validate Supplier
     var supplierValidator = $('#supplierForm').validate({
@@ -1308,7 +1308,7 @@ $(document).ready(function(){
         
         var isValid = true;
         if(reportModel.length === 0 && reportPayment != 'amount'){
-            $('.report-model-error').html('Please select model.');
+            $('.report-model-error').html(lang['Please select model.']);
             $('div#reportModel').closest('.form-group').removeClass('has-success').addClass('has-error');
             isValid = false;
         } else {
@@ -1317,7 +1317,7 @@ $(document).ready(function(){
         }
         
         if(!$('#reportRange').prop('disabled') && reportRange === ''){
-            $('.report-range-error').html('Please select period.');
+            $('.report-range-error').html(lang['Please select period.']);
             $('#reportRange').closest('.form-group').removeClass('has-success').addClass('has-error');
             isValid = false;
         } else {
@@ -1475,7 +1475,7 @@ $(document).ready(function(){
                             "<td>" + item.m_model_brand + ' ' + item.m_model_model + "</td>" +
                             "<td>" + item.c_category_name + "</td>" +
                             "<td>" + itemQuantity + "</td>" +
-                            "<td>" + item.b_bulk_price + " L.E.</td>" +
+                            "<td>" + item.b_bulk_price + lang[" L.E."] + "</td>" +
                             "<td>" +
                                 "<a class='btn btn-xs btn-remove-item'></a>" +
                             "</td>" +
@@ -1483,7 +1483,7 @@ $(document).ready(function(){
         $('.table-view-sale .table-footer').before(tableRow);
         $('.table-empty-row').addClass('hidden');
         clearItem();
-        $('#alert-message').html(alertInfoMessage('Item added to list.'));
+        $('#alert-message').html(alertInfoMessage(lang['Item added to list.']));
         itemListRequired = new Array();
         $.each(itemList , function (index, value){
             var requiredItem = {
@@ -1494,8 +1494,8 @@ $(document).ready(function(){
         });
         item = null;
         
-        $('#subtotal').html(calculateSubtotal() + ' L.E.');
-        $('#total').html(calculateTotal() + ' L.E.');
+        $('#subtotal').html(calculateSubtotal() + lang[' L.E.']);
+        $('#total').html(calculateTotal() + lang[' L.E.']);
         //console.log(itemListRequired);
     }
     function removeItem(itemSerial){
@@ -1581,7 +1581,7 @@ $(document).ready(function(){
         if(itemList.length > 0){
             if( !/^\d+$/.test(discount) || discount>subtotal || discount<0 ){
                 isValid = false;
-                $('#alert-message').html(alertDangerMessage('Discount is invalid.'));
+                $('#alert-message').html(alertDangerMessage(lang['Discount is invalid.']));
                 $('#saleDiscount').focus();
                 e.preventDefault();
             }
@@ -1590,14 +1590,14 @@ $(document).ready(function(){
                 amountPaid = $('#amountPaid').val();
                 if( !/^\d+$/.test(amountPaid) || amountPaid>=total || amountPaid<0){
                     isValid = false;
-                    $('#alert-message').html(alertDangerMessage('Amount Paid is invalid.'));
+                    $('#alert-message').html(alertDangerMessage(lang['Amount Paid is invalid.']));
                     $('#amountPaid').focus();
                     e.preventDefault();
                 }
             }
             //alert(isValid);
         } else {
-            $('#alert-message').html(alertDangerMessage('The list is empty, Please check items to list.'));
+            $('#alert-message').html(alertDangerMessage(lang['The list is empty, Please check items to list.']));
             $('#itemSerial').focus();
             e.preventDefault();
             isValid = false;
