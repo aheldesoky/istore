@@ -30,6 +30,9 @@
 			</tr>
                 {% if bulks|length %}
 		{% for bulk in bulks %}
+                        {% if filter.item_serial %}
+                            <script>window.location = '/bulk/view/'+{{bulk.b_id}};</script>
+                        {% endif %}
 			<tr class="bulk_{{bulk.b_id}}">
 				<td>{{ bulk.m_model_serial }}</td>
 				<td>{{ bulk.m_model_brand }}</td>

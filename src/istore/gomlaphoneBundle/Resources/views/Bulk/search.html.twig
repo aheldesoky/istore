@@ -9,6 +9,12 @@
                 <form class="form-horizontal" action="/bulk" method="post" id="filterForm">
                     <div class="row">
                             <div class="col-md-6">
+                                    <div class="form-group filter-item-serial">
+                                            <label for="filterItemSerial" class="col-sm-4 control-label">{%trans%}Item Serial{%endtrans%}</label>
+                                            <div class="col-sm-7">
+                                                    <input type="text" class="form-control" id="filterItemSerial" name="filterItemSerial" placeholder="{% trans %}Item Serial{% endtrans %}" value="{{filter.item_serial}}">
+                                            </div>
+                                    </div>
                                     <div class="form-group filter-serial">
                                             <label for="filterSerial" class="col-sm-4 control-label">{%trans%}Serial{%endtrans%}</label>
                                             <div class="col-sm-7">
