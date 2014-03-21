@@ -171,11 +171,13 @@ class BulkController extends Controller //implements AuthenticatedController
             $categoryFilter = $request->request->get('filterCategory');
             $supplierFilter = $request->request->get('filterSupplier');
             $serialFilter = $request->request->get('filterSerial');
+            $serialItemFilter = $request->request->get('filterItemSerial');
             $modelFilter = $request->request->get('model');
             
             $filter['category'] = $categoryFilter;
             $filter['supplier'] = $supplierFilter;
             $filter['serial'] = $serialFilter;
+            $filter['item_serial'] = $serialItemFilter;
             $filter['model'] = $modelFilter;
             $filter['range'] = $rangeDate;
             if($rangeDate === 'range'){
@@ -206,6 +208,11 @@ class BulkController extends Controller //implements AuthenticatedController
             if($serialFilter)
                 $countQuery->andWhere('m.model_serial=?4')->setParameter(4, $serialFilter);
             
+            if($serialItemFilter){
+                $countQuery->join('istoregomlaphoneBundle:Item', 'i' , 'WITH' , 'i.item_bulk=b.id')
+                        ->andWhere('i.item_serial=?5')->setParameter(5, $serialItemFilter);
+            }
+            
             if($modelFilter)
                 $countQuery->andWhere('m.id IN (:models)')->setParameter('models', $modelFilter);
                 
@@ -232,6 +239,11 @@ class BulkController extends Controller //implements AuthenticatedController
             
             if($serialFilter)
                 $paginatorQuery->andWhere('m.model_serial=?4')->setParameter(4, $serialFilter);
+            
+            if($serialItemFilter){
+                $paginatorQuery->join('istoregomlaphoneBundle:Item', 'i' , 'WITH' , 'i.item_bulk=b.id')
+                        ->andWhere('i.item_serial=?5')->setParameter(5, $serialItemFilter);
+            }
             
             if($modelFilter)
                 $paginatorQuery->andWhere('m.id IN (:models)')->setParameter('models', $modelFilter);
