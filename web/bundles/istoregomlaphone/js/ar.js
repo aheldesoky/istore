@@ -17,7 +17,7 @@ var lang = {
     "Model exists": "الموديل موجود ",
     "Model does not exist.": "الموديل غير موجود",
     "Quantity must be greater then zero.": "الكمية يجب ان تكون اكبر من الصفر",
-    "Model already exist.": "الموديل موجود بالفعل",
+    "Model already exists.": "الموديل موجود بالفعل",
     "Please select model.": "من فضلك أختر الموديل",
     "Please select period.": "من فضلك أختر الفترة",
     "Item already added to list.": "هذا المنتج مضاف مسبقا فى القائمة",
@@ -27,5 +27,4 @@ var lang = {
     "Last": "الصفحة الأخيرة",
     "First": "الصفحة الأولى",
     "Previuos": "الصفحة السابقة",
-
 };
