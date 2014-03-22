@@ -20,17 +20,7 @@ class Customer
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $customer_fname;
-    
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
-    protected $customer_lname;
-    
-    /**
-     * @ORM\Column(type="string", nullable=false)
-     */
-    protected $customer_address;
+    protected $customer_name;
     
     /**
      * @ORM\Column(type="string", unique=true, nullable=false)
@@ -53,72 +43,26 @@ class Customer
     }
 
     /**
-     * Set customer_fname
+     * Set customer_name
      *
-     * @param string $customerFname
+     * @param string $customerName
      * @return Customer
      */
-    public function setCustomerFname($customerFname)
+    public function setCustomerName($customerName)
     {
-        $this->customer_fname = $customerFname;
+        $this->customer_name = $customerName;
 
         return $this;
     }
 
     /**
-     * Get customer_fname
+     * Get customer_name
      *
      * @return string 
      */
-    public function getCustomerFname()
+    public function getCustomerName()
     {
-        return $this->customer_fname;
-    }
-
-    /**
-     * Set customer_lname
-     *
-     * @param string $customerLname
-     * @return Customer
-     */
-    public function setCustomerLname($customerLname)
-    {
-        $this->customer_lname = $customerLname;
-
-        return $this;
-    }
-
-    /**
-     * Get customer_lname
-     *
-     * @return string 
-     */
-    public function getCustomerLname()
-    {
-        return $this->customer_lname;
-    }
-
-    /**
-     * Set customer_address
-     *
-     * @param string $customerAddress
-     * @return Customer
-     */
-    public function setCustomerAddress($customerAddress)
-    {
-        $this->customer_address = $customerAddress;
-
-        return $this;
-    }
-
-    /**
-     * Get customer_address
-     *
-     * @return string 
-     */
-    public function getCustomerAddress()
-    {
-        return $this->customer_address;
+        return $this->customer_name;
     }
 
     /**

@@ -459,17 +459,9 @@ $(document).ready(function(){
                 required: true,
                 number: true,
             },
-            customerFirstName: {
+            customerName: {
                 required: true,
                 alphanumericspace: true,
-            },
-            customerLastName: {
-                required: true,
-                alphanumericspace: true,
-            },
-            customerAddress: {
-                required: true,
-                alphanumericspacecomma: true,
             },
             customerNotes: {
                 alphanumericspace: true,
@@ -484,9 +476,7 @@ $(document).ready(function(){
         }
     });
     $('#customerPhone').keypress(function(){customerValidator.element('#customerPhone');});
-    $('#customerFirstName').keypress(function(){customerValidator.element('#customerFirstName');});
-    $('#customerLastName').keypress(function(){customerValidator.element('#customerLastName');});
-    $('#customerAddress').keypress(function(){customerValidator.element('#customerAddress');});
+    $('#customerName').keypress(function(){customerValidator.element('#customerName');});
     $('#customerNotes').keypress(function(){customerValidator.element('#customerNotes');});
     
     $('.btn-find-phone').click(function(e){
@@ -499,31 +489,23 @@ $(document).ready(function(){
                 data: {phone:customerPhone},
                 success: function(response){
                     if(response.count===1){
-                        $('#customerFirstName').val(response.customer.c_customer_fname);
-                        $('#customerLastName').val(response.customer.c_customer_lname);
-                        $('#customerAddress').val(response.customer.c_customer_address);
+                        $('#customerName').val(response.customer.c_customer_fname);
                         $('#customerNotes').val(response.customer.c_customer_notes);
                         $('.alert-message-modal').html(alertInfoMessage(lang['Customer is available.']));
                     } else {
-                        $('#customerFirstName').val('');
-                        $('#customerLastName').val('');
-                        $('#customerAddress').val('');
+                        $('#customerName').val('');
                         $('#customerNotes').val('');
                         $('.alert-message-modal').html(alertDangerMessage(lang['Customer is not found.']));
                     }
                     customerValidator.element('#customerPhone');
-                    customerValidator.element('#customerFirstName');
-                    customerValidator.element('#customerLastName');
-                    customerValidator.element('#customerAddress');
+                    customerValidator.element('#customerName');
                     customerValidator.element('#customerNotes');
                 }
         }).always(function () {
                     btn.button('reset');
         });
         customerValidator.element('#customerPhone');
-        customerValidator.element('#customerFirstName');
-        customerValidator.element('#customerLastName');
-        customerValidator.element('#customerAddress');
+        customerValidator.element('#customerName');
         customerValidator.element('#customerNotes');
         e.preventDefault(); // prevents default
         return false;

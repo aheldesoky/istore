@@ -28,7 +28,7 @@
                             </tr>
                             <tr class="success">
                                 <td>{%trans%}Customer{%endtrans%}</td>
-                                <td><label id="label-sale-customer">{{sale.c_customer_fname}} {{sale.c_customer_lname}}</label></td>
+                                <td><label id="label-sale-customer">{{sale.c_customer_name}}</label></td>
                             </tr>
                         </table>
                     </div>
@@ -90,7 +90,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-body">
-                {%trans%}Are you sure that{%endtrans%} <label>{{sale.c_customer_fname}} {{sale.c_customer_lname}}</label> {%trans%}would pay{%endtrans%} <label id="paidAmount"></label> L.E.?
+                {%trans%}Are you sure that{%endtrans%} <label>{{sale.c_customer_name}}</label> {%trans%}would pay{%endtrans%} <label id="paidAmount"></label> L.E.?
             </div>
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
