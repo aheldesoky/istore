@@ -177,12 +177,12 @@ $(document).ready(function(){
                     if(response.error==0){
                         $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
                         $('.postpaid-amount-error').html(lang['Amount successfully added']);
-                        $('#alert-message').html(alertSuccessMessage(lang['Payment of ']+ amount +lang[' L.E. is successfully added to bill #']+saleId));
+                        $('#alert-message').html(alertSuccessMessage(lang['Payment has been successfully added to bill #']+saleId));
                         $(element).val(0);
-                        $('#label-sale-paid').html(response.total_paid + ' ' + 'L.E.');
-                        $('#label-sale-remaining').html(response.total_due - response.total_paid + ' ' + lang['L.E.']);
-                        $('tr.sale-'+saleId+' td.total-paid').html(response.total_paid + ' ' + lang['L.E.']);
-                        $('tr.sale-'+saleId+' td.total-remaining').html(response.total_due - response.total_paid + ' ' + lang['L.E.']);
+                        $('#label-sale-paid').html(response.total_paid + ' L.E.');
+                        $('#label-sale-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
+                        $('tr.sale-'+saleId+' td.total-paid').html(response.total_paid + lang[' L.E.']);
+                        $('tr.sale-'+saleId+' td.total-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
                         $('#confirmPaymentModal').modal('hide');
                         $('#addPostpaidPayment').modal('hide');
                     } else {
@@ -251,10 +251,10 @@ $(document).ready(function(){
                         //alert(salePaid);
                         $('#label-sale-paid').html(salePaid + ' L.E.');
                         $('#label-sale-remaining').html( parseInt(saleTotal) - parseInt(saleDiscount) - parseInt(salePaid) + ' L.E.');
-                        $('#alert-refund-message').html(alertSuccessMessage(lang['Payment of ']+paymentAmount+lang[' L.E. has been refunded']));
+                        $('#alert-refund-message').html(alertSuccessMessage(lang['Payment has been refunded']));
                     } else {
                         $('#confirmRefundModal').modal('hide');
-                        $('#alert-refund-message').html(alertDangerMessage(lang['Can not refund ']+paymentAmount+lang[' L.E. at this time.']));
+                        $('#alert-refund-message').html(alertDangerMessage(lang['Can not refund payment at this time.']));
                     }
                 }
         }).always(function () {
@@ -281,10 +281,10 @@ $(document).ready(function(){
                     if(response.error==0){
                         $('#refundSaleModal').modal('hide');
                         $('tr.sale-'+saleId).remove();
-                        $('#alert-message').html(alertSuccessMessage(lang['Sale #']+saleId+lang[' has been refunded']));
+                        $('#alert-message').html(alertSuccessMessage(lang['Sale has been refunded']));
                     } else {
                         $('#refundSaleModal').modal('hide');
-                        $('#alert-message').html(alertDangerMessage(lang['Can not refund Sale # ']+saleId+lang[' at this time.']));
+                        $('#alert-message').html(alertDangerMessage(lang['Can not refund sale at this time.']));
                     }
                 }
         }).always(function () {
@@ -315,10 +315,10 @@ $(document).ready(function(){
                         $('#confirmDiscountModal').modal('hide');
                         $('tr.sale-'+saleId+' .btn-discount-modal').addClass('hidden');
                         $('tr.sale-'+saleId+' .btn-discount-confirmed').removeClass('hidden');
-                        $('#alert-message').html(alertSuccessMessage(lang['Discount for Sale #']+saleId+lang[' has been confirmed']));
+                        $('#alert-message').html(alertSuccessMessage(lang['Discount has been confirmed']));
                     } else {
                         $('#confirmDiscountModal').modal('hide');
-                        $('#alert-message').html(alertDangerMessage(lang['Can not confirm discount for Sale # ']+saleId+lang[' at this time.']));
+                        $('#alert-message').html(alertDangerMessage(lang['Can not confirm discount at this time.']));
                     }
                 }
         }).always(function () {
@@ -1152,7 +1152,7 @@ $(document).ready(function(){
             success: function(response){
                 if(response.error==='category_exists'){
                     $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $(".category-error").html(lang['Category'] + ' ' + categoryName + ' ' + lang['already exists.'] );
+                    $(".category-error").html(lang['Category already exists.'] );
                     
                 } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')
@@ -1219,7 +1219,7 @@ $(document).ready(function(){
             success: function(response){
                 if(response.error==='warranty_exists'){
                     $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $(".warranty-error").html(lang['Warranty'] + ' ' + warrantyName + ' ' + lang['already exists.'] );
+                    $(".warranty-error").html(lang['Warranty already exists.'] );
                     
                 } else if (response.error==='not_found'){
                     $(element).text(lang['ok']).addClass('valid')

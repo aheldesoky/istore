@@ -396,7 +396,7 @@ View Payments: المبالغ المدفوعة
 Completed: تم
 Payments: 	المدفوعات
 Amount: المبلغ
-Sale#: مبيعات رقم
+Sale#:  رقم الفاتورة
 Time: الوقت
 Customer: العميل
 Total Due: إجمالى المطلوب
@@ -500,3 +500,4 @@ Silver: فضى
 (un)check all: تحديد الكل 
 Profile: الملف الشخصى
 Logout: تسجيل خروج
+Confirmed: تم تأكيد الخصم

@@ -19,9 +19,10 @@ var lang = {
     "Quantity must be greater then zero.": "الكمية يجب ان تكون اكبر من الصفر",
     "Model already exists.": "الموديل موجود بالفعل",
     "Please select model.": "من فضلك أختر الموديل",
-    "Please select period.": "من فضلك حدد الفترة",
+    "Please select period.": "من فضلك أختر الفترة",
     "Item already added to list.": "هذا المنتج مضاف مسبقا فى القائمة",
     "Item removed from list.": "تم حذف المنتج من القائمة",
+
     "Amount successfully added": "تم إضافة القيمة",
     "Payment has been successfully added to bill #": " تم إضافة دفعة جديدة للفاتورة رقم ",
     "Amount can not be added": "لا يمكن إضافة الدفعة فى الوقت الحالى",
@@ -46,6 +47,8 @@ var lang = {
     "Please enter a valid date. (e.g. 2014-02-16)": "من فضلك أدخل تاريخ صحيح",
     "Discount is invalid.": "قيمة الخصم غير صحيحة",
     "Amount Paid is invalid.": "القيمة المدفوعة غير صحيحة",
+
+
     " of ": " من ",
     " L.E.": " جنية",
     "Next": "الصفحة التالية",
