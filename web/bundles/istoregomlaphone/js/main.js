@@ -505,8 +505,8 @@ $(document).ready(function(){
                     btn.button('reset');
         });
         customerValidator.element('#customerPhone');
-        customerValidator.element('#customerName');
-        customerValidator.element('#customerNotes');
+        //customerValidator.element('#customerName');
+        //customerValidator.element('#customerNotes');
         e.preventDefault(); // prevents default
         return false;
     });
