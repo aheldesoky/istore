@@ -489,7 +489,7 @@ $(document).ready(function(){
                 data: {phone:customerPhone},
                 success: function(response){
                     if(response.count===1){
-                        $('#customerName').val(response.customer.c_customer_fname);
+                        $('#customerName').val(response.customer.c_customer_name);
                         $('#customerNotes').val(response.customer.c_customer_notes);
                         $('.alert-message-modal').html(alertInfoMessage(lang['Customer is available.']));
                     } else {
