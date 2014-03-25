@@ -427,7 +427,7 @@ class SaleController extends Controller //implements AuthenticatedController
             if(count($customer) == 0){
                 $customer = array(new Customer());
                 $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
-                $customer[0]->setCustomerFname($request->request->get('customerName'));
+                $customer[0]->setCustomerName($request->request->get('customerName'));
                 $customer[0]->setCustomerNotes($request->request->get('customerNotes'));
                 $entityManager->persist($customer[0]);
                 $entityManager->flush();
