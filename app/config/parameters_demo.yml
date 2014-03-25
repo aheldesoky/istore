@@ -3,7 +3,7 @@ parameters:
     database_driver: pdo_mysql
     
     # QA
-    database_host: istoreqa.db.11252726.hostedresource.com
+    database_host: istoredemo.db.11252726.hostedresource.com
     database_port: null
     database_name: istoredemo
     database_user: istoredemo
