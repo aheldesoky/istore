@@ -52,4 +52,10 @@ var lang = {
     "Last": "الصفحة الأخيرة",
     "First": "الصفحة الأولى",
     "Previuos": "الصفحة السابقة",
+    "Current page is ": "الصفحة الحالية رقم ",
+    "Go to page ": "الذهاب للصفحة رقم ",
+    "Go to last page": "الذهاب للصفحة الأخيرة",
+    "Go to next page": "الذهاب للصفحة التالية",
+    "Go to previous page": "الذهاب للصفحة السابقة",
+    "Go to first page": "الذهاب للصفحة الأولى",
 };

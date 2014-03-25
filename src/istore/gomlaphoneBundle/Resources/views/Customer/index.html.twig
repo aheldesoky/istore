@@ -13,7 +13,7 @@
                                 <th>{% trans %}Phone Number{% endtrans %}</th>
 				<th>{% trans %}Full Name{% endtrans %}</th>
                                 <th>{% trans %}Notes{% endtrans %}</th>
-				<!--<th>{% trans %}Action{% endtrans %}</th>-->
+				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
                 {% if customers|length %}
 		{% for customer in customers %}
@@ -21,10 +21,11 @@
                                 <td>{{ customer.c_customer_phone }}</td>
 				<td>{{ customer.c_customer_name }}</td>
                                 <td>{{ customer.c_customer_notes }}</td>
-				<!--<td>
-					<a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">Edit</a> - 
-					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="customer:{{customer.c_id}}:{{ customer.c_customer_name }}">{% trans %}Delete{% endtrans %}</a>
-				</td>-->
+				<td>
+					<a href="/customer/transactions/{{customer.c_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a> - 
+                                        <a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+					<!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="customer:{{customer.c_id}}:{{ customer.c_customer_name }}">{% trans %}Delete{% endtrans %}</a>-->
+				</td>
 			</tr>
 		{% endfor %}
                 {% else %}

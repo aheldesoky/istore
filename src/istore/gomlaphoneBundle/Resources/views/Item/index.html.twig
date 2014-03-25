@@ -88,11 +88,9 @@
 		{% for item in items %}
 			<tr 
                             {% if item.i_item_status=='pending_info' %}
-                            class="default item_{{item.i_id}}"
+                            class="info item_{{item.i_id}}"
                             {% elseif item.i_item_status=='in_stock' %}
                             class="success item_{{item.i_id}}"
-                            {% elseif item.i_item_status=='pending_discount' %}
-                            class="info item_{{item.i_id}}"
                             {% elseif item.i_item_status=='sold' %}
                             class="active item_{{item.i_id}}"
                             {% elseif item.i_item_status=='warranty' %}

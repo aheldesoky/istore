@@ -63,23 +63,51 @@ class CustomerController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function addAction(Request $request) {
-        if ($request->getMethod() == 'POST') {
-            $supplier = new Supplier();
-            $supplier->setSupplierName($request->request->get('supplierName'));
-            $supplier->setSupplierAddress($request->request->get('supplierAddress'));
-            $supplier->setSupplierPhone($request->request->get('supplierPhone'));
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($supplier);
-            $entityManager->flush();
-
-            return $this->redirect($this->generateUrl('istoregomlaphone_supplier_index'));
-            //return $this->forward('istoregomlaphoneBundle:Category:index');
-        }
+    public function transactionsAction(Request $request, Customer $customer) {
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
-        return $this->render('istoregomlaphoneBundle:Supplier:add.html.twig', array(
-            'action'    => 'add',
-            'controller' => 'customer',
+        $countPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(s) AS total_sales')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('cu.id=?1')
+            ->setParameter(1, $customer->getId())
+            ->andWhere('st.id=?2')
+            ->setParameter(2, 1)
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginatorPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s , cu , SUM(b.bulk_price) as s_sale_total')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('cu.id=?1')
+            ->setParameter(1, $customer->getId())
+            ->andWhere('st.id=?2')
+            ->setParameter(2, 1)
+            ->groupBy('s.id')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+//var_dump($paginator);die;
+        
+        return $this->render('istoregomlaphoneBundle:Customer:transactions.html.twig', array(
+            'sales'      => $paginatorPrepaid,
+            'customer'   => $customer,
+            'total_sales'=> $countPrepaid['total_sales'],
+            'total_pages'     => ceil($countPrepaid['total_sales']/10),
+            'current_page'    => $currentPage,
+            "action" => "transactions",
+            "controller" => "customer"
         ));
     }
     

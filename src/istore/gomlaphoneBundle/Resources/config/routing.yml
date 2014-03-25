@@ -180,9 +180,9 @@ istoregomlaphone_customer_find:
     pattern:  /customer/find
     defaults: { _controller: istoregomlaphoneBundle:Customer:find }
 
-istoregomlaphone_customer_edit:
-    pattern:  /customer/edit
-    defaults: { _controller: istoregomlaphoneBundle:Customer:edit }
+istoregomlaphone_customer_transactions:
+    pattern:  /customer/transactions/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Customer:transactions }
 
 istoregomlaphone_warranty_index:
     pattern:  /warranty
