@@ -336,3 +336,6 @@ div.container a.brand {
 #model-tab, #item-tab{
     margin-top: 30px;
 }
+.ltr{
+    direction: ltr;
+}
