@@ -1,0 +1,18 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_driver: pdo_mysql
+    
+    # QA
+    database_host: istoreqa.db.11252726.hostedresource.com
+    database_port: null
+    database_name: istoredemo
+    database_user: istoredemo
+    database_password: istoreDemo@123
+
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null
+    locale: en
+    secret: ThisTokenIsNotSoSecretChangeIt
+    current_tab: index
