@@ -540,9 +540,9 @@ $(document).ready(function(){
     var options = {
         currentPage: current_page,
         totalPages: total_pages,
-                useBootstrapTooltip:true,
+        useBootstrapTooltip:true,
         pageUrl: function(type, page, current){
-            currentPage = page;
+            currentPage = current;
             if(getQueryVariable('sort'))
                 return "?page="+page+'&column='+getQueryVariable('column')+'&sort='+getQueryVariable('sort');
             else
