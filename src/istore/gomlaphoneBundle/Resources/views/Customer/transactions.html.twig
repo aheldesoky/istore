@@ -12,17 +12,41 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="customerName" class="col-sm-4 control-label">{% trans %}Customer Name{% endtrans %} :</label>
+                                <label for="customerName" class="col-sm-5 control-label">{% trans %}Customer Name{% endtrans %} :</label>
                                 <div class="col-sm-6">
                                     <label for="customerName" class="col-sm-12 control-label">{{ customer.customerName }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerPhone" class="col-sm-5 control-label">{% trans %}Phone{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="customerPhone" class="col-sm-12 control-label">{{ customer.customerPhone }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerNotes" class="col-sm-5 control-label">{% trans %}Notes{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="customerNotes" class="col-sm-12 control-label">{{ customer.customerNotes }}</label>
                                 </div>
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
-                                <label for="customerPhone" class="col-sm-4 control-label">{% trans %}Phone{% endtrans %} :</label>
+                                <label for="customerTotalTransactions" class="col-sm-5 control-label">{% trans %}Total Transactions{% endtrans %} :</label>
                                 <div class="col-sm-6">
-                                    <label id="customerPhone" class="col-sm-12 control-label">{{ customer.customerPhone }}</label>
+                                    <label id="customerTotalTransactions" class="col-sm-12 control-label"></label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerTotalPaid" class="col-sm-5 control-label">{% trans %}Total Paid{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="customerTotalPaid" class="col-sm-12 control-label">{{ customer.customerNotes }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="customerTotalRemaining" class="col-sm-5 control-label">{% trans %}Total Remaining{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="customerTotalRemaining" class="col-sm-12 control-label">{{ customer.customerNotes }}</label>
                                 </div>
                             </div>
                         </div>
@@ -31,77 +55,86 @@
                 <div class="tab-content">
                     <!-- Nav tabs -->
                     <ul class="nav nav-tabs">
-                        <li class="active"><a href="#prepaid-tab" data-toggle="tab">{%trans%}Prepaid{%endtrans%}</a></li>
-                        <li><a href="#postpaid-tab" data-toggle="tab">{%trans%}Postpaid{%endtrans%}</a></li>
+                        <li {% if action == 'postpaid' %}class="active"{% endif %}><a href="/customer/postpaid/{{customer.id}}">{%trans%}Postpaid Transactions{%endtrans%}</a></li>
+                        <li {% if action == 'prepaid' %}class="active"{% endif %}><a href="/customer/prepaid/{{customer.id}}">{%trans%}Prepaid Transactions{%endtrans%}</a></li>
                     </ul>
-
-                    <!-- Tab panes -->
-                    <div class="tab-pane active" id="prepaid-tab">
-                            <table class="table table-hover table-view">
-                                    <tr>
-                                            <th>{% trans %}Bill#{% endtrans %}</th>
-                                            <th>{% trans %}Customer Name{% endtrans %}</th>
-                                            {% if action == 'discount' %}
-                                            <th>{% trans %}Subtotal{% endtrans %}</th>
-                                            <th>{% trans %}Discount{% endtrans %}</th>
-                                            {% endif %}
-                                            <th>{% trans %}Total Due{% endtrans %}</th>
-                                            {% if action == 'postpaid' %}
-                                                <th>{% trans %}Total Paid{% endtrans %}</th>
-                                                <th>{% trans %}Remaining{% endtrans %}</th>
-                                            {% endif %}
-                                            <th>{% trans %}Date{% endtrans %}</th>
-                                            <th>{% trans %}Actions{% endtrans %}</th>
-                                    </tr>
-                            {% if sales|length %}
-                            {% for sale in sales %}
-                                    <tr class="sale-{{ sale.s_id }} {% if sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid == 0 %}warning{%endif%}">
-                                            <td>{{ sale.s_id }}</td>
-                                            <td>{{ sale.cu_customer_name }}</td>
-                                            {% if action == 'discount' %}
-                                            <td>{{ sale.s_sale_total_price }} {% trans %}L.E.{% endtrans %}</td>
-                                            <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
-                                            {% endif %}
-                                            <td>{{ sale.s_sale_total_price - sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
-                                            {% if action == 'postpaid' %}
-                                                <td class="total-paid">{{ sale.po_total_paid }} {% trans %}L.E.{% endtrans %}</td>
-                                                <td class="total-remaining">{{ sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid }} {% trans %}L.E.{% endtrans %}</td>
-                                            {% endif %}
-                                            <td>{{ sale.s_sale_date.format('Y-m-d H:i:s') }}</td>
-                                            <td>
-                                                    {% if action == 'postpaid' %}
-                                                        {% if sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid %}
-                                                        <a href="#" class="btn btn-success btn-sm btn-payment-modal" data-id="{{sale.s_id}}">{% trans %}New Payment{% endtrans %}</a>
-                                                        {% else %}
-                                                        <a href="#" class="btn btn-default btn-sm disabled" data-id="{{sale.s_id}}">{% trans %}Completed{% endtrans %}</a>
-                                                        {% endif %}
-                                                        <a href="#" class="btn btn-primary btn-sm btn-view-payments" data-id="{{sale.s_id}}">{% trans %}View Payments{% endtrans %}</a>
-                                                    {% elseif action == 'discount' %}
-                                                        <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm btn-discount-modal {% if sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}:{{ sale.s_sale_discount }}">{% trans %}Confirm Discount{% endtrans %}</a>
-                                                        <a href="#" class="btn btn-default btn-sm disabled btn-discount-confirmed {% if not sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}">{% trans %}Confirmed{% endtrans %}</a>
-                                                    {% endif %}
-                                                    <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
-                                                    {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                                    <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
-                                                    {% endif %}
-                                                    <!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:bill #{{sale.s_id}}">{% trans %}Delete{% endtrans %}</a>-->
-                                            </td>
-                                    </tr>
-                            {% endfor %}
+                    
+                    <table class="table table-hover table-view">
+                            <tr>
+                                    <th>{% trans %}Bill#{% endtrans %}</th>
+                                    <th>{% trans %}Customer Name{% endtrans %}</th>
+                                    {% if action == 'discount' %}
+                                    <th>{% trans %}Subtotal{% endtrans %}</th>
+                                    <th>{% trans %}Discount{% endtrans %}</th>
+                                    {% endif %}
+                                    <th>{% trans %}Total Due{% endtrans %}</th>
+                                    {% if action == 'postpaid' %}
+                                        <th>{% trans %}Total Paid{% endtrans %}</th>
+                                        <th>{% trans %}Remaining{% endtrans %}</th>
+                                    {% endif %}
+                                    <th>{% trans %}Date{% endtrans %}</th>
+                                    <th>{% trans %}Actions{% endtrans %}</th>
+                            </tr>
+                    {% set totalTransactions = 0 %}
+                    {% set totalPaid = 0 %}
+                    {% set totalRemaining = 0 %}
+                    {% if sales|length %}
+                    {% for sale in sales %}
+                            {% set totalTransactions = totalTransactions + sale.s_sale_total_price - sale.s_sale_discount %}
+                            {% if action == 'postpaid' %}
+                                {% set totalPaid = totalPaid + sale.po_total_paid %}
+                                {% set totalRemaining = totalTransactions - totalPaid %}
                             {% else %}
-                                    <tr>
-                                        <td colspan="9">{% trans %}There are no sales.{% endtrans %}</td>
-                                    </tr>
+                                {% set totalPaid = totalTransactions %}
+                                {% set totalRemaining = 0 %}
                             {% endif %}
-                                    <tr>
-                                            <td colspan="9"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
-                                    </tr>
-                            </table>
-                    </div>
-                    <div class="tab-pane" id="postpaid-tab"></div>
+                            <tr class="sale-{{ sale.s_id }} {% if sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid == 0 %}warning{%endif%}">
+                                    <td>{{ sale.s_id }}</td>
+                                    <td>{{ sale.cu_customer_name }}</td>
+                                    {% if action == 'discount' %}
+                                    <td>{{ sale.s_sale_total_price }} {% trans %}L.E.{% endtrans %}</td>
+                                    <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
+                                    {% endif %}
+                                    <td>{{ sale.s_sale_total_price - sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>
+                                    {% if action == 'postpaid' %}
+                                        <td class="total-paid">{{ sale.po_total_paid }} {% trans %}L.E.{% endtrans %}</td>
+                                        <td class="total-remaining">{{ sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid }} {% trans %}L.E.{% endtrans %}</td>
+                                    {% endif %}
+                                    <td>{{ sale.s_sale_date.format('Y-m-d H:i:s') }}</td>
+                                    <td>
+                                            {% if action == 'postpaid' %}
+                                                {% if sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid %}
+                                                <a href="#" class="btn btn-success btn-sm btn-payment-modal" data-id="{{sale.s_id}}">{% trans %}New Payment{% endtrans %}</a>
+                                                {% else %}
+                                                <a href="#" class="btn btn-default btn-sm disabled" data-id="{{sale.s_id}}">{% trans %}Completed{% endtrans %}</a>
+                                                {% endif %}
+                                                <a href="#" class="btn btn-primary btn-sm btn-view-payments" data-id="{{sale.s_id}}">{% trans %}View Payments{% endtrans %}</a>
+                                            {% elseif action == 'discount' %}
+                                                <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm btn-discount-modal {% if sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}:{{ sale.s_sale_discount }}">{% trans %}Confirm Discount{% endtrans %}</a>
+                                                <a href="#" class="btn btn-default btn-sm disabled btn-discount-confirmed {% if not sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}">{% trans %}Confirmed{% endtrans %}</a>
+                                            {% endif %}
+                                            <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
+                                            {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                            <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
+                                            {% endif %}
+                                            <!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:bill #{{sale.s_id}}">{% trans %}Delete{% endtrans %}</a>-->
+                                    </td>
+                            </tr>
+                    {% endfor %}
+                    {% else %}
+                            <tr>
+                                <td colspan="9">{% trans %}There are no transactions.{% endtrans %}</td>
+                            </tr>
+                    {% endif %}
+                            <tr>
+                                    <td colspan="9"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+                            </tr>
+                    </table>
                 </div>
 	</div>
 	<div class="panel-footer">
+                <a href="/customer" class="btn btn-default btn-md">{% trans %}Back to customers{% endtrans %}</a>
+                <a href="/sale/prepaid" class="btn btn-default btn-md">{% trans %}Back to sales{% endtrans %}</a>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>
@@ -164,4 +197,11 @@
 
 <input type="hidden" value="{{ action }}" id="action">
 <input type="hidden" value="{{ controller }}" id="controller">
+
+<script>
+    $('#customerTotalTransactions').html('{{totalTransactions}}' + lang[' L.E.'])
+    $('#customerTotalPaid').html('{{totalPaid}}' + lang[' L.E.'])
+    $('#customerTotalRemaining').html('{{totalRemaining}}' + lang[' L.E.'])
+</script>
+
 {% endblock %}

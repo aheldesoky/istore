@@ -63,7 +63,7 @@ class CustomerController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function transactionsAction(Request $request, Customer $customer) {
+    public function prepaidAction(Request $request, Customer $customer) {
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
         $countPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
@@ -106,7 +106,81 @@ class CustomerController extends Controller //implements AuthenticatedController
             'total_sales'=> $countPrepaid['total_sales'],
             'total_pages'     => ceil($countPrepaid['total_sales']/10),
             'current_page'    => $currentPage,
-            "action" => "transactions",
+            "action" => "prepaid",
+            "controller" => "customer"
+        ));
+    }
+    
+    
+    public function postpaidAction(Request $request, Customer $customer) {
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $countPostpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(DISTINCT s.id) AS total_sales')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('s.sale_customer_id=?1')
+            ->setParameter(1, $customer->getId())
+            ->andWhere('st.id=?2')
+            ->setParameter(2, 1)
+            //->groupBy('s.id')
+            ->getQuery()
+            ->getScalarResult();
+        
+        $paginatorPostpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('DISTINCT s , cu , SUM(b.bulk_price) AS s_sale_total')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
+            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('cu.id=?1')
+            ->setParameter(1, $customer->getId())
+            ->andWhere('st.id=?2')
+            ->setParameter(2, 1)
+            ->groupBy('s.id')
+            ->orderBy('s.id', 'DESC')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+        foreach ($paginatorPostpaid as &$temp){
+            $postpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('SUM(po.postpaid_amount) AS total_paid')
+                ->from('istoregomlaphoneBundle:Postpaid', 'po')
+                ->where('po.postpaid_sale_id=?1')
+                ->setParameter(1, $temp['s_id'])
+                ->getQuery()
+                ->getSingleResult();
+            $temp['po_total_paid'] = $postpaid['total_paid'];
+            
+            $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('SUM(b.bulk_price) AS total_sale')
+                ->from('istoregomlaphoneBundle:Sale', 's')
+                ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
+                ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+                ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+                ->where('s.id=?1')
+                ->setParameter(1, $temp['s_id'])
+                ->getQuery()
+                ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+                ->setMaxResults(10)
+                ->getSingleResult();
+            $temp['s_sale_total'] = $sale['total_sale'];
+        }
+//var_dump($paginator);die;
+        
+        return $this->render('istoregomlaphoneBundle:Customer:transactions.html.twig', array(
+            'sales'      => $paginatorPostpaid,
+            'customer'   => $customer,
+            'total_sales'=> $countPostpaid[0]['total_sales'],
+            'total_pages'     => ceil($countPostpaid[0]['total_sales']/10),
+            'current_page'    => $currentPage,
+            "action" => "postpaid",
             "controller" => "customer"
         ));
     }

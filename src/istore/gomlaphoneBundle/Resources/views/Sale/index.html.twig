@@ -56,7 +56,11 @@
 		{% for sale in sales %}
 			<tr class="sale-{{ sale.s_id }} {% if sale.s_sale_total_price - sale.s_sale_discount - sale.po_total_paid == 0 %}warning{%endif%}">
 				<td>{{ sale.s_id }}</td>
-				<td>{{ sale.cu_customer_name }}</td>
+                                {% if action == 'prepaid' %}
+				<td><a href="/customer/prepaid/{{sale.cu_id}}" class="btn btn-md btn-link">{{ sale.cu_customer_name }}</a></td>
+                                {% else %}
+				<td><a href="/customer/postpaid/{{sale.cu_id}}" class="btn btn-md btn-link">{{ sale.cu_customer_name }}</a></td>
+                                {% endif %}
                                 {% if action == 'discount' %}
                                 <td>{{ sale.s_sale_total_price }} {% trans %}L.E.{% endtrans %}</td>
                                 <td>{{ sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</td>

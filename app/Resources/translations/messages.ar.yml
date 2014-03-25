@@ -433,7 +433,12 @@ Address: العنوان
 Notes : الملاحظات
 Transactions: تعاملات
 transactions: تعاملات
+Total Transactions: إجمالى التعاملات
+Postpaid Transactions: تعاملات الآجل
+Prepaid Transactions: تعاملات الكاش
 Customer Transactions: تعاملات العميل
+Back to customers: العودة لصفحة العملاء
+Back to sales: العودة لصفحة المبيعات
 Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
@@ -503,6 +508,7 @@ Logout: تسجيل خروج
 Confirmed: تم تأكيد الخصم
 
 There are no customers.: لا يوجد عملاء
+There are no transactions.: لا توجد تعاملات
 There are no sales.: لا توجد مبيعات
 There are no bulks.: لا توجد مجموعات منتجات
 There are no models.: لا توجد موديلات
