@@ -142,6 +142,10 @@ div.container a.brand {
     padding: 25px 0px 15px 20px;
     margin: 10px 10px 40px 10px;
 }
+.alert-serial-model-override{
+    padding: 25px 0px 10px 20px;
+    margin: 10px 10px 20px 10px;
+}
 .alert-serial-sale{
     padding: 20px 15px 5px 10px;
     margin: 10px 10px 30px 10px;
@@ -235,11 +239,11 @@ div.container a.brand {
     padding-left: 35px !important;
     padding-right: 35px !important;
 }
-.btn-remove-item{
+/*.btn-remove-item{
     background: url(/bundles/istoregomlaphone/img/remove-icon.png) 0 -6px;
     height: 20px;
     width: 35px;
-}
+}*/
 .report-criteria{
     background-image: linear-gradient(to bottom,#d9edf7 0,#c4e3f3 100%);
     padding: 20px 20px 10px 20px;
@@ -338,4 +342,47 @@ div.container a.brand {
 }
 .ltr{
     direction: ltr;
+}
+
+/* Transaction Process Wizard */
+.wizard-modal p {
+        margin: 0 0 10px;
+        padding: 0;
+}
+
+#wizard-ns-detail-servers, .wizard-additional-servers {
+        font-size: 12px;
+        margin-top: 10px;
+        margin-left: 15px;
+}
+#wizard-ns-detail-servers > li, .wizard-additional-servers li {
+        line-height: 20px;
+        list-style-type: none;
+}
+#wizard-ns-detail-servers > li > img {
+        padding-right: 5px;
+}
+
+.wizard-modal .chzn-container .chzn-results {
+        max-height: 150px;
+}
+.wizard-addl-subsection {
+        margin-bottom: 40px;
+}
+.create-server-agent-key {
+        margin-left: 15px; 
+        width: 90%;
+}
+.clearfix{
+    clear: both;
+}
+#tabsleft .pager.wizard{
+    margin-left: 50px;
+    margin-right: 50px;
+}
+#tabsleft .pager.wizard .finish{
+    float: left;
+}
+label.bulk-error{
+    display: none;
 }

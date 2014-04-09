@@ -24,7 +24,9 @@
                                 <td>{{ supplier.s_supplier_phone }}</td>
                                 <td>{{ supplier.s_supplier_email }}</td>
 				<td>
-					<a href="/supplier/edit/{{supplier.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
+                                        <a href="#" class="btn btn-success btn-sm number-of-bulks-modal" data-id="{{supplier.s_id}}">{% trans %}New Transaction{% endtrans %}</a> 
+                                        - <a href="/supplier/transactions/{{supplier.s_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a> 
+					- <a href="/supplier/edit/{{supplier.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                         - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="supplier:{{supplier.s_id}}:{{ supplier.s_supplier_name }}">{% trans %}Delete{% endtrans %}</a>
                                         {% endif %}
@@ -48,24 +50,58 @@
 	</div>
 </div>
 <!-- Delete Confirmation modal -->
-<div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+<div class="modal fade bs-modal-md" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
+                <h4 class="modal-title">{% trans %}Delete Confirmation{% endtrans %}</h4>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete <label id="entityName"></label>?
+                {% trans %}Are you sure you want to delete {% endtrans %}<label id="entityName"></label>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
-                <input type="hidden" id="entityId" name="entityId" val="">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">{% trans %}Delete{% endtrans %}</a>
+                <input type="hidden" id="entityId" name="entityId">
             </div>
         </div>
     </div>
 </div>
+<!-- Number of bulks modal -->
+<div class="modal fade bs-modal-md" tabindex="-1" id="numberOfBulks" role="dialog" aria-labelledby="NumberOfBulksModal" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{% trans %}Number of models{% endtrans %}</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-horizontal">
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="numberOfModels" class="col-md-5 control-label">{% trans %}Enter number of models{% endtrans %}</label>
+                                    <div class="col-md-3">
+                                        <input type="number" class="form-control" id="numberOfModels" name="numberOfModels" placeholder="{% trans %}Number of models{% endtrans %}" value="1">
+                                        <label for="numberOfModels" class="number-of-models-error"></label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-success btn-sm btn-bulk-wizard">{% trans %}Continue{% endtrans %}</a>
+                <input type="hidden" id="entityId" name="entityId">
+            </div>
+        </div>
+    </div>
+</div>
+<div id="bulkWizardModalContainer"></div>
 <input type="hidden" value="{{ action }}" id="action">
 <input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

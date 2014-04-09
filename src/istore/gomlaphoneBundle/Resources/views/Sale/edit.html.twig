@@ -1,0 +1,221 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="form-horizontal">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h4 class="panel-heading-sale">{% trans %}Edit Bill{% endtrans %}</h4>            
+        </div>
+        <div class="panel-body">
+            <div class="immutable-bulk-view-data">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="customerName" class="col-sm-5 control-label">{% trans %}Customer Name{% endtrans %} :</label>
+                            <div class="col-sm-6">
+                                <label for="customerName" class="col-sm-12 control-label">{{ sale.c_customer_name }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="customerPhone" class="col-sm-5 control-label">{% trans %}Phone{% endtrans %} :</label>
+                            <div class="col-sm-6">
+                                <label id="customerPhone" class="col-sm-12 control-label">{{ sale.c_customer_phone }}</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label for="customerNotes" class="col-sm-5 control-label">{% trans %}Notes{% endtrans %} :</label>
+                            <div class="col-sm-6">
+                                <label id="customerNotes" class="col-sm-12 control-label">{{ sale.c_customer_notes }}</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="form-container">
+                <div class="row">
+                    <form class="form-horizontal" id="saleForm" role="form" method="post" action="/sale/edit">
+                        <div class="col-lg-12">
+                            <div class="row item-list">
+                                <div class="col-lg-12">
+                                    {% set itemList = null %}
+                                    {% set totalDue = 0 %}
+                                    
+                                    {# Items with serial #}
+                                    {% for item in sale.items.with_serial %}
+                                        {% if loop.first == true %}
+                                            {% set itemId = '{"itemId":' ~ item.i_id ~ '}' %}
+                                        {% else %}
+                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
+                                        {% endif %}
+                                        
+                                        {% set itemList = itemList ~ itemId %}
+                                        {% set totalDue = totalDue + item.i_item_price %}
+                                    {% endfor %}
+                                    
+                                    {# Items without serial #}
+                                    {% for item in sale.items.without_serial %}
+                                        {% if loop.first == true and itemList|length == null %}
+                                            {% set itemId = '{"itemId":' ~ item.i_id ~ '}' %}
+                                        {% elseif loop.first == true and itemList|length != null %}
+                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
+                                        {% else %}
+                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
+                                        {% endif %}
+                                        
+                                        {% set itemList = itemList ~ itemId %}
+                                        {% set totalDue = totalDue + item.i_item_price %}
+                                    {% endfor %}
+                                    
+                                    <input type="hidden" id="itemList" value="[{{ itemList }}]" />
+                                    <table class="table table-bordered table-curved table-view table-view-sale">
+                                        <tr class="table-header active">
+                                            <th>{% trans %}Serial{% endtrans %}</th>
+                                            <th>{% trans %}Item{% endtrans %}</th>
+                                            <th>{% trans %}Category{% endtrans %}</th>
+                                            <th>{% trans %}Qty{% endtrans %}</th>
+                                            <th class="table-col-price">{% trans %}Price{% endtrans %}</th>
+                                            <th class="table-col-action">{% trans %}Action{% endtrans %}</th>
+                                        </tr>
+                                        
+                                        <tr class="table-footer success">
+                                            <td colspan="3" rowspan="3">
+                                                <div class="row padding-10">
+                                                    <div class="col-md-12">
+                                                        <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Payment{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            {% if sale.payments|length > 0 %}
+                                                                <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Postpaid{% endtrans %}</label>
+                                                            {% else %}
+                                                                <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Prepaid{% endtrans %}</label>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
+                                                    <div class="col-md-12">
+                                                        <label for="amountPaid" class="col-sm-5 control-label">{% trans %}Amount Paid{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            {% if sale.payments|length > 0 %}
+                                                                <label for="amountPaid" class="col-sm-5 control-label">{{sale.s_sale_total_paid}} {% trans %}L.E.{% endtrans %}</label>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
+                                                    <div class="col-md-12">
+                                                        <label for="remainingAmount" class="col-sm-5 control-label">{% trans %}Remaining{% endtrans %} : </label>
+                                                        <div class="col-sm-6">
+                                                            {% if sale.payments|length > 0 %}
+                                                                <label id="remainingAmount" name="remainingAmount" class="col-sm-5 control-label">{{ sale.s_sale_total_price - sale.s_sale_discount - sale.s_sale_total_paid }} {% trans %}L.E.{% endtrans %}</label>
+                                                            {% endif %}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row padding-10"></div>
+                                                <div class="row padding-10">
+                                                    <div class="col-md-12">
+                                                        <div class="col-md-6 col-md-offset-3">
+                                                            <a href="#" class="btn btn-md btn-success btn-add-item-modal">+ {% trans %}Add New Item{% endtrans %}</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <th>{% trans %}Subtotal{% endtrans %}</th>
+                                            <th colspan="2" id="subtotal">{{ totalDue }} {% trans %}L.E.{% endtrans %}</th>
+                                        </tr>
+                                        <tr class="success">
+                                            <th>{% trans %}Discount{% endtrans %}</th>
+                                            <td colspan="2" class="discount-field">
+                                                <input type="number" class="form-control" id="saleDiscount" name="saleDiscount" value="{{ sale.s_sale_discount }}" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                            </td>
+                                        </tr>
+                                        <tr class="success">
+                                            <th>{% trans %}Total{% endtrans %}</th>
+                                            <th colspan="2" id="total">{{ sale.s_sale_total_price - sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</th>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <a class="col-md-3 col-md-offset-2 btn btn-primary btn-lg btn-checkout">{%trans%}Edit Bill{%endtrans%}</a>
+                                    <a class="col-md-3 col-md-offset-2 btn btn-danger btn-lg" href="/sale/prepaid">{%trans%}Back to sales{%endtrans%}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include('istoregomlaphoneBundle:Sale:addItem.html.twig') %}
+<script>
+    {% set items = [] %}
+    {% set items = items|merge(sale.items.with_serial) %}
+    {% set items = items|merge(sale.items.without_serial) %}
+        
+    $(function(){
+        var itemListTemp = {{ items|json_encode|raw }};
+        //console.log(itemListTemp);
+        //itemList = $('#itemList');
+
+        //var addItem = require("addItem");
+        $.each(itemListTemp , function (index, value){
+            globals.item = value;
+            console.log(globals.item);
+            var displayedSerial;
+            var itemQuantity = $('#itemQuantity').val();
+            globals.item['s_sale_quantity'] = itemQuantity;
+
+            if(globals.item.m_model_item_has_serial)
+                displayedSerial = globals.item.i_item_serial;
+            else
+                displayedSerial = globals.item.m_model_serial;
+
+            if(globals.item.m_model_item_has_serial)
+                globals.itemList.push(globals.item);
+            else
+                for(var i=0 ; i<itemQuantity ; i++){
+                    globals.itemList.push(globals.bulk[i]);
+                    globals.bulkList.push(globals.bulk[i]);
+                }
+           //console.log(globals.itemList)
+            var tableRow = "<tr>" +
+                                "<td>" + displayedSerial + "</td>" +
+                                "<td>" + globals.item.m_model_brand + ' ' + globals.item.m_model_model + "</td>" +
+                                "<td>" + globals.item.ca_category_name + "</td>" +
+                                "<td>" + itemQuantity + "</td>" +
+                                "<td>" + globals.item.b_bulk_price + lang[" L.E."] + "</td>" +
+                                "<td>" +
+                                    "<a class='btn btn-sm btn-danger btn-remove-item'>"+ lang['Remove'] +"</a>" +
+                                "</td>" +
+                            "</tr>";
+            $('.table-view-sale .table-footer').before(tableRow);
+            $('.table-empty-row').addClass('hidden');
+            //clearItem();
+            //$('#alert-message').html(alertInfoMessage(lang['Item added to list.']));
+            console.log(globals.itemList)
+            globals.itemListRequired = new Array();
+            $.each(globals.itemList , function (index, value){
+                var requiredItem = {
+                    itemId: value.i_id , 
+                };
+                globals.itemListRequired.push(requiredItem);
+                $('#itemList').val(JSON.stringify(globals.itemListRequired));
+            });
+            globals.item = null;
+
+            $('#subtotal').html(globals.calculateSubtotal() + lang[' L.E.']);
+            $('#total').html(globals.calculateTotal() + lang[' L.E.']);
+            //console.log(globals.itemListRequired);
+        });
+    });
+    
+</script>
+<input type="hidden" id="action" name="action" value="edit" />
+<input type="hidden" id="controller" name="controller" value="sale" />
+{% endblock %}

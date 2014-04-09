@@ -1,0 +1,49 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<form class="form-horizontal" role="form" method="post" id="storeForm">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>{% trans %}Add New Store{% endtrans %}</h4>
+		</div>
+		<div class="panel-body">
+			<div class="form-container">
+				<div class="">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="storeName" class="col-sm-4 control-label">{% trans %}Store Name{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="storeName" name="storeName" placeholder="{% trans %}Name{% endtrans %}">
+								</div>
+							</div>
+                                                        <div class="form-group">
+								<label for="storePhone" class="col-sm-4 control-label">{% trans %}Store Phone{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="storePhone" name="storePhone" placeholder="{% trans %}Phone{% endtrans %}">
+								</div>
+							</div>
+                                                        <div class="form-group">
+								<label for="storeAddress" class="col-sm-4 control-label">{% trans %}Store Address{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="storeAddress" name="storeAddress" placeholder="{% trans %}Address{% endtrans %}">
+								</div>
+							</div>
+                                                        <div class="form-group">
+								<label for="storeLogo" class="col-sm-4 control-label">{% trans %}Store Logo{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="storeLogo" name="storeLogo" placeholder="{% trans %}Logo{% endtrans %}">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<button type="submit" class="btn btn-success btn-lg">{% trans %}Add Store{% endtrans %}</button>
+		</div>
+	</div>
+</form>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

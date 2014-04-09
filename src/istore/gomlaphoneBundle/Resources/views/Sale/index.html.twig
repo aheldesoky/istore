@@ -85,7 +85,8 @@
                                         {% endif %}
                                         <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                        <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
+                                            <a href="/sale/edit/{{sale.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+                                            <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
                                         {% endif %}
                                         <!--<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="sale:{{sale.s_id}}:bill #{{sale.s_id}}">{% trans %}Delete{% endtrans %}</a>-->
 				</td>

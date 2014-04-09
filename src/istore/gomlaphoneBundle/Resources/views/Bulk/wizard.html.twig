@@ -1,0 +1,46 @@
+<div class="modal fade bs-modal-lg" id="bulkWizardModal" tabindex="-1" role="dialog" aria-labelledby="BulkWizardModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ supplier.s_supplier_name }} 
+                    <small><span class="label label-success">{%trans%}New Transaction{%endtrans%}</span></small>
+                </h4>
+            </div>
+            <div class="modal-body bulk-wizard">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar"></div>
+                </div>
+                <div id="tabsleft" class="tabbable tabs-right">
+                    <ul>
+                        {% for i in 1..numberOfBulks %}
+                            <li><a href="#tabsleft-tab{{i}}" data-toggle="tab">{% trans %}model{% endtrans %} {{i}}</a></li>
+                        {% endfor %}
+                    </ul>
+                    
+                    <div class="tab-content">
+                        {% for i in 1..numberOfBulks %}
+                            <div class="tab-pane bulk{{i}}" id="tabsleft-tab{{i}}">
+                                <input type="hidden" id="bulkNumber" value="{{i}}" />
+                                {% include('istoregomlaphoneBundle:Bulk:bulkWizard.html.twig') %}
+                            </div>
+                        {% endfor %}
+                        <div class="clearfix">
+                            <ul class="pager wizard">
+                                <li class="previous first"><a href="javascript:;">{% trans %}First Model{% endtrans %}</a></li>
+                                <li class="previous"><a href="javascript:;">{% trans %}Previous Model{% endtrans %}</a></li>
+                                <li class="next last"><a href="javascript:;">{% trans %}Last Model{% endtrans %}</a></li>
+                                <li class="next"><a href="javascript:;">{% trans %}Next Model{% endtrans %}</a></li>
+                                <li class="finish" style="display:none;"><a href="javascript:;">{% trans %}Finish{% endtrans %}</a></li>
+                            </ul>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+            <!--<div class="modal-footer modal-footer-override">
+                <button type="button" class="btn btn-default" data-dismiss="modal">{%trans%}Close{%endtrans%}</button>
+                <button type="submit" class="btn btn-danger btn-continue">{%trans%}Continue{%endtrans%}</button>
+            </div>-->
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

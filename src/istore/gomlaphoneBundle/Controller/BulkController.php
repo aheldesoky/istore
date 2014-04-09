@@ -444,6 +444,77 @@ class BulkController extends Controller //implements AuthenticatedController
         ));
     }
     
+    public function wizardAction(Request $request) 
+    {
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        $supplier = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s')
+            ->from('istoregomlaphoneBundle:Supplier', 's')
+            ->where('s.id = ?1')
+            ->setParameter(1, $request->request->get('supplierId'))
+            ->getQuery()
+            ->getScalarResult();
+//var_dump($supplier);die;
+        
+        $numberOfBulks = $request->request->get('numberOfBulks');
+        /*
+        if ($request->getMethod() == 'POST') {
+            $bulk = new Bulk();
+            
+            $bulkModel = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Model')
+                ->findBy(array('model_serial' => $request->request->get('modelSerial')));
+            $bulk->setBulkModel($bulkModel[0]);
+            
+            $bulkSupplier = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Supplier')
+                ->find($request->request->get('bulkSupplier'));
+            $bulk->setBulkSupplier($bulkSupplier);
+            
+            $bulk->setBulkPrice($request->request->get('bulkPrice'));
+            $bulk->setBulkQuantity($request->request->get('bulkQuantity'));
+            
+            $bulkDate = new \DateTime($request->request->get('bulkDate'));
+            $bulk->setBulkDate($bulkDate);
+            
+            //var_dump($bulk);die;
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($bulk);
+            $entityManager->flush();
+            
+            $quantity = $request->request->get('bulkQuantity');
+            $itemPrice = $request->request->get('bulkPrice');
+            for($i=0 ; $i<$quantity ; $i++)
+            {
+                $item = new Item();
+                $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemPrice($itemPrice);
+                if($bulkModel[0]->getModelItemHasSerial())
+                    $item->setItemStatus('pending_info');
+                else
+                    $item->setItemStatus('in_stock');
+                     
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->persist($item);
+                $entityManager->flush();
+            }
+
+            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));
+            //return $this->forward('istoregomlaphoneBundle:Category:index');
+        }*/
+        
+        return $this->render('istoregomlaphoneBundle:Bulk:wizard.html.twig' , array(
+            "supplier" => $supplier[0],
+            "numberOfBulks" => $numberOfBulks,
+            "action" => "wizard",
+            "controller" => "bulk"
+        ));
+    }
+    
     public function editAction(Request $request, Bulk $bulk)
     {
         $user = $this->getUser();

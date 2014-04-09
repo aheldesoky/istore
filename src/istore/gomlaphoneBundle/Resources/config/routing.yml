@@ -88,6 +88,10 @@ istoregomlaphone_bulk_delete:
     pattern:  /bulk/delete/{id}
     defaults: { _controller: istoregomlaphoneBundle:Bulk:delete }
 
+istoregomlaphone_bulk_wizard:
+    pattern:  /bulk/wizard
+    defaults: { _controller: istoregomlaphoneBundle:Bulk:wizard }
+
 istoregomlaphone_item_index:
     pattern:  /item
     defaults: { _controller: istoregomlaphoneBundle:Item:index }
@@ -156,8 +160,16 @@ istoregomlaphone_sale_add:
     pattern:  /sale/add
     defaults: { _controller: istoregomlaphoneBundle:Sale:add }
 
+istoregomlaphone_sale_edit:
+    pattern:  /sale/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:edit }
+
 istoregomlaphone_sale_bill:
     pattern:  /sale/bill/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Sale:bill }
+    
+istoregomlaphone_sale_bill_first:
+    pattern:  /sale/bill/{id}/{first}
     defaults: { _controller: istoregomlaphoneBundle:Sale:bill }
 
 istoregomlaphone_sale_refund:
@@ -251,3 +263,19 @@ istoregomlaphone_user_change_password:
 istoregomlaphone_search:
     pattern:  /search
     defaults: { _controller: istoregomlaphoneBundle:Search:index }
+
+istoregomlaphone_store_index:
+    pattern:  /store
+    defaults: { _controller: istoregomlaphoneBundle:Store:index }
+
+istoregomlaphone_store_add:
+    pattern:  /store/add
+    defaults: { _controller: istoregomlaphoneBundle:Store:add }
+
+istoregomlaphone_store_edit:
+    pattern:  /store/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Store:edit }
+
+istoregomlaphone_store_delete:
+    pattern:  /store/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Store:delete }

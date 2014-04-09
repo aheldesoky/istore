@@ -250,7 +250,7 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function validateAction(Request $request)
     {
-        //var_dump($request);die;
+        //var_dump($request->request);die;
         $modelNew['modelId'] = $request->request->get('modelId');
         $modelNew['modelSerial'] = $request->request->get('modelSerial');
         $modelNew['modelBrand'] = $request->request->get('modelBrand');
@@ -304,13 +304,19 @@ class ModelController extends Controller //implements AuthenticatedController
                 if($model[0]['m_id'] != $modelNew['modelId'])
                     $error = 'model_exists';
                 
-            //Bulk Controllers
+            //Bulk Controller
             } elseif ($controller === 'bulk' && $action === 'add'){
                 $error = 'model_exists';
             } elseif ($controller === 'bulk' && $action === 'edit'){
                 if($model[0]['m_id'] != $modelNew['modelId'])
                     $error = 'model_exists';
+            
+            //Supplier Controller
+            } elseif ($controller === 'supplier' && $action === 'index'){
+                $error = 'model_exists';
             }
+            
+            
             
         //Model does not exist
         } else {

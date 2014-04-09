@@ -10,9 +10,12 @@ parameters:
     database_password: istoreQa@123
 
     mailer_transport: smtp
-    mailer_host: 127.0.0.1
-    mailer_user: null
-    mailer_password: null
-    locale: en
+    mailer_host: smtpout.secureserver.net
+    mailer_user: notifications@istorems.com
+    mailer_port: 465
+    mailer_encryption: ssl
+    mailer_password: N0t!f!cat!0n$
+    
+    locale: ar
     secret: ThisTokenIsNotSoSecretChangeIt
     current_tab: index

@@ -133,7 +133,7 @@ Brand Name: اسم الصنف
 Model: الموديل
 Category: الفئه
 Price L.E.: السعر بالجنيه
-Quantity: الكميه
+Quantity: الكمية
 Supplier: المورد
 Date: التاريخ
 Actions: الإجراء
@@ -442,7 +442,13 @@ Back to sales: العودة لصفحة المبيعات
 Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
-Previuos: الصفحة السابقة
+Previous: الصفحة السابقة
+
+Next Model: الموديل التالى
+Last Model: الموديل الأخير
+First Model: الموديل الأول
+Previous Model: الموديل السابق
+Finish: إنهاء
 
 ##--------------------------------------------------------------------------------------------------------------------
 
@@ -515,3 +521,14 @@ There are no models.: لا توجد موديلات
 There are no categories.: لا توجد فئات
 There are no suppliers.: لا يوجد موردين
 There are no warranties.: لا يوجد وكلاء ضمان
+Remove: إزالة
+Edit Bill: تعديل الفاتورة
+Add New Item: إضافة منتج جديد
+
+bulk: مجموعة
+model: موديل
+New Transaction: تعامل جديد
+Number of models: عدد الموديلات
+Enter number of models: ادخل عدد الموديلات
+Transaction Date: تاريخ التعامل
+Unit Price: سعر الوحدة

@@ -487,31 +487,111 @@ class SaleController extends Controller //implements AuthenticatedController
             $entityManager->persist($sale);
             $entityManager->flush();
             
-            return $this->redirect('/sale/bill/'.$sale->getId() );
+            return $this->redirect('/sale/bill/'.$sale->getId().'/true' );
             
         }
         
         return $this->render('istoregomlaphoneBundle:Category:add.html.twig');
     }
     
-    public function editAction(Request $request, $id)
-    {
-        $category = $this->getDoctrine()
-            ->getRepository('istoregomlaphoneBundle:Category')
-            ->find($id);
+    public function editAction(Request $request , $id){
         
-        if( $request->getMethod() == 'POST')
-        {
-            $category->setCategoryName($request->request->get('categoryName'));
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($category);
-            $entityManager->flush();
-
-            return $this->redirect($this->generateUrl('istoregomlaphone_category_index'));
-        }
+        $entityManager = $this->getDoctrine()->getManager();
         
-        return $this->render('istoregomlaphoneBundle:Category:edit.html.twig' , array(
-            "category" => $category,
+        $sale = $entityManager->createQueryBuilder()
+            ->select('s , c , st')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->join('istoregomlaphoneBundle:Customer', 'c' , 'WITH' , 's.sale_customer_id=c.id')
+            //->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_sale_id=s.id')
+            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
+            ->where('s.id=?1')
+            ->andWhere('st.id=?2')
+            ->setParameter(1, $id)
+            ->setParameter(2, 1)
+            ->getQuery()
+            ->getScalarResult();
+        
+        $postpaid = $entityManager->createQueryBuilder()
+            ->select('SUM(po.postpaid_amount) AS total_paid')
+            ->from('istoregomlaphoneBundle:Postpaid', 'po')
+            ->where('po.postpaid_sale_id=?1')
+            ->setParameter(1, $id)
+            ->getQuery()
+            ->getSingleResult();
+        $sale[0]['po_total_paid'] = $postpaid['total_paid'];
+        
+        $sale[0]['items']['with_serial'] = $entityManager->createQueryBuilder()
+            ->select('i , b , m , ca')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
+            ->where('ca.category_store_id=?1')
+            ->andWhere('si.saleitem_sale_id=?2')
+            ->andWhere('m.model_item_has_serial=?3')
+            ->groupBy('i.item_serial')
+            ->setParameter(1, 1)
+            ->setParameter(2, $id)
+            ->setParameter(3, true)
+            ->getQuery()
+            ->getScalarResult();
+        
+        $sale[0]['items']['without_serial'] = $entityManager->createQueryBuilder()
+            ->select('i , b , m , ca')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
+            ->where('ca.category_store_id=?1')
+            ->andWhere('si.saleitem_sale_id=?2')
+            ->andWhere('m.model_item_has_serial=?3')
+            //->groupBy('m.model_serial')
+            ->setParameter(1, 1)
+            ->setParameter(2, $id)
+            ->setParameter(3, false)
+            ->getQuery()
+            ->getScalarResult();
+        
+        $sale[0]['items']['without_serial_grouped'] = $entityManager->createQueryBuilder()
+            ->select('i , b , m , ca , COUNT(i.id) AS quantity , SUM(i.item_price) AS totalPrice')
+            ->from('istoregomlaphoneBundle:Item', 'i')
+            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
+            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
+            ->where('ca.category_store_id=?1')
+            ->andWhere('si.saleitem_sale_id=?2')
+            ->andWhere('m.model_item_has_serial=?3')
+            ->groupBy('m.model_serial')
+            ->setParameter(1, 1)
+            ->setParameter(2, $id)
+            ->setParameter(3, false)
+            ->getQuery()
+            ->getScalarResult();
+        
+        
+        $sale[0]['payments'] = $entityManager->createQueryBuilder()
+            ->select('po')
+            ->from('istoregomlaphoneBundle:Postpaid', 'po')
+            ->where('po.postpaid_sale_id=?1')
+            ->setParameter(1, $id)
+            ->getQuery()
+            ->getScalarResult();
+        
+//var_dump($sale[0]['items']);die;
+//var_dump($sale[0]);die;
+//var_dump($sale[0]['payments']);die;
+    
+        return $this->render('istoregomlaphoneBundle:Sale:edit.html.twig', array(
+            'sale'      => $sale[0],
+            "action" => "edit",
+            "controller" => "sale"
         ));
     }
     
@@ -531,7 +611,7 @@ class SaleController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function billAction(Request $request , $id){
+    public function billAction(Request $request , $id , $first = false){
         
         $entityManager = $this->getDoctrine()->getManager();
         
@@ -606,6 +686,23 @@ class SaleController extends Controller //implements AuthenticatedController
 //var_dump($sale[0]['items']);die;
 //var_dump($payments);die;
     
+        if($first){
+            $message = \Swift_Message::newInstance()
+                ->setSubject('Hello Email')
+                ->setFrom(array('notifications@istorems.com' => 'iStore MS'))
+                ->setTo(array('aheldesoky@gmail.com','ahdos@facebook.com'))
+                ->setContentType('text/html')
+                ->setBody(
+                    $this->renderView('istoregomlaphoneBundle:Sale:billMail.html.twig', array(
+                        'sale'      => $sale[0],
+                        "action" => "bill",
+                        "controller" => "sale"
+                    ))
+                )
+            ;
+            $this->get('mailer')->send($message);
+        }
+        
         return $this->render('istoregomlaphoneBundle:Sale:bill.html.twig', array(
             'sale'      => $sale[0],
             "action" => "bill",
@@ -676,5 +773,23 @@ class SaleController extends Controller //implements AuthenticatedController
         } catch (DBALException $e){
             return new JsonResponse(array('error' => 1 , 'message' => 'Can not confirm discount at this time.'));
         }
+    }
+    
+    public function mailerAction($name)
+    {
+        $message = \Swift_Message::newInstance()
+            ->setSubject('Hello Email')
+            ->setFrom('notifications@istorems.com')
+            ->setTo('aheldesoky@gmail.com')
+            ->setBody(
+                $this->renderView(
+                    'HelloBundle:Hello:email.txt.twig',
+                    array('name' => $name)
+                )
+            )
+        ;
+        $this->get('mailer')->send($message);
+
+        //return $this->render();
     }
 }
