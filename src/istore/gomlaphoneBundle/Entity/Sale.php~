@@ -57,7 +57,7 @@ class Sale
     protected $sale_total_count;
     
     /**
-     * @ORM\Column(nullable=false)
+     * @ORM\Column(type="integer" , nullable=false)
      * @ORM\ManyToOne(targetEntity="Store")
      * @ORM\JoinTable(name="store" , 
      *                joinColumns={@ORM\JoinColumn(name="sale_store_id", 

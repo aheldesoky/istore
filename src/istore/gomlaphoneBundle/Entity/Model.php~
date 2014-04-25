@@ -18,14 +18,22 @@ class Model
     protected $id;
 
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\ManyToOne(targetEntity="Brand")
+     * @ORM\JoinTable(name="brand" , 
+     *                joinColumns={@ORM\JoinColumn(name="model_brand", 
+     *                                         referencedColumnName="id")})
      */
     protected $model_brand;
     
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $model_model;
+    protected $model_name;
+    
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $model_number;
     
     /**
      * @ORM\Column(type="string", unique=true, nullable=false)
@@ -40,6 +48,14 @@ class Model
      *                                         referencedColumnName="id")})
      */
     protected $model_category;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Color")
+     * @ORM\JoinTable(name="color" , 
+     *                joinColumns={@ORM\JoinColumn(name="model_color", 
+     *                                         referencedColumnName="id")})
+     */
+    protected $model_color;
     
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -69,52 +85,6 @@ class Model
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set model_brand
-     *
-     * @param string $modelBrand
-     * @return Model
-     */
-    public function setModelBrand($modelBrand)
-    {
-        $this->model_brand = $modelBrand;
-
-        return $this;
-    }
-
-    /**
-     * Get model_brand
-     *
-     * @return string 
-     */
-    public function getModelBrand()
-    {
-        return $this->model_brand;
-    }
-
-    /**
-     * Set model_model
-     *
-     * @param string $modelModel
-     * @return Model
-     */
-    public function setModelModel($modelModel)
-    {
-        $this->model_model = $modelModel;
-
-        return $this;
-    }
-
-    /**
-     * Get model_model
-     *
-     * @return string 
-     */
-    public function getModelModel()
-    {
-        return $this->model_model;
     }
 
     /**
@@ -230,5 +200,97 @@ class Model
     public function getModelItemHasSerial()
     {
         return $this->model_item_has_serial;
+    }
+
+    /**
+     * Set model_color
+     *
+     * @param \istore\gomlaphoneBundle\Entity\Color $modelColor
+     * @return Model
+     */
+    public function setModelColor(\istore\gomlaphoneBundle\Entity\Color $modelColor = null)
+    {
+        $this->model_color = $modelColor;
+
+        return $this;
+    }
+
+    /**
+     * Get model_color
+     *
+     * @return \istore\gomlaphoneBundle\Entity\Color 
+     */
+    public function getModelColor()
+    {
+        return $this->model_color;
+    }
+
+    /**
+     * Set model_name
+     *
+     * @param string $modelName
+     * @return Model
+     */
+    public function setModelName($modelName)
+    {
+        $this->model_name = $modelName;
+
+        return $this;
+    }
+
+    /**
+     * Get model_name
+     *
+     * @return string 
+     */
+    public function getModelName()
+    {
+        return $this->model_name;
+    }
+
+    /**
+     * Set model_number
+     *
+     * @param string $modelNumber
+     * @return Model
+     */
+    public function setModelNumber($modelNumber)
+    {
+        $this->model_number = $modelNumber;
+
+        return $this;
+    }
+
+    /**
+     * Get model_number
+     *
+     * @return string 
+     */
+    public function getModelNumber()
+    {
+        return $this->model_number;
+    }
+
+    /**
+     * Set model_brand
+     *
+     * @param \istore\gomlaphoneBundle\Entity\Brand $modelBrand
+     * @return Model
+     */
+    public function setModelBrand(\istore\gomlaphoneBundle\Entity\Brand $modelBrand = null)
+    {
+        $this->model_brand = $modelBrand;
+
+        return $this;
+    }
+
+    /**
+     * Get model_brand
+     *
+     * @return \istore\gomlaphoneBundle\Entity\Brand 
+     */
+    public function getModelBrand()
+    {
+        return $this->model_brand;
     }
 }

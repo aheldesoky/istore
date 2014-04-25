@@ -47,7 +47,12 @@ class Item
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $item_price;
+    protected $item_buy_price;
+    
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $item_sell_price;
 
     /**
      * @ORM\Column(type="string", nullable=false)
@@ -236,25 +241,48 @@ class Item
     }
 
     /**
-     * Set item_price
+     * Set item_buy_price
      *
-     * @param string $itemPrice
+     * @param string $itemBuyPrice
      * @return Item
      */
-    public function setItemPrice($itemPrice)
+    public function setItemBuyPrice($itemBuyPrice)
     {
-        $this->item_price = $itemPrice;
+        $this->item_buy_price = $itemBuyPrice;
 
         return $this;
     }
 
     /**
-     * Get item_price
+     * Get item_buy_price
      *
      * @return string 
      */
-    public function getItemPrice()
+    public function getItemBuyPrice()
     {
-        return $this->item_price;
+        return $this->item_buy_price;
+    }
+
+    /**
+     * Set item_sell_price
+     *
+     * @param string $itemSellPrice
+     * @return Item
+     */
+    public function setItemSellPrice($itemSellPrice)
+    {
+        $this->item_sell_price = $itemSellPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get item_sell_price
+     *
+     * @return string 
+     */
+    public function getItemSellPrice()
+    {
+        return $this->item_sell_price;
     }
 }

@@ -25,7 +25,7 @@
                                 <td>{{ supplier.s_supplier_email }}</td>
 				<td>
                                         <a href="#" class="btn btn-success btn-sm number-of-bulks-modal" data-id="{{supplier.s_id}}">{% trans %}New Transaction{% endtrans %}</a> 
-                                        - <a href="/supplier/transactions/{{supplier.s_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a> 
+                                        - <a href="/supplier/{{supplier.s_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a> 
 					- <a href="/supplier/edit/{{supplier.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                         - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="supplier:{{supplier.s_id}}:{{ supplier.s_supplier_name }}">{% trans %}Delete{% endtrans %}</a>
@@ -101,7 +101,9 @@
         </div>
     </div>
 </div>
+<a href="#" class="btn btn-success btn-sm btn-item-wizard hidden">{% trans %}Setup Items{% endtrans %}</a>
 <div id="bulkWizardModalContainer"></div>
+<div id="itemWizardModalContainer"></div>
 <input type="hidden" value="{{ action }}" id="action">
 <input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

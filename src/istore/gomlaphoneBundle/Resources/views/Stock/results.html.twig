@@ -1,84 +1,25 @@
-{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
 {% block body %}
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-                        {% if bulk|length %}
-			{% trans %}Bulk#{% endtrans %} {{ bulk.id }}
-                        {% else %}
-                        {% trans %}Item List{% endtrans %}
-                        {% endif %}
+                        {% trans %}Search Results{% endtrans %}
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_items }}) {% trans %}items{% endtrans %}</span>
 		</h4>
 	</div>
 	<div class="panel-body">
-            {% if bulk|length %}
-                <div class="immutable-bulk-view-data">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="modelSerial" class="col-sm-4 control-label">{% trans %}Model Serial{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="modelBrand" class="col-sm-12 control-label">{{ bulk.bulkModel.modelSerial }}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="modelModel" class="col-sm-4 control-label">{% trans %}Model{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="modelModel" class="col-sm-12 control-label">{{ bulk.bulkModel.modelBrand.brandName }} {{ bulk.bulkModel.modelName }} {{ bulk.bulkModel.modelColor.colorName }} {{ bulk.bulkModel.modelNumber }}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="modelCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="modelCategory" class="col-sm-12 control-label">{{ bulk.bulkModel.modelCategory.categoryName }}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bulkDate" class="col-sm-4 control-label">{% trans %}Bulk Date{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkTransaction.transactionDate.format('Y-m-d') }}</label>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group">
-                                <label for="bulkSupplier" class="col-sm-4 control-label">{% trans %}Supplier{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="bulkDate" class="col-sm-12 control-label">{{ bulk.bulkTransaction.transactionSupplier.supplierName }}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bulkPrice" class="col-sm-4 control-label">{% trans %}Item Price{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label for="bulkPrice" class="col-sm-12 control-label">{{ bulk.bulkBuyPrice }} - {{ bulk.bulkSellPrice }} {%trans%}L.E.{%endtrans%}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="bulkQuantity" class="col-sm-4 control-label">{% trans %}Quantity{% endtrans %} :</label>
-                                <div class="col-sm-6">
-                                    <label id="bulkQuantity" class="col-sm-12 control-label">{{ bulk.bulkQuantity }}</label>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{% if bulk.bulkModel.modelSpecs == '' %}{%trans%}empty{%endtrans%}{% else %}{{ bulk.bulkModel.modelSpecs }}{% endif %}" data-title="{{ bulk.bulkModel.modelBrand.brandName }} {{ bulk.bulkModel.modelName }}">{% trans %}Show Specifications{% endtrans %}</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
 		<table class="table table-hover table-view">
 			<tr>
-				<th>{% trans %}Item Serial{% endtrans %}</th>
+				<th>{% trans %}Model Serial{% endtrans %}</th>
+                                <th>{% trans %}Item Serial{% endtrans %}</th>
 				<th>{% trans %}Model{% endtrans %}</th>
 				<th>{% trans %}Category{% endtrans %}</th>
-				<th>{% trans %}Price L.E.{% endtrans %}</th>
+				<th>{% trans %}Price{% endtrans %} ({% trans %}Buy{% endtrans %} - {% trans %}Sell{% endtrans %})</th>
                                 <th>{% trans %}Date{% endtrans %}</th>
 				<th>{% trans %}Status{% endtrans %}</th>
 				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
-                {% if items|length %}
-		{% for item in items %}
+                {% if results|length %}
+		{% for item in results %}
 			<tr 
                             {% if item.i_item_status=='pending_info' %}
                             class="info item_{{item.i_id}}"
@@ -92,7 +33,10 @@
                             class="danger item_{{item.i_id}}"
                             {% endif %}
                             >
-				<td>
+                                <td>
+                                        <span class="label label-default">{{ item.m_model_serial }}</span>
+                                </td>
+				<td class="item_serial_{{item.i_id}}">
                                     {% if item.m_model_item_has_serial %}
                                         {% if item.i_item_serial==null %}
                                         <span class="label label-primary">{% trans %}Not Set{% endtrans %}</span>
@@ -100,14 +44,14 @@
                                         <span class="label label-default">{{ item.i_item_serial }}</span>
                                         {% endif %}
                                     {% else %}
-                                        <span class="label label-default">{% trans %}-{% endtrans %}</span>
+                                        <span class="label label-default">-</span>
                                     {% endif %}
                                 </td>
-				<td>{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}</td>
+				<td>{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }}  {{ item.m_model_number }}</td>
 				<td>{{ item.c_category_name }}</td>
 				<td>{{ item.i_item_buy_price }} - {{ item.i_item_sell_price }}</td>
                                 <td>{{ item.t_transaction_date.format('Y-m-d') }}</td>
-				<td>
+				<td  class="item_status_{{item.i_id}}">
                                     {% if item.i_item_status=='pending_info' %}
                                     <span class="label label-primary">{% trans %}Pending Info{% endtrans %}</span>
                                     {% elseif item.i_item_status=='in_stock' %}
@@ -133,7 +77,7 @@
                                         <input type="hidden" value="{{ item.i_id }}" id="item-{{ item.i_id }}">
                                     </button>
                                     {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                     - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}">{% trans %}Delete{% endtrans %}</a>
+                                     - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a>
                                     {% endif %}
 				</td>
 			</tr>
@@ -144,16 +88,11 @@
 			</tr>
                 {% endif %}
 			<tr>
-				<td colspan="9"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator{% endif %}"></div></td>
+				<td colspan="9"><div id="{% if(lang=='ar') %}paginator-ar{% else %}paginator-search{% endif %}"></div></td>
 			</tr>
 		</table>
 	</div>
 	<div class="panel-footer">
-                {% if bulk|length %}
-                <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a>
-                {% else %}
-                <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Items{% endtrans %}</a>
-                {% endif %}
                 <div id="editModalContainer"></div>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
@@ -178,6 +117,4 @@
         </div>
     </div>
 </div>
-<input type="hidden" value="{{ action }}" id="action">
-<input type="hidden" value="{{ controller }}" id="controller">
 {% endblock %}

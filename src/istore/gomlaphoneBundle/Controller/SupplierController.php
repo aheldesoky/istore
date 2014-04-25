@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use istore\gomlaphoneBundle\Entity\Supplier;
+use istore\gomlaphoneBundle\Entity\Transaction;
 use Doctrine\DBAL\DBALException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -79,7 +80,7 @@ class SupplierController extends Controller //implements AuthenticatedController
     }
     
     public function addAction(Request $request) {
-        
+//var_dump($request);die;        
         $user = $this->getUser();
         
         if(!in_array('ROLE_ADMIN', $user->getRoles())){
@@ -91,7 +92,7 @@ class SupplierController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Governorate', 'g')
             ->getQuery()
             ->getScalarResult();
-        
+//var_dump($governorates);die;
         if ($request->getMethod() == 'POST') {
             $supplier = new Supplier();
             $supplier->setSupplierName($request->request->get('supplierName'));
@@ -114,7 +115,7 @@ class SupplierController extends Controller //implements AuthenticatedController
             'controller'      => 'supplier',
         ));
     }
-    
+        
     public function editAction(Request $request, $id)
     {
         

@@ -15,6 +15,7 @@ $(document).ready(function(){
     globals.bulkQty;
     globals.calculateSubtotal;
     globals.calculateTotal;
+    globals.transaction = {bulks:new Array() , info:null};
     
     // Table Sorting
     $('.unsorted, .sortAsc, .sortDesc').click(function() {
@@ -53,8 +54,15 @@ $(document).ready(function(){
     $('#navbar-main ul li').removeClass('active');
     if(controller === 'default')
         $('#navbar-main ul li.home').addClass('active');
-    else
+    else if(controller === 'category' || controller === 'color' || controller === 'model') {
+        $('#navbar-main ul li.settings').addClass('active');
         $('#navbar-main ul li.'+controller).addClass('active');
+    } else
+        $('#navbar-main ul li.'+controller).addClass('active');
+    
+    /*$('.btn-hide-nav').on('click', function(e){
+        $('.navbar').collapse('hide');
+    });*/
     
     $('div#reportModel').slimScroll({
         height: '135px',
@@ -65,7 +73,7 @@ $(document).ready(function(){
     });
     
     $('.btn-popover').popover();
-    $('#bulkDate, #reportFromDate, #reportToDate, #filterFromDate, #filterToDate').datetimepicker({
+    $('#bulkDate, #reportFromDate, #reportToDate, #filterFromDate, #filterToDate, #stockFromDate, #stockToDate').datetimepicker({
         pickTime: false,
         language: 'ar'
     });
@@ -132,6 +140,22 @@ $(document).ready(function(){
             $('#addPaymentModalContainer').load("/sale/postpaid/add" , data , function(){
                 btn.button('reset');
                 $('a.btn-save-payment').attr('href' , '/sale/postpaid/add/'+saleId);
+                $('#addPostpaidPayment').modal('show');
+            });
+            
+    //Add new postpaid payment        
+    }).on("click", ".btn-trans-payment-modal", function (e) {
+            e.preventDefault();
+            
+            var _self = $(this);
+            var transactionId = _self.data('id');
+            
+            var btn = $(this);
+            var data = {transactionId:transactionId};
+            btn.button('loading');
+            $('#addPaymentModalContainer').load("/app_dev.php/payment/add" , data , function(){
+                btn.button('reset');
+                $('a.btn-save-payment').attr('href' , '/payment/add/'+transactionId);
                 $('#addPostpaidPayment').modal('show');
             });
             
@@ -548,6 +572,8 @@ $(document).ready(function(){
             globals.currentPage = current;
             if(getQueryVariable('sort'))
                 return "?page="+page+'&column='+getQueryVariable('column')+'&sort='+getQueryVariable('sort');
+            else if($('#controller').val() === 'stock')
+                return "#";
             else
                 return "?page="+page;
         },
@@ -564,15 +590,46 @@ $(document).ready(function(){
             case "page":
                 return page;
             }
+        },
+        onPageClicked: function(e,originalEvent,type,page){
+            var stockForm = $('#stockForm');
+            postStockData(stockForm, page);
         }
     };
-
-    $('#paginator').bootstrapPaginator(options);
-    $('#paginator-ar').bootstrapPaginator(options);
-
+    
+    $('#paginator, #paginator-ar, #paginator-search').bootstrapPaginator(options);
+    
+    function postStockData(stockForm, page){
+        data = {
+            stockSerial : $(stockForm).find('#stockSerial').val(),
+            stockCategory : $(stockForm).find('#stockCategory').val(),
+            stockSupplier : $(stockForm).find('#stockSupplier').val(),
+            stockModel : $(stockForm).find('#stockModel').val(),
+            stockStatus : $(stockForm).find('#stockStatus').val(),
+            stockDateRange : $(stockForm).find('#stockDateRange').val(),
+            stockFromDate : $(stockForm).find('#stockFromDate').val(),
+            stockToDate : $(stockForm).find('#stockToDate').val(),
+            stockLowestBuyPrice : $(stockForm).find('#stockLowestBuyPrice').val(),
+            stockHighestBuyPrice : $(stockForm).find('#stockHighestBuyPrice').val(),
+            stockLowestSellPrice : $(stockForm).find('#stockLowestSellPrice').val(),
+            stockHighestSellPrice : $(stockForm).find('#stockHighestSellPrice').val(),
+        };
+        
+        $.ajax({
+            url: "/stock?page="+page,
+            type: "post",
+            data: data,
+            success: function(response){
+                document.open();
+                document.write( response );
+                document.close();
+            }
+        });
+    };
+    
     //Checkout sale
     $('.btn-checkout').click(function(e){
-        if(validCheckout(e)){ 
+        if(validCheckout(e)){
             $('.bs-modal-lg').modal('show');
         }
     });
@@ -710,42 +767,12 @@ $(document).ready(function(){
         return validateModelSerial();
     });
     
-    // Check Bulk Serial
-    $('#bulkWizardModalContainer').on('click' , '#bulkForm #check-model-serial' , function () {
-        var bulk = $(this).closest('div.tab-pane.active');
-        //console.log($(element).find('#bulkSerial').val());
-        return isValidBulkSerial(bulk);
-    });
-
-    $('#bulkWizardModalContainer').on('keypress', '#bulkForm #bulkSerial' , function(e){
-        var bulk = $(this).closest('div.tab-pane.active');
-        if ( e.which == 13 ) return isValidBulkSerial(bulk);
-    }).focusout(function(){
-        var bulk = $(this).closest('div.tab-pane.active');
-        return isValidBulk(bulk);
-    });
-    
-    // Check Item Serial
-    $('#editModalContainer').on('click', 'button.btn-item-serial', function () {
-        return validateItemSerial();
-    });
 // Forms Validations
     $('#modelSerial').focus();
     $('#modelForm #modelSerial').keypress(function(e){
         if ( e.which == 13 ) return validateModelSerial();
     }).focusout(function(){
         return validateModelSerial();
-    });
-    
-    
-    $('#itemSerial').focus();
-    $("#editModalContainer").on("keypress", "#itemForm #itemSerial", function(e){
-        if ( e.which == 13 ){ 
-            validateItemSerial();
-            e.preventDefault();
-        }
-    }).on("focusout", "#itemSerial", function(){
-        validateItemSerial();
     });
     
     //Validate Model
@@ -859,43 +886,6 @@ $(document).ready(function(){
         return globals.passedValidation;
     }
     
-    
-    //Validate Bulk
-    var bulkValidator = $('#bulkForm').validate({
-            submitHandler: function(form){
-                if(globals.passedValidation)
-                    if(form.valid())
-                        form.submit();
-            },
-            rules: {
-                bulkPrice: {
-                    required: true,
-                    number: true,
-                    greaterThan: 0,
-                },
-                bulkQuantity: {
-                    required: true,
-                    number: true,
-                    greaterThan: 0,
-                },
-                bulkDate: {
-                    required: true,
-                    regexdate: true,
-                },
-            },
-            highlight: function (element) {
-                $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-            },
-            success: function (element) {
-                $(element).text(lang['ok']).addClass('valid')
-                    .closest('.form-group').removeClass('has-error').addClass('has-success');
-            }
-        });
-    $('#bulkDate').keypress(function(){bulkValidator.element('#bulkDate');});
-    $('#bulkPrice').keypress(function(){bulkValidator.element('#bulkPrice');});
-    $('#bulkQuantity').keypress(function(){bulkValidator.element('#bulkQuantity');});
-    $('#bulkSupplier').change(function(){bulkValidator.element('#bulkSupplier');});
-    
     //Quantity not less than 1
     $.validator.addMethod("greaterThan", function(value, element, param) {
         return this.optional(element) || value > param;
@@ -910,100 +900,11 @@ $(document).ready(function(){
         $('#editModalContainer').load("/item/edit" , data , function(){
             btn.button('reset');
             $('#editModal').modal('show');
-            var itemValidator = $('#itemForm').validate({
-                submitHandler: function(form){
-                    if(globals.passedValidation)
-                        if(form.valid())
-                            form.submit();
-                },
-                rules: {
-                    itemNotes: {
-                        alphanumericspace: true
-                    }
-                },
-                highlight: function (element) {
-                    $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-                },
-                success: function (element) {
-                    $(element).text(lang['ok']).addClass('valid')
-                        .closest('.form-group').removeClass('has-error').addClass('has-success');
-                }
+            $('#editModal').on('shown.bs.modal' , function(){
+                $('#editModal #itemSerial').focus();
             });
-            $('#itemNotes').keypress(function(){itemValidator.element('#itemNotes');});
         });
     });
-
-    $("#editModalContainer").on("click", '.btn-item-edit-save', function () {
-        return validateItemSerial();
-    });
-    
-    function validateItemSerial() {
-        var action = $("#action").val();
-        var controller = $("#controller").val();
-        var itemSerial = $("#itemSerial").val();
-        var itemColor = $("#itemColor").val();
-        var itemStatus = $("#itemStatus").val();
-        var itemHaswarranty = $("#itemHasWarranty").val();
-        var itemWarranty = $("#itemWarranty").val();
-        
-        //Validate empty serial
-        if(itemSerial === ''){
-            $(".serial-error").html(lang['Serial can not be empty']);
-            $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
-            $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-            $("#itemSerial").focus();
-            return false;
-            
-        //Validate letters, numbers and dashes
-        } else if(!/^[a-zA-Z0-9-]+$/.test(itemSerial)){
-            $(".serial-error").html(lang['Please enter a valid serial first.']);
-            $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
-            $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-            $("#itemSerial").focus();
-            return false;
-        }
-        
-        $('#btn-item-serial').button('loading');
-        $.ajax({
-            async: false,
-            url: "/item/validate",
-            type: "post",
-            data: {
-                itemId:globals.itemId,
-                itemSerial:itemSerial,
-                itemStatus:itemStatus,
-                itemHasWarranty:itemHaswarranty,
-                itemWarranty:itemWarranty,
-                itemColor:itemColor,
-                action:action,
-                controller:controller
-            },
-            success: function(response){
-                // Do whatever check of the server data you need here.
-                if(response.error === null) {  
-                    // Good result, allow the submission
-                    $('#alert-message').html('');
-                    $(".serial-error").html(lang['Serial is valid.']);
-                    $('#itemSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
-                    $('.alert-serial-item').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
-                    $('#itemColor').focus();
-                    globals.passedValidation = true;
-                    
-                    // Show an error message
-                } else if(response.error === 'item_exists'){
-                    $(".serial-error").html(lang['Item already exists.']);
-                    $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-                    $("#itemSerial").focus();
-                } else if(response.error === 'has_no_serial'){
-                    globals.passedValidation = true;
-                }
-            }
-        }).always(function () {
-            $('#btn-item-serial').button('reset');
-        });
-        return globals.passedValidation;
-    }
     
     //Validate Category
     $('#categoryForm input').focusout(function(e){
@@ -1306,20 +1207,6 @@ $(document).ready(function(){
         $("#reportForm").submit();
         e.preventDefault();
     });
-    //Functions
-    /*function validateItemSerial(btn , itemSerial , handleData){
-    btn.button('loading');
-    $.ajax({
-            url: "/item/find",
-            type: "post",
-            data: {serial:itemSerial},
-            success: function(response){
-                    handleData(response.item);
-            },
-    }).always(function () {
-            btn.button('reset');
-    });
-    }*/
 
     function returnData(data){
         return data;
@@ -1587,6 +1474,15 @@ $(document).ready(function(){
             $(".report-from-date input, .report-to-date input").prop("disabled", true);
         }
     });
+    $("select#stockDateRange").change(function(){
+        if($(this).val() === "range"){
+            $(".stock-from-date, .stock-to-date").removeClass("hidden");
+            $(".stock-from-date input, .stock-to-date input").prop("disabled", false);
+        } else {
+            $(".stock-from-date, .stock-to-date").addClass("hidden");
+            $(".stock-from-date input, .stock-to-date input").prop("disabled", true);
+        }
+    });
     $("select#filterRange").change(function(){
         if($(this).val() === "range"){
             $(".filter-from-date, .filter-to-date").removeClass("hidden");
@@ -1630,6 +1526,7 @@ $(document).ready(function(){
         });
     });
     
+    // Bulk Wizard
     $(document).on('click', '.btn-bulk-wizard', function(e){
         e.preventDefault();
         $('#numberOfBulks').modal('hide');
@@ -1642,6 +1539,8 @@ $(document).ready(function(){
             btn.button('reset');
             $('#bulkWizardModal').modal('show').on('shown.bs.modal', function(){
                 $('.tab-pane.active').find('#bulkSerial').focus();
+            }).on('hidden.bs.modal', function(){
+                globals.transaction = {bulks:new Array() , info:null};
             });
             $('#tabsleft').bootstrapWizard({
                 'tabClass': 'nav nav-tabs', 
@@ -1652,7 +1551,25 @@ $(document).ready(function(){
                     $('.tab-pane.active').find('#bulkSerial').focus();
                     
                 }, onNext: function(tab, navigation, index) {
-                    if(!isValidBulk($('.tab-pane.active'))) return false;
+                    var bulk = $('.tab-pane.active');
+                    if(!isValidBulk(bulk)) return false;
+                    else {
+                        var bulkObject = {};
+                        bulkObject.model = $(bulk).find('#modelId').val();
+                        bulkObject.serial = $(bulk).find('#bulkSerial').val();
+                        bulkObject.buyPrice = $(bulk).find('#bulkBuyPrice').val();
+                        bulkObject.sellPrice = $(bulk).find('#bulkSellPrice').val();
+                        bulkObject.quantity = $(bulk).find('#bulkQuantity').val();
+                        bulkObject.itemHasSerial = $(bulk).find('#bulkItemHasSerial').val();
+                        globals.transaction.bulks.push( bulkObject );
+                    }
+                    
+                    var totalDue = 0;
+                    $.each(globals.transaction.bulks, function(index, bulk){
+                        totalDue += bulk.buyPrice * bulk.quantity;
+                    });
+                    $('.tab-pane.transaction-info').find('#transactionTotalDue').val(totalDue);
+                    $('.tab-pane.transaction-info').find('.transaction-total-due').html(totalDue.toString() + lang[' L.E.']);
                     
                 }, onPrevious: function(tab, navigation, index) {
                     //console.log('Tab '+index+' - onPrevious');
@@ -1661,7 +1578,7 @@ $(document).ready(function(){
                     if(!isValidBulk($('.tab-pane.active'))) return false;
                     
                 }, onTabClick: function(tab, navigation, index) {
-                    //if(!isValidBulk($('.tab-pane.active'))) return false;
+                    return false;
                     
                 }, onTabShow: function(tab, navigation, index) {
                     $('.tab-pane.active').find('#bulkSerial').focus();
@@ -1671,6 +1588,7 @@ $(document).ready(function(){
                     $('.bulk-wizard').find('.progress-bar').css({width:$percent+'%'});
                     // If it's the last tab then hide the last button and show the finish instead
                     if($current >= $total) {
+                        $('.transaction-info #transactionDiscount').focus();
                         $('#tabsleft').find('.pager .next').hide();
                         $('#tabsleft').find('.pager .finish').show();
                         $('#tabsleft').find('.pager .finish').removeClass('disabled');
@@ -1680,15 +1598,42 @@ $(document).ready(function(){
                     }
                 }
             });
+            
             $('#tabsleft .finish').click(function() {
-                $.each($('.tab-pane'), function(index, value){
-                    if(!isValidBulk(value)){
-                        $('#tabsleft').bootstrapWizard('show', index);
-                        return false;
+                var transactionInfo = {};
+                transactionInfo.supplier = $('.tab-pane.active').find('#transactionSupplier').val();
+                transactionInfo.totalDue = $('.tab-pane.active').find('#transactionTotalDue').val();
+                transactionInfo.discount = $('.tab-pane.active').find('#transactionDiscount').val();
+                transactionInfo.paidAmount = $('.tab-pane.active').find('#transactionPaidAmount').val();
+                transactionInfo.date = $('.tab-pane.active').find('#transactionDate').val();
+                globals.transaction.info = transactionInfo;
+                //console.log(globals.transaction);
+                
+                var transactionJSON = JSON.stringify(globals.transaction);
+                
+                var btn = $(this);
+                btn.button('loading');
+                $.ajax({
+                    async: false,
+                    url: "/bulk/add",
+                    type: "post",
+                    data: { transaction: transactionJSON },
+                    success: function(response){
+                        globals.transaction.info.id = response.transactionId;
+                        //$('#bulkWizardModal').modal('hide');
+                        $('.btn-item-wizard').click();
+                        //console.log(globals.transaction);
                     }
+                }).always(function () {
+                    $('#itemWizardModal').on('load', function(){
+                        //itemWizard(btn);
+                    });
+                    
+                    //btn.button('reset');
                 });
             });
-            $('#bulkDate').datetimepicker({
+            
+            $('.tab-pane #transactionDate').datetimepicker({
                 pickTime: false,
                 language: 'ar'
             });
@@ -1696,15 +1641,253 @@ $(document).ready(function(){
         
     });
     
+    // Item Wizard
+    $(document).on('click', '.btn-item-wizard', function(e){
+        
+        var transactionId = globals.transaction.info.id;
+        var data = {transactionId:transactionId};
+        var btn = $(this);
+        btn.button('loading');
+        $('#itemWizardModalContainer').load("/app_dev.php/item/wizard/"+transactionId , data , function(){
+            btn.button('reset');
+            $('#itemWizardModal').modal('show').on('shown.bs.modal', function(){
+                $('.tab-pane.active').find('#itemSerial').focus();
+            }).on('hidden.bs.modal', function(){
+                
+            });
+            $('#tabsbulk').bootstrapWizard({
+                'tabClass': 'nav nav-tabs', 
+                'debug': false,
+                onInit: function(tab, navigation, index) {
+                    
+                }, onShow: function(tab, navigation, index) {
+                    
+                }, onNext: function(tab, navigation, index) {
+                    
+                }, onPrevious: function(tab, navigation, index) {
+                    
+                }, onLast: function(tab, navigation, index) {
+                    
+                }, onTabClick: function(tab, navigation, index) {
+                    
+                }, onTabShow: function(tab, navigation, index) {
+                    //$('.tab-pane.active').find('#bulkSerial').focus();
+                    var $total = navigation.find('li').length;
+                    var $current = index+1;
+                    var $percent = ($current/$total) * 100;
+                    $('.bulk-wizard').find('.progress-bar').css({width:$percent+'%'});
+                    // If it's the last tab then hide the last button and show the finish instead
+                    if($current >= $total) {
+                        $('#tabsbulk').find('.pager .next').hide();
+                        $('#tabsbulk').find('.pager .finish').show();
+                        $('#tabsbulk').find('.pager .finish').removeClass('disabled');
+                    } else {
+                        $('#tabsbulk').find('.pager .next').show();
+                        $('#tabsbulk').find('.pager .finish').hide();
+                    }
+                }
+            });
+            
+            $('#tabsbulk .finish').click(function() {
+                window.location.reload();
+            });
+            
+            $('.tabsitem').bootstrapWizard({
+                'nextSelector': '.next-item', 
+                'previousSelector': '.previous-item',
+                'firstSelector': '.first-item', 
+                'lastSelector' : 'last-item',
+                'tabClass': 'nav nav-pills', 
+                'debug': false,
+                onInit: function(tab, navigation, index) {
+                    
+                }, onShow: function(tab, navigation, index) {
+                    
+                }, onNext: function(tab, navigation, index) {
+                    
+                }, onPrevious: function(tab, navigation, index) {
+                    
+                }, onLast: function(tab, navigation, index) {
+                    
+                }, onTabClick: function(tab, navigation, index) {
+                    //console.log($(tab).find('#itemSerial'));
+                    
+                }, onTabShow: function(tab, navigation, index) {
+                    $('#tabsbulk .tab-pane.bulk.active .tabsitem .tab-pane.item.active #itemSerial').focus();
+                    
+                    var $total = navigation.find('li').length;
+                    var $current = index+1;
+                    //var $percent = ($current/$total) * 100;
+                    //$('.bulk-wizard').find('.progress-bar').css({width:$percent+'%'});
+                    // If it's the last tab then hide the last button and show the finish instead
+                    if($current >= $total) {
+                        //$('.tabsitem').find('.pager .next-item').hide();
+                        //$('.tabsitem').find('.pager .finish-item').show();
+                        //$('.tabsitem').find('.pager .finish-item').removeClass('disabled');
+                    } else {
+                        //$('.tabsitem').find('.pager .next-item').show();
+                        //$('.tabsitem').find('.pager .finish-item').hide();
+                    }
+                }
+            });
+            
+            $('.tabsitem .finish-item').click(function(){
+                
+            });
+            
+        });
+        
+    });
+    
+    $('#numberOfBulks #numberOfModels').on('keypress', function(e){
+        if( e.which == 13 && globals.isPositiveInteger($(this))) $('.btn-bulk-wizard').click();
+        else $(this).focus();
+    });
+    
+    // Validate Bulk
+    $('#bulkWizardModalContainer').on('click' , '#bulkForm #check-model-serial' , function () {
+        var bulk = $(this).closest('div.tab-pane.active');
+        return isValidBulkSerial(bulk);
+        
+    }).on('hidden.bs.modal' , '#bulkWizardModal' , function(){
+        $('#bulkWizardModalContainer').empty();
+        
+    }).on('keypress', '#bulkForm #bulkSerial', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        if ( e.which == 13 && isValidBulkSerial(bulk)) $(bulk).find('#bulkBuyPrice').focus();
+        else $(this).focus();
+        
+    }).on('focusout', '#bulkForm #bulkBuyPrice', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        return isValidBulkBuyPrice(bulk);
+        
+    }).on('keypress', '#bulkForm #bulkBuyPrice', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        if( e.which == 13 && isValidBulkBuyPrice(bulk)) $(bulk).find('#bulkSellPrice').focus();
+        else $(this).focus();
+        
+    }).on('focusout', '#bulkForm #bulkSellPrice', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        return isValidBulkSellPrice(bulk);
+        
+    }).on('keypress', '#bulkForm #bulkSellPrice', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        if( e.which == 13 && isValidBulkSellPrice(bulk)) $(bulk).find('#bulkQuantity').focus();
+        else $(this).focus();
+        
+    }).on('focusout', '#bulkForm #bulkQuantity', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        return isValidBulkQuantity(bulk);
+        
+    }).on('keypress', '#bulkForm #bulkQuantity', function(e){
+        var bulk = $(this).closest('div.tab-pane.active');
+        if( e.which == 13 && isValidBulkQuantity(bulk)) $('#tabsleft li.next a')[1].click();
+        else $(this).focus();
+        
+    }).on('keypress', '.transaction-info #transactionDiscount', function(e){
+        if( e.which == 13 && globals.isPositiveInteger($(this))) 
+            $(this).closest('div.tab-pane.active').find('#transactionPaidAmount').focus();
+        else 
+            $(this).focus();
+        
+    }).on('keypress', '.transaction-info #transactionPaidAmount', function(e){
+        if( e.which == 13 && globals.isPositiveInteger($(this))) 
+            $(this).closest('div.tab-pane.active').find('#transactionDate').focus();
+        else 
+            $(this).focus();
+        
+    }).on('keypress', '.transaction-info #transactionDate', function(e){
+        if( e.which == 13 && globals.isPositiveInteger($(this))) 
+            $('#tabsleft li.finish a')[0].click();
+        else 
+            $(this).focus();
+        
+    });
+    
+    // Check Item Serial
+    $("#editModalContainer").on("keypress", "#itemForm #itemSerial", function(e){
+        if ( e.which == 13 ){
+            var item = $('#itemForm');
+            isValidItemSerial(item);
+            e.preventDefault();
+        }
+    /*}).on("focusout", "#itemSerial", function(){
+        var item = $('#itemForm');
+        isValidItemSerial(item);*/
+    }).on('click', 'button.btn-item-serial', function () {
+        var item = $('#itemForm');
+        isValidItemSerial(item);
+    }).on("click", '.btn-item-edit-save', function (e) {
+        var item = $('#itemForm');
+        if(isValidItemSerial(item)){
+            // Attach a submit handler to the form
+            $(item).submit(function(event){
+                // Stop form from submitting normally
+                event.preventDefault();
+                // Get some values from elements on the page:
+                var $form = $( this ),
+                    itemId = $form.find("input[name='itemId']").val(),
+                    itemHasSerial = $form.find( "input[name='itemHasSerial']" ).val(),
+                    itemSerial = $form.find( "input[name='itemSerial']" ).val(),
+                    itemHasWarranty = $form.find( "select[name='itemHasWarranty']" ).val(),
+                    action = $form.find("input[name='action']").val(),
+                    controller = $form.find("input[name='controller']").val(),
+                    url = $form.attr( "action" );
+                // Send the data using post
+                var posting = $.post( url, {
+                    itemId: itemId,
+                    itemHasSerial: itemHasSerial,
+                    itemSerial: itemSerial,
+                    itemHasWarranty: itemHasWarranty,
+                    action: action,
+                    controller: controller,
+                });
+                // Put the results in a div
+                posting.done(function( data ) {
+                    console.log(data);
+                    $('#editModal').modal('hide');
+                    $('#editModal').on('hidden.bs.modal' , function(){
+                        $('tr.item_'+itemId).removeClass('info').addClass('success');
+                        $('tr.item_'+itemId).find('td.item_serial_'+itemId).html('<span class="label label-default">'+itemSerial+'</span>');
+                        $('tr.item_'+itemId).find('td.item_status_'+itemId).html('<span class="label label-success">'+lang['In Stock']+'</span>');
+                        $('tr.item_'+itemId+' .btn-item-edit').html(lang['Update']);
+                        //window.location.reload(true);
+                    });
+                });
+            });
+        } else {
+            e.preventDefault();
+        }
+    });
+    
+    // Check Item Serial
+    $('#itemWizardModalContainer').on('click', 'button.btn-item-serial', function () {
+        var item = $(this).closest('.tab-pane.active');
+        return isValidItemSerial(item);
+    }).on('keypress', '.input-item-serial', function(e){ 
+        var item = $(this).closest('.tab-pane.active'); 
+        if( e.which == 13 && isValidItemSerial(item)){
+            var currentBulkIndex = $('#tabsbulk .tab-pane.bulk.active').index();
+            var currentItemIndex = $('#tabsbulk .tab-pane.bulk.active .tabsitem .tab-pane.item.active').index();
+            if(currentItemIndex+1 == globals.transaction.bulks[currentBulkIndex].quantity) 
+                $('#tabsbulk li.next a')[1].click();
+            else 
+                $('#tabsbulk .tab-pane.bulk.active .tabsitem li.next-item a')[0].click();
+        }
+        else $(this).focus();
+        
+    });
+    
+    //Bulk validation functions
     function isValidBulk(bulk) {
         var validBulk = true;
         if(!isValidBulkSerial(bulk)) validBulk = false;
-        if(!isValidBulkDate(bulk)) validBulk = false;
-        if(!isValidBulkPrice(bulk)) validBulk = false;
+        if(!isValidBulkBuyPrice(bulk)) validBulk = false;
+        if(!isValidBulkSellPrice(bulk)) validBulk = false;
         if(!isValidBulkQuantity(bulk)) validBulk = false;
         
         return validBulk;
-    }
+    };
     
     function isValidBulkSerial(bulk) {
         var action = $("#action").val();
@@ -1714,8 +1897,11 @@ $(document).ready(function(){
         if(action === 'edit') bulkId = $("#bulkId");
         
         var bulkSerial = $(bulk).find("#bulkSerial");
-        var bulkBrand = $(bulk).find("#bulkBrand");
-        var bulkModel = $(bulk).find("#bulkModel");
+        var modelId = $(bulk).find("#modelId");
+        var bulkItemHasSerial = $(bulk).find("#bulkItemHasSerial");
+        var bulkModelBrand = $(bulk).find("#bulkModelBrand");
+        var bulkModelName = $(bulk).find("#bulkModelName");
+        var bulkModelNumber = $(bulk).find("#bulkModelNumber");
         var bulkCategory = $(bulk).find("#bulkCategory");
         
         //Validate empty serial
@@ -1723,12 +1909,15 @@ $(document).ready(function(){
             $('#alert-message').html('');
             $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $(bulkSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
-            $(bulkSerial).next('.bulk-error').html(lang['Serial can not be empty']).show();
+            $(bulkSerial).next('label.bulk-error').html(lang['Serial can not be empty']).show();
 
             
             //Clear Model Data
-            $(bulkBrand).val('');
-            $(bulkModel).val('');
+            $(modelId).val('');
+            $(bulkItemHasSerial).val('');
+            $(bulkModelBrand).val('');
+            $(bulkModelName).val('');
+            $(bulkModelNumber).val('');
             $(bulkCategory).val('');
             $(bulkSerial).focus();
             return false;
@@ -1738,11 +1927,31 @@ $(document).ready(function(){
             $('#alert-message').html('');
             $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $(bulkSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
-            $(bulkSerial).next('.bulk-error').html(lang['Please enter a valid serial first.']).show();
+            $(bulkSerial).next('label.bulk-error').html(lang['Please enter a valid serial first.']).show();
             
             //Clear Model Data
-            $(bulkBrand).val('');
-            $(bulkModel).val('');
+            $(modelId).val('');
+            $(bulkItemHasSerial).val('');
+            $(bulkModelBrand).val('');
+            $(bulkModelName).val('');
+            $(bulkModelNumber).val('');
+            $(bulkCategory).val('');
+            $(bulkSerial).focus();
+            return false;
+            
+        //Validate model duplication
+        } else if(isDuplicatedModel($(bulkSerial).val())){
+            $('#alert-message').html('');
+            $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+            $(bulkSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(bulkSerial).next('label.bulk-error').html(lang['This model is already added']).show();
+            
+            //Clear Model Data
+            $(modelId).val('');
+            $(bulkItemHasSerial).val('');
+            $(bulkModelBrand).val('');
+            $(bulkModelName).val('');
+            $(bulkModelNumber).val('');
             $(bulkCategory).val('');
             $(bulkSerial).focus();
             return false;
@@ -1765,72 +1974,102 @@ $(document).ready(function(){
                     $('#alert-message').html('');
                     $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
                     $(bulkSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
-                    $(bulkSerial).next('.bulk-error').html(lang['Model does not exist']).show();
+                    $(bulkSerial).next('label.bulk-error').html(lang['Model does not exist']).show();
                     
                     //Clear Model Data
-                    $(bulkBrand).val('');
-                    $(bulkModel).val('');
+                    $(modelId).val('');
+                    $(bulkItemHasSerial).val('');
+                    $(bulkModelBrand).val('');
+                    $(bulkModelName).val('');
+                    $(bulkModelNumber).val('');
                     $(bulkCategory).val('');
                     $(bulkSerial).focus();
+                    globals.passedValidation = false;
                     
                     // Show an error message
                 } else if(response.error === 'model_exists'){
                     $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
                     $(bulkSerial).closest('.form-group').removeClass('has-error').addClass('has-success');
-                    $(bulkSerial).next('.bulk-error').html(lang['Model exists']).show();
+                    $(bulkSerial).next('label.bulk-error').html(lang['Model exists']).show();
                     
                     //Load Model Data
-                    $(bulkBrand).val(response.model.m_model_brand);
-                    $(bulkModel).val(response.model.m_model_model);
+                    $(modelId).val(response.model.m_id);
+                    $(bulkItemHasSerial).val(response.model.m_model_item_has_serial);
+                    $(bulkModelBrand).val(response.model.br_brand_name);
+                    $(bulkModelName).val(response.model.m_model_name + ' ' + response.model.co_color_name);
+                    $(bulkModelNumber).val(response.model.m_model_number);
                     $(bulkCategory).val(response.model.c_category_name);
-                    //$('#bulkDate').focus();
+                    
                     globals.passedValidation = true;
                 }
             }
         }).always(function () {
             $(bulk).find('#check-model-serial').button('reset');
         });
+        
         return globals.passedValidation;
-    }
+    };
     
-    function isValidBulkDate(bulk){
+    function isValidTransactionDate(transaction){
         var validDate = true;
-        var bulkDate = $(bulk).find('#bulkDate');
-        if(globals.isEmpty(bulkDate)){
+        var transactionDate = $(transaction).find('#transactionDate');
+        if(globals.isEmpty(transactionDate)){
             validDate = false;
-            $(bulkDate).next('.bulk-error').html(lang['The field can not be empty']).show();
-            $(bulkDate).closest('.form-group').removeClass('has-success').addClass('has-error');
-        } else if(!globals.isDate(bulkDate)){
+            $(transactionDate).next('.transaction-error').html(lang['The field can not be empty']).show();
+            $(transactionDate).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else if(!globals.isDate(transactionDate)){
             validDate = false;
-            $(bulkDate).next('.bulk-error').html(lang['Please enter a valid date. (e.g. 2014-02-16)']).show();
-            $(bulkDate).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(transactionDate).next('.bulk-error').html(lang['Please enter a valid date. (e.g. 2014-02-16)']).show();
+            $(transactionDate).closest('.form-group').removeClass('has-success').addClass('has-error');
         } else {
-            $(bulkDate).next('.bulk-error').html('').hide();
-            $(bulkDate).closest('.form-group').removeClass('has-error').addClass('has-success');
+            $(transactionDate).next('.bulk-error').html('').hide();
+            $(transactionDate).closest('.form-group').removeClass('has-error').addClass('has-success');
         }
         return validDate;
-    }
+    };
     
-    function isValidBulkPrice(bulk){
+    
+    function isValidBulkBuyPrice(bulk){
         var validPrice = true;
-        var bulkPrice = $(bulk).find('#bulkPrice');
+        var bulkBuyPrice = $(bulk).find('#bulkBuyPrice');
         
-        if(globals.isEmpty(bulkPrice)){
+        if(globals.isEmpty(bulkBuyPrice)){
             validPrice = false;
-            $(bulkPrice).next('.bulk-error').html(lang['The field can not be empty']).show();
-            $(bulkPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
-        } else if(!globals.isPositiveInteger(bulkPrice)){
+            $(bulkBuyPrice).next('.bulk-error').html(lang['The field can not be empty']).show();
+            $(bulkBuyPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else if(!globals.isPositiveInteger(bulkBuyPrice)){
             validPrice = false;
             $('#alert-message').html('');
-            $(bulkPrice).next('.bulk-error').html(lang['Please insert valid number']).show();
-            $(bulkPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(bulkBuyPrice).next('.bulk-error').html(lang['Please insert valid number']).show();
+            $(bulkBuyPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
         } else {
             $('#alert-message').html('');
-            $(bulkPrice).next('.bulk-error').html('').hide();
-            $(bulkPrice).closest('.form-group').removeClass('has-error').addClass('has-success');
+            $(bulkBuyPrice).next('.bulk-error').html('').hide();
+            $(bulkBuyPrice).closest('.form-group').removeClass('has-error').addClass('has-success');
         }
         return validPrice;
-    }
+    };
+    
+    function isValidBulkSellPrice(bulk){
+        var validPrice = true;
+        var bulkSellPrice = $(bulk).find('#bulkSellPrice');
+        
+        if(globals.isEmpty(bulkSellPrice)){
+            validPrice = false;
+            $(bulkSellPrice).next('.bulk-error').html(lang['The field can not be empty']).show();
+            $(bulkSellPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else if(!globals.isPositiveInteger(bulkSellPrice)){
+            validPrice = false;
+            $('#alert-message').html('');
+            $(bulkSellPrice).next('.bulk-error').html(lang['Please insert valid number']).show();
+            $(bulkSellPrice).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else {
+            $('#alert-message').html('');
+            $(bulkSellPrice).next('.bulk-error').html('').hide();
+            $(bulkSellPrice).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+        return validPrice;
+    };
     
     function isValidBulkQuantity(bulk){
         var validQuantity = true;
@@ -1851,7 +2090,94 @@ $(document).ready(function(){
             $(bulkQuantity).closest('.form-group').removeClass('has-error').addClass('has-success');
         }
         return validQuantity;
-    }
+    };
+    
+    function isDuplicatedModel(serial){
+        var duplicted = false;
+        $.each(globals.transaction.bulks , function(index, bulk){
+            if(bulk.serial === serial)
+                duplicted = true;
+        });
+        return duplicted;
+    };
+    
+    function isValidItemSerial(item) {
+        var action = $("#action").val();
+        var controller = $("#controller").val();
+        var itemId = $(item).find('#itemId');
+        var itemSerial = $(item).find('#itemSerial');
+        
+        //Validate empty serial
+        if( globals.isEmpty(itemSerial) ){
+            $(itemSerial).next(".item-error").html(lang['Serial can not be empty']);
+            $(itemSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+            $(itemSerial).focus();
+            return false;
+            
+        //Validate letters, numbers and dashes
+        } else if( !globals.isAlphanumeric(itemSerial) ){
+            $(itemSerial).next(".item-error").html(lang['Please enter a valid serial first.']);
+            $(itemSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+            $(itemSerial).focus();
+            return false;
+        }
+        
+        $(itemSerial).closest('#btn-item-serial').button('loading');
+        $.ajax({
+            async: false,
+            url: "/item/validate",
+            type: "post",
+            data: {
+                itemId:itemId.val(),
+                itemSerial:$(itemSerial).val(),
+                /*itemStatus:itemStatus,
+                itemHasWarranty:itemHaswarranty,
+                itemWarranty:itemWarranty,
+                itemColor:itemColor,*/
+                action:action,
+                controller:controller
+            },
+            success: function(response){
+                // Serial is valid
+                if(response.error === null){
+                    $(itemSerial).next(".item-error").html(lang['Serial is valid.']);
+                    $(itemSerial).closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
+                    //$('#itemColor').focus();
+                    globals.passedValidation = true;
+                    
+                // Serial is not valid
+                } else if(response.error === 'item_exists'){
+                    $(itemSerial).next(".item-error").html(lang['Item already exists.']);
+                    $(itemSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+                    //$("#itemSerial").focus();
+                    globals.passedValidation = false;
+                    
+                // It's Model Serial
+                } else if(response.error === 'model_serial'){
+                    $(itemSerial).next(".item-error").html(lang['This is a model serial']);
+                    $(itemSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+                    //$("#itemSerial").focus();
+                    globals.passedValidation = false;
+                    
+                // Item has no serial
+                } else if(response.error === 'item_updated'){
+                    $(itemSerial).next(".item-error").html(lang['Serial is valid.']);
+                    $(itemSerial).closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $(itemSerial).closest('.alert-serial-item').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
+                    //$('#itemColor').focus();
+                    globals.passedValidation = true;
+                }
+            }
+        }).always(function () {
+            $(itemSerial).closest('#btn-item-serial').button('reset');
+        });
+        return globals.passedValidation;
+    };
     
     globals.isEmpty = function (element){
         if($(element).val() == '')
@@ -1865,7 +2191,7 @@ $(document).ready(function(){
             return true;
         else
             return false;
-    }
+    };
     
     globals.isAlphanumericSpace = function (element){
         //lang["The field must contain only letters, numbers, or dashes."];
@@ -1890,21 +2216,20 @@ $(document).ready(function(){
             return true;
         else
             return false;
-    }
+    };
     
     globals.isPositiveInteger = function (element){
         if(/^\d+$/.test($(element).val()))
             return true;
         else
             return false;
-    }
+    };
     
     globals.isNumber = function (element){
         if(/^\d+$/.test($(element).val()))
             return true;
         else
             return false;
-    }
-    
+    };
     
 });

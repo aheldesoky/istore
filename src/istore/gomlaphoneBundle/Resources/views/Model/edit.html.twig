@@ -25,13 +25,35 @@
 							<div class="form-group">
 								<label for="modelBrand" class="col-sm-4 control-label">{% trans %}Brand Name{% endtrans %}</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="modelBrand" name="modelBrand" placeholder="{% trans %}Brand Name{% endtrans %}" value="{{ model.modelBrand }}">
+									<select class="form-control required" id="modelBrand" name="modelBrand">
+										<option value="" selected>{% trans %}Select brand{% endtrans %}</option>
+										{% for brand in brands %}
+										<option value="{{ brand.br_id }}" {% if model.modelBrand.id == brand.br_id %}selected{% endif %}>{{ brand.br_brand_name }}</option>
+										{% endfor %}
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
-								<label for="modelModel" class="col-sm-4 control-label">{% trans %}Model{% endtrans %}</label>
+								<label for="modelName" class="col-sm-4 control-label">{% trans %}Model Name{% endtrans %}</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="modelModel" name="modelModel" placeholder="{% trans %}Model{% endtrans %}" value="{{ model.modelModel }}">
+									<input type="text" class="form-control" id="modelName" name="modelName" placeholder="{% trans %}Model Name{% endtrans %}" value="{{ model.modelName }}">
+								</div>
+							</div>
+                                                        <div class="form-group">
+								<label for="modelNumber" class="col-sm-4 control-label">{% trans %}Model Number{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="modelNumber" name="modelNumber" placeholder="{% trans %}Model Number{% endtrans %}" value="{{ model.modelNumber }}">
+								</div>
+							</div>
+                                                        <div class="form-group">
+								<label for="modelColor" class="col-sm-4 control-label">{% trans %}Color{% endtrans %}</label>
+								<div class="col-sm-6">
+									<select class="form-control required" id="modelColor" name="modelColor">
+										<option value="" selected>{% trans %}Select color{% endtrans %}</option>
+										{% for color in colors %}
+										<option value="{{ color.co_id }}" {% if model.modelColor.id == color.co_id %}selected{% endif %}>{{ color.co_color_name }}</option>
+										{% endfor %}
+									</select>
 								</div>
 							</div>
 							<div class="form-group">
@@ -69,6 +91,7 @@
 		</div>
 		<div class="panel-footer">
 			<button type="submit" class="btn btn-success btn-lg">{% trans %}Edit Model{% endtrans %}</button>
+                        <a href="/model" class="btn btn-default btn-lg">{% trans %}Back to Models{% endtrans %}</a>
 		</div>
 	</div>
 </form>

@@ -1,0 +1,32 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<form class="form-horizontal" role="form" method="post" id="colorForm">
+	<div class="panel panel-primary">
+		<div class="panel-heading">
+			<h4>{% trans %}Add New Color{% endtrans %}</h4>
+		</div>
+		<div class="panel-body">
+			<div class="form-container">
+				<div class="">
+					<div class="row">
+						<div class="col-md-6">
+							<div class="form-group">
+								<label for="colorName" class="col-sm-4 control-label">{% trans %}Color Name{% endtrans %}</label>
+								<div class="col-sm-6">
+									<input type="text" class="form-control" id="colorName" name="colorName" placeholder="{% trans %}Color Name{% endtrans %}">
+                                                                        <label for="colorName" class="color-error"></label>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="panel-footer">
+			<button type="submit" class="btn btn-success btn-lg btn-color-add">{% trans %}Add Color{% endtrans %}</button>
+		</div>
+	</div>
+</form>
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

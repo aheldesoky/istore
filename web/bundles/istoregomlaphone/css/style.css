@@ -177,11 +177,7 @@ div.container a.brand {
     float: left;
     margin-top: -30px;
 }
-#modelForm #modelSerial,
-#bulkForm #modelSerial,
-#bulkForm #bulkBrand,
-#bulkForm #bulkModel,
-#bulkForm #bulkCategory{
+#modelForm #modelSerial, #bulkSerial, #bulkModelBrand, #bulkModelName, #bulkModelNumber, #bulkCategory{
     text-align: center;
 }
 .immutable-bulk-view-data{
@@ -344,35 +340,6 @@ div.container a.brand {
     direction: ltr;
 }
 
-/* Transaction Process Wizard */
-.wizard-modal p {
-        margin: 0 0 10px;
-        padding: 0;
-}
-
-#wizard-ns-detail-servers, .wizard-additional-servers {
-        font-size: 12px;
-        margin-top: 10px;
-        margin-left: 15px;
-}
-#wizard-ns-detail-servers > li, .wizard-additional-servers li {
-        line-height: 20px;
-        list-style-type: none;
-}
-#wizard-ns-detail-servers > li > img {
-        padding-right: 5px;
-}
-
-.wizard-modal .chzn-container .chzn-results {
-        max-height: 150px;
-}
-.wizard-addl-subsection {
-        margin-bottom: 40px;
-}
-.create-server-agent-key {
-        margin-left: 15px; 
-        width: 90%;
-}
 .clearfix{
     clear: both;
 }
@@ -380,9 +347,44 @@ div.container a.brand {
     margin-left: 50px;
     margin-right: 50px;
 }
-#tabsleft .pager.wizard .finish{
+#tabsleft .pager.wizard .finish, #tabsbulk .pager.wizard .finish{
     float: left;
 }
+.tabs-right li {
+    text-align: center;
+} 
 label.bulk-error{
     display: none;
+}
+label.transaction-error{
+    display: none;
+}
+.text-center-override{
+    text-align: center !important;
+}
+.btn-hide-nav{
+    height: 50px;
+    width: 50px;
+    background-color: grey;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    z-index: 2000 !important;
+}
+.search-component{
+    background-color: #333;
+    color: #fff;
+    border-radius: 20px !important;
+}
+.stock-serial {
+    padding: 10px 20px 10px 20px;
+    margin: 10px 10px 10px 10px;
+    background-color: #333;
+    border: none;
+}
+.search-link{
+    color: #999;
+}
+.search-link:hover{
+    color: #fff;
 }

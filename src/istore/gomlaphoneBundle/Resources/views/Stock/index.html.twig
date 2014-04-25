@@ -1,0 +1,138 @@
+{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% block body %}
+<div class="panel-group" id="accordion">
+        <div class="panel panel-info search-component">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseSearch" class="btn btn-lg btn-block text-center search-link">
+                        {% trans %}Search in stock{% endtrans %}
+                </a>
+                <div id="collapseSearch" class="panel-collapse collapse {% if results is not defined %}in{% endif %}">
+                        <div class="panel-body">
+                                <div id="stockPage">
+                                        <div class="stock-criteria form-container">
+                                                <form class="form-horizontal" action="/stock" method="post" id="stockForm">
+                                                        <div class="row">
+                                                                <div class="row input-serial alert alert-info stock-serial">
+                                                                        <div class="col-lg-6 col-lg-offset-3">
+                                                                                <div class="form-group">
+                                                                                        <input type="text" class="form-control text-center input-lg" id="stockSerial" name="stockSerial" placeholder="{% trans %}Enter Model or Item Serial{% endtrans %}" value="{{ filters.serial }}">
+                                                                                        <label for="stockSerial" class="stock-error"></label>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                        <div class="form-group">
+                                                                                <label for="stockCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %}</label>
+                                                                                <div class="col-sm-6">
+                                                                                        <select class="form-control" id="stockCategory" name="stockCategory">
+                                                                                                <option value="" selected>{% trans %}All categories{% endtrans %}</option>
+                                                                                                {% for category in categories %}
+                                                                                                <option value="{{ category.id }}" {% if filters.category == category.id %}selected{% endif %}>{{ category.categoryName }}</option>
+                                                                                                {% endfor %}
+                                                                                        </select>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                                <label for="stockSupplier" class="col-sm-4 control-label">{% trans %}Supplier{% endtrans %}</label>
+                                                                                <div class="col-sm-6">
+                                                                                        <select class="form-control" id="stockSupplier" name="stockSupplier">
+                                                                                                <option value="" selected>{% trans %}All suppliers{% endtrans %}</option>
+                                                                                                {% for supplier in suppliers %}
+                                                                                                <option value="{{ supplier.id }}" {% if filters.supplier == supplier.id %}selected{% endif %}>{{ supplier.supplierName }}</option>
+                                                                                                {% endfor %}
+                                                                                        </select>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                                <label for="stockModel" class="col-sm-4 control-label">{% trans %}Model{% endtrans %}</label>
+                                                                                <div class="col-sm-6">
+                                                                                        <select class="form-control" id="stockModel" name="stockModel">
+                                                                                                <option value="" selected>{% trans %}All models{% endtrans %}</option>
+                                                                                                {% for model in models %}
+                                                                                                <option value="{{ model.id }}" {% if filters.model == model.id %}selected{% endif %}>{{ model.modelBrand.brandName }} {{ model.modelName }} {{ model.modelColor.colorName }} {{ model.modelNumber }}</option>
+                                                                                                {% endfor %}
+                                                                                        </select>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="form-group report-status">
+                                                                                <label for="stockStatus" class="col-sm-4 control-label">{% trans %}Status{% endtrans %}</label>
+                                                                                <div class="col-sm-6">
+                                                                                        <select class="form-control" id="stockStatus" name="stockStatus">
+                                                                                                <option value="" selected>{% trans %}All status{% endtrans %}</option>
+                                                                                                <option value="pending_info" {% if filters.status == 'pending_info' %}selected{% endif %}>{% trans %}Pending Info{% endtrans %}</option>
+                                                                                                <option value="in_stock" {% if filters.status == 'in_stock'  %}selected{% endif %}>{% trans %}In Stock{% endtrans %}</option>
+                                                                                                <option value="sold" {% if filters.status == 'sold' %}selected{% endif %}>{% trans %}Sold{% endtrans %}</option>
+                                                                                                <option value="warranty" {% if filters.status == 'warranty' %}selected{% endif %}>{% trans %}Warranty{% endtrans %}</option>
+                                                                                                <option value="warranty_replaced" {% if filters.status == 'warranty_replaced' %}selected{% endif %}>{% trans %}Warranty - Replaced{% endtrans %}</option>
+                                                                                        </select>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                        <div class="form-group stock-range">
+                                                                                <label for="stockDateRange" class="col-sm-4 control-label">{% trans %}Period{% endtrans %}</label>
+                                                                                <div class="col-sm-6">
+                                                                                        <select class="form-control" id="stockDateRange" name="stockDateRange">
+                                                                                                <option value="" selected>{% trans %}Any period{% endtrans %}</option>
+                                                                                                <option value="today" {% if filters.dateRange == 'today' %}selected{% endif %}>{% trans %}Today{% endtrans %}</option>
+                                                                                                <option value="this_week" {% if filters.dateRange == 'this_week' %}selected{% endif %}>{% trans %}This Week{% endtrans %}</option>
+                                                                                                <option value="last_week" {% if filters.dateRange == 'last_week' %}selected{% endif %}>{% trans %}Last Week{% endtrans %}</option>
+                                                                                                <option value="this_month" {% if filters.dateRange == 'this_month' %}selected{% endif %}>{% trans %}This Month{% endtrans %}</option>
+                                                                                                <option value="last_month" {% if filters.dateRange == 'last_month' %}selected{% endif %}>{% trans %}Last Month{% endtrans %}</option>
+                                                                                                <option value="this_year" {% if filters.dateRange == 'this_year' %}selected{% endif %}>{% trans %}This Year{% endtrans %}</option>
+                                                                                                <option value="last_year" {% if filters.dateRange == 'last_year' %}selected{% endif %}>{% trans %}Last Year{% endtrans %}</option>
+                                                                                                <option value="range" {% if filters.dateRange == 'range' %}selected{% endif %}>{% trans %}Custom Range{% endtrans %}</option>
+                                                                                        </select>
+                                                                                </div>
+                                                                                <label for="stockDateRange" class="stock-error control-label"></label>
+                                                                        </div>
+                                                                        <div class="form-group stock-from-date {% if filters is defined and filters.dateRange != 'range' %}hidden{% endif %}">
+                                                                                <label for="stockFromDate" class="col-sm-4 control-label">{% trans %}Date{% endtrans %}</label>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockFromDate" name="stockFromDate" placeholder="{% trans %}From{% endtrans %}" data-date-format="YYYY-MM-DD" {% if filters is defined and filters.dateRange == 'range' %}value="{{filters.fromDate}}"{% else %}disabled{% endif %}>
+                                                                                </div>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockToDate" name="stockToDate" placeholder="{% trans %}To{% endtrans %}" data-date-format="YYYY-MM-DD" {% if filters is defined and filters.dateRange == 'range' %}value="{{filters.toDate}}"{% else %}disabled{% endif %}>
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                                <label for="stockBuyPriceRange" class="col-sm-4 control-label">{% trans %}Buy Price{% endtrans %}</label>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockLowestBuyPrice" name="stockLowestBuyPrice" placeholder="{% trans %}From{% endtrans %}" value="{{filters.lowestBuyPrice}}">
+                                                                                </div>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockHighestBuyPrice" name="stockHighestBuyPrice" placeholder="{% trans %}To{% endtrans %}" value="{{filters.highestBuyPrice}}">
+                                                                                </div>
+                                                                        </div>
+                                                                        <div class="form-group">
+                                                                                <label for="stockSellPriceRange" class="col-sm-4 control-label">{% trans %}Sell Price{% endtrans %}</label>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockLowestSellPrice" name="stockLowestSellPrice" placeholder="{% trans %}From{% endtrans %}" value="{{filters.lowestSellPrice}}">
+                                                                                </div>
+                                                                                <div class="col-sm-3">
+                                                                                        <input type="text" class="form-control text-center" id="stockHighestSellPrice" name="stockHighestSellPrice" placeholder="{% trans %}To{% endtrans %}" value="{{filters.highestSellPrice}}">
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                        <div class="row">
+                                                                <div class="col-md-12">
+                                                                        <div class="form-group">
+                                                                                <div class="col-sm-12 text-center">
+                                                                                        <button class="btn btn-warning btn-lg" id="btnSearch">{% trans %}Search{% endtrans %}</button>
+                                                                                </div>
+                                                                        </div>
+                                                                </div>
+                                                        </div>
+                                                </form>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>
+{% if results is defined %}
+{% include('istoregomlaphoneBundle:Stock:results.html.twig') %}
+{% endif %}
+<input type="hidden" value="{{ action }}" id="action">
+<input type="hidden" value="{{ controller }}" id="controller">
+{% endblock %}

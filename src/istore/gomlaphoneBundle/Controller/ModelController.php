@@ -54,6 +54,9 @@ class ModelController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(m) AS total_models')
             ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
             ->setParameter(1, $user->getStoreId())
@@ -61,8 +64,10 @@ class ModelController extends Controller //implements AuthenticatedController
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('m , c')
+            ->select('m , br , co , c')
             ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
@@ -72,7 +77,7 @@ class ModelController extends Controller //implements AuthenticatedController
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
-    //var_dump($paginator);die;
+//var_dump($paginator);die;
         //$paginator = new Paginator($query, $fetchJoinCollection = true);
         
         //if (!$paginator) {
@@ -133,15 +138,35 @@ class ModelController extends Controller //implements AuthenticatedController
             ->getQuery()
             ->getScalarResult();
         
+        $colors = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('co')
+            ->from('istoregomlaphoneBundle:Color', 'co')
+            ->getQuery()
+            ->getScalarResult();
+        
+        $brands = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('br')
+            ->from('istoregomlaphoneBundle:Brand', 'br')
+            ->getQuery()
+            ->getScalarResult();
+        
         if ($request->getMethod() == 'POST') {
             $model = new Model();
             $model->setModelSerial($request->request->get('modelSerial'));
-            $model->setModelBrand($request->request->get('modelBrand'));
-            $model->setModelModel($request->request->get('modelModel'));
+            $modelBrand = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Brand')
+                ->find($request->request->get('modelBrand'));
+            $model->setModelBrand($modelBrand);
+            $model->setModelName($request->request->get('modelName'));
+            $model->setModelNumber($request->request->get('modelNumber'));
             $modelCategory = $this->getDoctrine()
                 ->getRepository('istoregomlaphoneBundle:Category')
                 ->find($request->request->get('modelCategory'));
             $model->setModelCategory($modelCategory);
+            $modelColor = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Color')
+                ->find($request->request->get('modelColor'));
+            $model->setModelColor($modelColor);
             $model->setModelSpecs($request->request->get('modelSpecs'));
             $model->setModelItemHasSerial($request->request->get('modelItemHasSerial'));
             $model->setModelStoreId(1);
@@ -155,6 +180,8 @@ class ModelController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Model:add.html.twig' , array(
             "categories" => $categories,
+            "colors" => $colors,
+            "brands" => $brands,
             "action" => "add",
             "controller" => "model"
         ));
@@ -179,15 +206,35 @@ class ModelController extends Controller //implements AuthenticatedController
             ->getQuery()
             ->getScalarResult();
         
+        $colors = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('co')
+            ->from('istoregomlaphoneBundle:Color', 'co')
+            ->getQuery()
+            ->getScalarResult();
+        
+        $brands = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('br')
+            ->from('istoregomlaphoneBundle:Brand', 'br')
+            ->getQuery()
+            ->getScalarResult();
+        
         if( $request->getMethod() == 'POST')
         {
             $model->setModelSerial($request->request->get('modelSerial'));
-            $model->setModelBrand($request->request->get('modelBrand'));
-            $model->setModelModel($request->request->get('modelModel'));
+            $modelBrand = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Brand')
+                ->find($request->request->get('modelBrand'));
+            $model->setModelBrand($modelBrand);
+            $model->setModelName($request->request->get('modelName'));
+            $model->setModelNumber($request->request->get('modelNumber'));
             $modelCategory = $this->getDoctrine()
                 ->getRepository('istoregomlaphoneBundle:Category')
                 ->find($request->request->get('modelCategory'));
             $model->setModelCategory($modelCategory);
+            $modelColor = $this->getDoctrine()
+                ->getRepository('istoregomlaphoneBundle:Color')
+                ->find($request->request->get('modelColor'));
+            $model->setModelColor($modelColor);
             $model->setModelSpecs($request->request->get('modelSpecs'));
             //$model->setModelItemHasSerial($model->getModelItemHasSerial());
             $entityManager = $this->getDoctrine()->getManager();
@@ -199,6 +246,8 @@ class ModelController extends Controller //implements AuthenticatedController
         
         return $this->render('istoregomlaphoneBundle:Model:edit.html.twig' , array(
             "categories" => $categories,
+            "colors" => $colors,
+            "brands" => $brands,
             "model" => $model,
             "action" => "edit",
             "controller" => "model"
@@ -254,7 +303,8 @@ class ModelController extends Controller //implements AuthenticatedController
         $modelNew['modelId'] = $request->request->get('modelId');
         $modelNew['modelSerial'] = $request->request->get('modelSerial');
         $modelNew['modelBrand'] = $request->request->get('modelBrand');
-        $modelNew['modelModel'] = $request->request->get('modelModel');
+        $modelNew['modelName'] = $request->request->get('modelName');
+        $modelNew['modelNumber'] = $request->request->get('modelNumber');
         $modelNew['modelCategory'] = $request->request->get('modelCategory');
         $modelNew['modelSpecs'] = $request->request->get('modelSpecs');
         $action = $request->request->get('action');
@@ -287,9 +337,12 @@ class ModelController extends Controller //implements AuthenticatedController
         $validator = $this->get('validator');
         */
         $model = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('m , c')
+            ->select('m , br , co , c')
             ->from('istoregomlaphoneBundle:Model', 'm')
-            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('m.model_serial = ?1')
             ->setParameter(1 , $modelNew['modelSerial'])
             ->getQuery()

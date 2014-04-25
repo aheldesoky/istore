@@ -1,0 +1,57 @@
+<div class="modal fade bs-modal-lg" id="itemWizardModal" tabindex="-1" role="dialog" aria-labelledby="ItemWizardModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ transaction.transactionSupplier.supplierName }} 
+                    <small><span class="label label-success">{%trans%}Transaction Items{%endtrans%}</span></small>
+                </h4>
+            </div>
+            <div class="modal-body bulk-wizard">
+                <div class="alert-message-modal"></div>
+                <div class="progress progress-striped active">
+                    <div class="progress-bar"></div>
+                </div>
+                <div id="tabsbulk" class="tabbable tabs-right">
+                    <ul>
+                        {% for bulk in bulks %}
+                        <li><a href="#tabsbulk-tab{{loop.index}}" data-toggle="tab">{{ bulk.br_brand_name }} {{ bulk.m_model_name }} {{ bulk.m_model_number }}</a></li>
+                        <!--<li><a href="#tabsbulk-tab{{loop.index}}" data-toggle="tab">{% trans %}model{% endtrans %} {{loop.index}}</a></li>-->
+                        {% endfor %}
+                        <li><a href="#tabsbulk-tab{{bulks|length + 1}}" data-toggle="tab">{% trans %}finalize{% endtrans %}</a></li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        {% for bulk in bulks %}
+                            {% if bulk.m_model_item_has_serial == true %}
+                                <div class="tab-pane bulk" id="tabsbulk-tab{{loop.index}}">
+                                    <input type="hidden" id="bulkNumber" value="{{loop.index}}" />
+                                    {% include('istoregomlaphoneBundle:Item:itemWizard.html.twig') %}
+                                </div>
+                            {% else %}
+                                <div class="tab-pane bulk" id="tabsbulk-tab{{loop.index}}">
+                                    <input type="hidden" id="bulkNumber" value="{{loop.index}}" />
+                                    {% include('istoregomlaphoneBundle:Item:itemWithoutSerial.html.twig') %}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                                <div class="tab-pane transaction-finalize" id="tabsbulk-tab{{bulks|length + 1}}">
+                                    <div class="jumbotron col-lg-8 text-center">
+                                            <p>{%trans%}Transaction setup has been completed successfully{%endtrans%}</p>
+                                    </div>
+                                </div>
+                        <div class="clearfix">
+                            <ul class="pager wizard">
+                                <li class="previous first"><a href="javascript:;">{% trans %}First{% endtrans %}</a></li>
+                                <li class="previous"><a href="javascript:;">{% trans %}Previous{% endtrans %}</a></li>
+                                <li class="next last"><a href="javascript:;">{% trans %}Last{% endtrans %}</a></li>
+                                <li class="next"><a href="javascript:;">{% trans %}Next{% endtrans %}</a></li>
+                                <li class="finish" style="display:none;"><a href="javascript:;">{% trans %}Finish{% endtrans %}</a></li>
+                            </ul>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

@@ -1,0 +1,43 @@
+<div class="col-md-8">
+        <div class="form-horizontal" id="bulkForm">
+                <div class="form-container">
+                        <!--<div class="tab-pane bulk-info" id="tabsbulk-tab{{loop.index}}">
+                                {% include('istoregomlaphoneBundle:Item:bulkInfo.html.twig') %}
+                        </div>-->
+                        <div id="tabsitem{{loop.index}}" class="tabbable tabs-right tabsitem">
+                                <ul class="hidden">
+                                    {% for item in bulk.items %}
+                                    <li><a href="#tabsitem{{loop.parent.loop.index}}-tab{{loop.index}}" data-toggle="tab">{% trans %}item{% endtrans %} {{loop.index}}</a></li>
+                                    {% endfor %}
+                                </ul>
+                                <div class="tab-content">
+                                        {% for item in bulk.items %}
+                                        <div class="tab-pane item" id="tabsitem{{loop.parent.loop.index}}-tab{{loop.index}}">
+                                                <div class="row item-serial-container alert alert-info alert-serial-item">
+                                                        <div class="col-lg-8 col-lg-offset-1">
+                                                                <div class="form-group">
+                                                                        <input type="hidden" value="{{ item.i_id }}" id="itemId">
+                                                                        <input type="text" class="form-control input-lg input-item-serial" id="itemSerial" name="itemSerial" placeholder="{%trans%}Item Serial{%endtrans%} {{loop.index}} {%trans%}of{%endtrans%} {{bulk.b_bulk_quantity}}" value="{{ item.i_item_serial }}">
+                                                                        <label for="itemSerial" class="item-error"></label>
+                                                                </div>
+                                                        </div>
+                                                        <div class="col-lg-1">
+                                                                <button data-loading-text="{%trans%}Loading{%endtrans%}..." class="btn btn-warning btn-lg btn-item-serial" type="button">{%trans%}Check{%endtrans%}</button>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        {% endfor %}
+                                        <div class="clearfix">
+                                            <ul class="pager wizard">
+                                                <!--<li class="previous-item first-item"><a href="javascript:;">{% trans %}First{% endtrans %}</a></li>-->
+                                                <li class="previous-item"><a href="javascript:;">{% trans %}Previous Item{% endtrans %}</a></li>
+                                                <!--<li class="next-item last-item"><a href="javascript:;">{% trans %}Last{% endtrans %}</a></li>-->
+                                                <li class="next-item"><a href="javascript:;">{% trans %}Next Item{% endtrans %}</a></li>
+                                                <li class="finish-item" style="display:none;"><a href="javascript:;">{% trans %}Finish{% endtrans %}</a></li>
+                                            </ul>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

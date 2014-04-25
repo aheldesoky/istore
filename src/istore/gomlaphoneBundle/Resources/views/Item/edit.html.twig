@@ -24,9 +24,8 @@
                             <div class="row item-serial-container alert alert-info alert-serial-item">
                                 <div class="col-lg-6 col-lg-offset-2">
                                     <div class="form-group">
-                                        <input type="hidden" value="{{ item.i_id }}" id="itemId">
-                                        <input type="text" class="form-control input-lg input-item-serial" id="itemSerial" name="itemSerial" placeholder="{%trans%}Item Serial{%endtrans%}" value="{{ item.i_item_serial }}">
-                                        <label for="itemSerial" class="serial-error"></label>
+                                        <input type="text" class="form-control input-lg input-item-serial text-center" id="itemSerial" name="itemSerial" placeholder="{%trans%}Item Serial{%endtrans%}" value="{{ item.i_item_serial }}">
+                                        <label for="itemSerial" class="item-error"></label>
                                     </div>
                                 </div>
                                 <div class="col-lg-1">
@@ -111,21 +110,6 @@
                                     </div>
                                     {% endif %}
                                     <div class="form-group">
-                                        <label for="itemColor" class="col-sm-4 control-label">{%trans%}Change Color{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <select class="form-control required" id="itemColor" name="itemColor">
-                                                <option value="" {% if item.i_item_color==null%}selected{% endif %}>{%trans%}Select color{%endtrans%}</option>
-                                                <option value="White" {% if item.i_item_color=='White'%}selected{% endif %}>{%trans%}White{%endtrans%}</option>
-                                                <option value="Black" {% if item.i_item_color=='Black'%}selected{% endif %}>{%trans%}Black{%endtrans%}</option>
-                                                <option value="Silver" {% if item.i_item_color=='Silver'%}selected{% endif %}>{%trans%}Silver{%endtrans%}</option>
-                                                <option value="Gray" {% if item.i_item_color=='Gray'%}selected{% endif %}>{%trans%}Gray{%endtrans%}</option>
-                                                <option value="Red" {% if item.i_item_color=='Red'%}selected{% endif %}>{%trans%}Red{%endtrans%}</option>
-                                                <option value="Blue" {% if item.i_item_color=='Blue'%}selected{% endif %}>{%trans%}Blue{%endtrans%}</option>
-                                                <option value="Yellow" {% if item.i_item_color=='Yellow'%}selected{% endif %}>{%trans%}Yellow{%endtrans%}</option>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
                                         <label for="itemNotes" class="col-sm-4 control-label">{%trans%}Item Notes{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <div class="col-sm-12">
@@ -137,45 +121,27 @@
                                 <div class="col-md-6 immutable-data">
                                     <div class="form-group">
                                         <label for="modelSerial" class="col-sm-4 control-label">{%trans%}Model Serial{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <label for="modelBrand" class="col-sm-10 control-label">{{ item.m_model_serial }}</label>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <label for="modelBrand" class="col-sm-4 control-label">{%trans%}Brand{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <label for="modelBrand" class="col-sm-10 control-label">{{ item.m_model_brand }}</label>
+                                        <div class="col-sm-8">
+                                            <label for="modelBrand" class="col-sm-10 control-label text-center-override">{{ item.m_model_serial }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="modelModel" class="col-sm-4 control-label">{%trans%}Model{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <label for="modelModel" class="col-sm-10 control-label">{{ item.m_model_model }}</label>
+                                        <div class="col-sm-8">
+                                            <label for="modelModel" class="col-sm-10 control-label text-center-override">{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="modelCategory" class="col-sm-4 control-label">{%trans%}Category{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <label for="modelCategory" class="col-sm-10 control-label">{{ item.c_category_name }}</label>
+                                        <div class="col-sm-8">
+                                            <label for="modelCategory" class="col-sm-10 control-label text-center-override">{{ item.c_category_name }}</label>
                                         </div>
                                     </div>
                                     <div class="form-group">
                                         <label for="modelPrice" class="col-sm-4 control-label">{%trans%}Price{%endtrans%}:</label>
-                                        <div class="col-sm-6">
-                                            <label for="modelCategory" class="col-sm-10 control-label">{{ item.b_bulk_price }} {%trans%}L.E.{%endtrans%}</label>
+                                        <div class="col-sm-8">
+                                            <label for="modelCategory" class="col-sm-10 control-label text-center-override">{{ item.i_item_buy_price }} - {{ item.i_item_sell_price }} {%trans%}L.E.{%endtrans%}</label>
                                         </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <!--
-                                        <button class="btn btn-default btn-item-specs">Show Specifications</button>
-                                        <div class="modal fade modal-item-specs" tabindex="-1" role="dialog" aria-labelledby="itemSpecs" aria-hidden="true">
-                                          <div class="modal-dialog modal-sm">
-                                            <div class="modal-content">
-                                                {{ item.m_model_specs }}
-                                            </div>
-                                          </div>
-                                        </div>
-                                        -->
                                     </div>
                                 </div>
                             </div>

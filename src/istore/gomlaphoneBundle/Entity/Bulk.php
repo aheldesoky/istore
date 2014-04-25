@@ -28,7 +28,12 @@ class Bulk
     /**
      * @ORM\Column(type="string", nullable=false)
      */
-    protected $bulk_price;
+    protected $bulk_buy_price;
+    
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $bulk_sell_price;
     
     /**
      * @ORM\Column(type="integer", nullable=false)
@@ -36,17 +41,12 @@ class Bulk
     protected $bulk_quantity;
     
     /**
-     * @ORM\ManyToOne(targetEntity="Supplier")
-     * @ORM\JoinTable(name="supplier" , 
-     *                joinColumns={@ORM\JoinColumn(name="bulk_supplier", 
+     * @ORM\ManyToOne(targetEntity="Transaction")
+     * @ORM\JoinTable(name="transaction" , 
+     *                joinColumns={@ORM\JoinColumn(name="bulk_transaction", 
      *                                         referencedColumnName="id")})
      */
-    protected $bulk_supplier;
-    
-    /**
-     * @ORM\Column(type="date", nullable=false)
-     */
-    protected $bulk_date;
+    protected $bulk_transaction;
     
     /**
      * Get id
@@ -59,26 +59,26 @@ class Bulk
     }
 
     /**
-     * Set bulk_price
+     * Set bulk_buy_price
      *
-     * @param string $bulkPrice
+     * @param string $bulkBuyPrice
      * @return Bulk
      */
-    public function setBulkPrice($bulkPrice)
+    public function setBulkBuyPrice($bulkBuyPrice)
     {
-        $this->bulk_price = $bulkPrice;
+        $this->bulk_buy_price = $bulkBuyPrice;
 
         return $this;
     }
 
     /**
-     * Get bulk_price
+     * Get bulk_buy_price
      *
      * @return string 
      */
-    public function getBulkPrice()
+    public function getBulkBuyPrice()
     {
-        return $this->bulk_price;
+        return $this->bulk_buy_price;
     }
 
     /**
@@ -102,29 +102,6 @@ class Bulk
     public function getBulkQuantity()
     {
         return $this->bulk_quantity;
-    }
-
-    /**
-     * Set bulk_date
-     *
-     * @param \DateTime $bulkDate
-     * @return Bulk
-     */
-    public function setBulkDate($bulkDate)
-    {
-        $this->bulk_date = $bulkDate;
-
-        return $this;
-    }
-
-    /**
-     * Get bulk_date
-     *
-     * @return \DateTime 
-     */
-    public function getBulkDate()
-    {
-        return $this->bulk_date;
     }
 
     /**
@@ -194,5 +171,51 @@ class Bulk
     public function getBulkItemHasSerial()
     {
         return $this->bulk_item_has_serial;
+    }
+
+    /**
+     * Set bulk_transaction
+     *
+     * @param \istore\gomlaphoneBundle\Entity\Transaction $bulkTransaction
+     * @return Bulk
+     */
+    public function setBulkTransaction(\istore\gomlaphoneBundle\Entity\Transaction $bulkTransaction = null)
+    {
+        $this->bulk_transaction = $bulkTransaction;
+
+        return $this;
+    }
+
+    /**
+     * Get bulk_transaction
+     *
+     * @return \istore\gomlaphoneBundle\Entity\Transaction 
+     */
+    public function getBulkTransaction()
+    {
+        return $this->bulk_transaction;
+    }
+
+    /**
+     * Set bulk_sell_price
+     *
+     * @param string $bulkSellPrice
+     * @return Bulk
+     */
+    public function setBulkSellPrice($bulkSellPrice)
+    {
+        $this->bulk_sell_price = $bulkSellPrice;
+
+        return $this;
+    }
+
+    /**
+     * Get bulk_sell_price
+     *
+     * @return string 
+     */
+    public function getBulkSellPrice()
+    {
+        return $this->bulk_sell_price;
     }
 }

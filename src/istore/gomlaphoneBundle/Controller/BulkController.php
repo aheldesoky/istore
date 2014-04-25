@@ -5,6 +5,7 @@ namespace istore\gomlaphoneBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Tools\Pagination\Paginator;
+use istore\gomlaphoneBundle\Entity\Transaction;
 use istore\gomlaphoneBundle\Entity\Bulk;
 use istore\gomlaphoneBundle\Entity\Model;
 use istore\gomlaphoneBundle\Entity\Item;
@@ -278,6 +279,8 @@ class BulkController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Bulk', 'b')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
+            ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, $user->getStoreId())
@@ -285,11 +288,12 @@ class BulkController extends Controller //implements AuthenticatedController
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('b , m , c , s')
+            ->select('b , t , m , c , s')
             ->from('istoregomlaphoneBundle:Bulk', 'b')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
-            ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 'b.bulk_supplier=s.id')
+            ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
+            ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')
             ->setParameter(1, $user->getStoreId())
@@ -298,7 +302,7 @@ class BulkController extends Controller //implements AuthenticatedController
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
-    //var_dump($paginator);die;
+//var_dump($paginator);die;
         //$paginator = new Paginator($query, $fetchJoinCollection = true);
         
         //if (!$paginator) {
@@ -350,9 +354,10 @@ class BulkController extends Controller //implements AuthenticatedController
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('i , b , m , c')
+            ->select('i , b , t , m , c')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
@@ -382,63 +387,95 @@ class BulkController extends Controller //implements AuthenticatedController
     public function addAction(Request $request) 
     {
         $user = $this->getUser();
-        
+//var_dump($user->getStoreId());die;
+
         if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
         }
         
-        $suppliers = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s')
-            ->from('istoregomlaphoneBundle:Supplier', 's')
-            ->getQuery()
-            ->getScalarResult();
-        
         if ($request->getMethod() == 'POST') {
-            $bulk = new Bulk();
+            $transactionJSON = json_decode(stripcslashes($request->request->get('transaction')));
             
-            $bulkModel = $this->getDoctrine()
-                ->getRepository('istoregomlaphoneBundle:Model')
-                ->findBy(array('model_serial' => $request->request->get('modelSerial')));
-            $bulk->setBulkModel($bulkModel[0]);
+            $transactionSupplier = $this->getDoctrine()
+                    ->getRepository('istoregomlaphoneBundle:Supplier')
+                    ->find($transactionJSON->info->supplier);
             
-            $bulkSupplier = $this->getDoctrine()
-                ->getRepository('istoregomlaphoneBundle:Supplier')
-                ->find($request->request->get('bulkSupplier'));
-            $bulk->setBulkSupplier($bulkSupplier);
+            $transactionStore = $this->getDoctrine()
+                    ->getRepository('istoregomlaphoneBundle:Store')
+                    ->find($user->getStoreId());
             
-            $bulk->setBulkPrice($request->request->get('bulkPrice'));
-            $bulk->setBulkQuantity($request->request->get('bulkQuantity'));
+            $transactionDate = new \DateTime($transactionJSON->info->date);
+            $transactionTotalDue = $transactionJSON->info->totalDue;
+            $transactionDiscount = $transactionJSON->info->discount;
+            $transactionPaidAmount = $transactionJSON->info->paidAmount;
             
-            $bulkDate = new \DateTime($request->request->get('bulkDate'));
-            $bulk->setBulkDate($bulkDate);
+            $transaction = new Transaction();
+            $transaction->setTransactionSupplier($transactionSupplier)
+                        ->setTransactionDate($transactionDate)
+                        ->setTransactionTotalDue($transactionTotalDue)
+                        ->setTransactionDiscount($transactionDiscount)
+                        ->setTransactionPaidAmount($transactionPaidAmount)
+                        ->setTransactionStore($transactionStore);
             
-            //var_dump($bulk);die;
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($bulk);
+            $entityManager->persist($transaction);
+            //var_dump($transaction);die;
+            $transactionItems = array();
+            
+            foreach ($transactionJSON->bulks as $bulkJSON) {
+                    $bulk = new Bulk();
+                    $bulkModel = $this->getDoctrine()
+                        ->getRepository('istoregomlaphoneBundle:Model')
+                        ->find($bulkJSON->model);
+                    
+                    $bulk->setBulkModel($bulkModel);
+                    $bulk->setBulkBuyPrice($bulkJSON->buyPrice);
+                    $bulk->setBulkSellPrice($bulkJSON->sellPrice);
+                    $bulk->setBulkQuantity($bulkJSON->quantity);
+                    $bulk->setBulkTransaction($transaction);
+                    //var_dump($bulk);die;
+                    
+                    $entityManager->persist($bulk);
+                    
+                    $quantity = $bulkJSON->quantity;
+                    $itemBuyPrice = $bulkJSON->buyPrice;
+                    $itemSellPrice = $bulkJSON->sellPrice;
+                    for($i=0 ; $i<$quantity ; $i++)
+                    {
+                        $item = new Item();
+                        $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemBuyPrice($itemBuyPrice)->setItemSellPrice($itemSellPrice);
+                        if($bulkModel->getModelItemHasSerial())
+                            $item->setItemStatus('pending_info');
+                        else
+                            $item->setItemStatus('in_stock');
+                        
+                        $entityManager->persist($item);
+                    }
+            }
+            
             $entityManager->flush();
             
-            $quantity = $request->request->get('bulkQuantity');
-            $itemPrice = $request->request->get('bulkPrice');
-            for($i=0 ; $i<$quantity ; $i++)
-            {
-                $item = new Item();
-                $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemPrice($itemPrice);
-                if($bulkModel[0]->getModelItemHasSerial())
-                    $item->setItemStatus('pending_info');
-                else
-                    $item->setItemStatus('in_stock');
-                     
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($item);
-                $entityManager->flush();
-            }
-
-            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));
+            $transactionItems = $this->getDoctrine()->getManager()->createQueryBuilder()
+                    ->select('i , b , t , m , c , s')
+                    ->from('istoregomlaphoneBundle:Item', 'i')
+                    ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+                    ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                    ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+                    ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
+                    ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
+                    ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                    ->where('t.id=?1')
+                    ->setParameter(1, $transaction->getId())
+                    ->getQuery()
+                    ->getScalarResult();
+//var_dump($transactionItems);die;
+            return new JsonResponse(array('error' => 0 , 'transactionId' => $transaction->getId()));
+            //return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));
             //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
         return $this->render('istoregomlaphoneBundle:Bulk:add.html.twig' , array(
-            "suppliers" => $suppliers,
+            //"suppliers" => $suppliers,
             "action" => "add",
             "controller" => "bulk"
         ));
@@ -462,50 +499,6 @@ class BulkController extends Controller //implements AuthenticatedController
 //var_dump($supplier);die;
         
         $numberOfBulks = $request->request->get('numberOfBulks');
-        /*
-        if ($request->getMethod() == 'POST') {
-            $bulk = new Bulk();
-            
-            $bulkModel = $this->getDoctrine()
-                ->getRepository('istoregomlaphoneBundle:Model')
-                ->findBy(array('model_serial' => $request->request->get('modelSerial')));
-            $bulk->setBulkModel($bulkModel[0]);
-            
-            $bulkSupplier = $this->getDoctrine()
-                ->getRepository('istoregomlaphoneBundle:Supplier')
-                ->find($request->request->get('bulkSupplier'));
-            $bulk->setBulkSupplier($bulkSupplier);
-            
-            $bulk->setBulkPrice($request->request->get('bulkPrice'));
-            $bulk->setBulkQuantity($request->request->get('bulkQuantity'));
-            
-            $bulkDate = new \DateTime($request->request->get('bulkDate'));
-            $bulk->setBulkDate($bulkDate);
-            
-            //var_dump($bulk);die;
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($bulk);
-            $entityManager->flush();
-            
-            $quantity = $request->request->get('bulkQuantity');
-            $itemPrice = $request->request->get('bulkPrice');
-            for($i=0 ; $i<$quantity ; $i++)
-            {
-                $item = new Item();
-                $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemPrice($itemPrice);
-                if($bulkModel[0]->getModelItemHasSerial())
-                    $item->setItemStatus('pending_info');
-                else
-                    $item->setItemStatus('in_stock');
-                     
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($item);
-                $entityManager->flush();
-            }
-
-            return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));
-            //return $this->forward('istoregomlaphoneBundle:Category:index');
-        }*/
         
         return $this->render('istoregomlaphoneBundle:Bulk:wizard.html.twig' , array(
             "supplier" => $supplier[0],

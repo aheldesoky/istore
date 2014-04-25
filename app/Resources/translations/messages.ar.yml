@@ -19,10 +19,10 @@ Home: الرئيسية
 Sales: المبيعات
 Customers: العملاء
 items: المنتجات
-Search: البحث
+Search: بحث
 Bulks: مجموعة المنتجات
 Models: الموديلات
-Categories: الفئات
+Categories: الأصناف
 Suppliers: الموردين
 Warranties: وكلاء الضمان
 Reports: التقارير
@@ -37,9 +37,9 @@ Serial can not be empty.: يجب إضافة كود المنتج
 There is no item to be added.: لا يوجد منتج ليتم إضافته
 Check item first.: إضغط على فحص أولاً
 Item added to list.: تم إضافة المنتج
-Brand: الصنف
+Brand: الفئة
 Model: الموديل
-Category: الفئه
+Category: الصنف
 Price: السعر
 Serial: الكود
 Item: المنتج
@@ -109,7 +109,7 @@ Time: الوقت
 Cashier Name: اسم البائع
 Item Serial: كود المنتج
 Description: الوصف
-Category: الفئه
+Category: الصنف
 Discount: الخصم
 Price: السعر
 Subtotal: إجمالى المبلغ
@@ -129,9 +129,9 @@ Loading: تحميل
 
 ## Bulks
 Serial: الكود
-Brand Name: اسم الصنف
+Brand Name: اسم الفئة
 Model: الموديل
-Category: الفئه
+Category: الصنف
 Price L.E.: السعر بالجنيه
 Quantity: الكمية
 Supplier: المورد
@@ -151,11 +151,11 @@ Item already exists.: المنتج موجود بالفعل
 Enter Model Serial: أدخل كود الموديل
 Serial is valid.: الكود صالح
 Check: فحص
-Bulk Brand: صنف المجموعة
-Brand: الصنف
+Bulk Brand: فئة المجموعة
+Brand: الفئة
 Bulk Model: موديل المجموعة
 Model: الموديل
-Category: الفئة
+Category: الصنف
 Bulk Date: تاريخ إدخال المجموعه
 Select Date: أختر التاريخ
 Price: السعر
@@ -250,19 +250,19 @@ Previuos: الصفحة السابقة
 ##--------------------------------------------------------------------------------------------------------------------
 
 ##Category
-Category Name: أسم الفئة
-Category List: قائمة الفئات
-categories: كل الفئات
+Category Name: أسم الصنف
+Category List: قائمة الأصناف
+categories: كل الأصناف
 Name: الاسم
-Add New Category: أضف فئة جديدة
+Add New Category: أضف صنف جديد
 Action: الإجراء
 Edit: تعديل
 Delete: حذف
-Add Category: أضف الفئة
+Add Category: أضف الصنف
 Delete Confirmation: تأكيد الحذف
 Are you sure you want to delete : هل تريد الحذف
 Cancel: إلغاء
-Edit Category : تعديل الفئة
+Edit Category : تعديل الصنف
 This field is required.: بيانات مطلوبة
 Loading: تحميل
 Next: الصفحة التالية
@@ -280,17 +280,19 @@ Check: فحص
 Serial is valid.: الكود صالح
 Model already exist.: الموديل موجود بالفعل
 Serial: الكود
-Brand: الصنف
-Brand Name:	اسم الصنف
+Brand: الفئة
+Brand Name:	اسم الفئة
 Model:	الموديل
-Category:	الفئه
+Model Number: رقم الموديل
+Model Brand: فئة الموديل
+Category:	الصنف
 Specifications:	المواصفات
 Show Specifications: مشاهدة المواصفات
 Actions: الإجراء
 Add New Model: أضف موديل جديد
 Add Model: أضف الموديل
 Item has serial: القطعة لها كود
-Select category: اختر الفئة
+Select category: اختر الصنف
 Enter specifications: ادخل مواصفات الموديل
 Edit: تعديل
 Delete: حذف
@@ -311,18 +313,17 @@ Reports: التقارير
 Report Type: نوع التقرير
 Status: الحاله
 All status: كل الحالات
-All categories: كل الفئات
+All categories: كل الأصناف
 Pending Info: فى إنتظار المعلومات
 Warranty: ضمان
 Warranty - Replaced: مستبدل من الضمان
 In Stock: فى المخزن
 Sold: مباع
-Category: الفئه
+Category: الصنف
 Models: الموديلات
 View Report: عرض التقرير
 Model Serial: كود الموديل
 Model Name: اسم الموديل
-Category: الفئة
 Total: الإجمالى
 Please select model.: من فضلك أختر الموديل
 There is no report to display.: لا يوجد تقارير للعرض
@@ -349,9 +350,9 @@ Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
 Previuos: الصفحة السابقة
-Stock: مخزن
+Stock: المخزن
 Amount: المبالغ 
-Sales: مبيعات
+Sales: المبيعات
 Filter By: بحث عن
 Please select period.: من فضلك حدد الفترة
 Payment Method: طريقة الدفع
@@ -455,9 +456,9 @@ Finish: إنهاء
 ##  Items
 Item List: قائمة المنتجات
 Item Serial: كود المنتج
-Brand Name: اسم الصنف
+Brand Name: اسم الفئة
 Model: الموديل
-Category: الفئة
+Category: الصنف
 Item Price : سعر المنتج
 Price L.E.: السعر بالجنية
 Status: الحالة
@@ -500,7 +501,7 @@ Loading: تحميل
 Next: الصفحة التالية
 Last: الصفحة الأخيرة
 First: الصفحة الأولى
-Previuos: الصفحة السابقة
+Previous: الصفحة السابقة
 Black: أسود
 White: أبيض
 Red: أحمر
@@ -518,7 +519,7 @@ There are no transactions.: لا توجد تعاملات
 There are no sales.: لا توجد مبيعات
 There are no bulks.: لا توجد مجموعات منتجات
 There are no models.: لا توجد موديلات
-There are no categories.: لا توجد فئات
+There are no categories.: لا توجد أصناف
 There are no suppliers.: لا يوجد موردين
 There are no warranties.: لا يوجد وكلاء ضمان
 Remove: إزالة
@@ -532,3 +533,36 @@ Number of models: عدد الموديلات
 Enter number of models: ادخل عدد الموديلات
 Transaction Date: تاريخ التعامل
 Unit Price: سعر الوحدة
+Transaction Info: بيانات التعامل
+Total Transaction: إجمالى التعامل
+Discount L.E.: الخصم بالجنية
+Paid Amount L.E.: المبلغ المدفوع بالجنية
+Transactions List: قائمة التعاملات
+
+Next Item: التالى
+Last Item: الأخير
+First Item: الأول
+Previous Item: السابق
+finalize: إكمال التعامل
+Transaction setup has been completed successfully: تم إكمال التعامل بنجاح
+The items of this model don't have serial: منتجات هذا الموديل بلا كود
+
+Settings: إعدادات
+Colors: الألوان
+Buy Price: سعر الشراء
+Sell Price: سعر البيع
+#Highest Price: أعلى سعر
+#Lowest Price: أقل سعر
+All models: كل الموديلات
+Search in stock: البحث فى المخزن
+Enter Model or Item Serial: أدخل كود موديل أو منتج
+
+Brands: الفئات
+Add New Brand: أضافة فئة جديدة
+Add Brand: أضف الفئة
+Select brand: أختر الفئة
+Search Results: نتائج البحث
+All suppliers: كل الموردين
+Any period: أى فترة
+Buy: شراء
+Sell: بيع

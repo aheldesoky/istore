@@ -7,6 +7,8 @@
                                                 <div class="form-group">
                                                         <input type="text" class="form-control input-lg" id="bulkSerial" name="bulkSerial[{{i}}]" placeholder="{% trans %}Enter Model Serial{% endtrans %} {{i}}">
                                                         <label for="bulkSerial" class="bulk-error"></label>
+                                                        <input type="hidden" class="form-control" id="modelId" name="modelId" value="">
+                                                        <input type="hidden" class="form-control" id="bulkItemHasSerial" name="bulkItemHasSerial" value="">
                                                 </div>
                                         </div>
                                         <div class="col-lg-1">
@@ -16,45 +18,46 @@
                                 <div class="row">
                                         <div class="col-md-6">
                                                 <div class="form-group">
-                                                        <label for="bulkBrand" class="col-sm-5 control-label">{% trans %}Bulk Brand{% endtrans %}</label>
+                                                        <label for="bulkModelBrand" class="col-sm-6 control-label">{% trans %}Model Brand{% endtrans %}</label>
                                                         <div class="col-sm-6">
-                                                                <input type="text" class="form-control" disabled id="bulkBrand" name="bulkBrand" placeholder="{% trans %}Brand{% endtrans %}">
+                                                                <input type="text" class="form-control" disabled id="bulkModelBrand" name="bulkModelBrand" placeholder="{% trans %}Model Brand{% endtrans %}">
                                                         </div>
                                                 </div>
                                                 <div class="form-group">
-                                                        <label for="bulkModel" class="col-sm-5 control-label">{% trans %}Bulk Model{% endtrans %}</label>
+                                                        <label for="bulkModelName" class="col-sm-6 control-label">{% trans %}Model Name{% endtrans %}</label>
                                                         <div class="col-sm-6">
-                                                                <input type="text" class="form-control" disabled id="bulkModel" name="bulkModel" placeholder="{% trans %}Model{% endtrans %}">
+                                                                <input type="text" class="form-control" disabled id="bulkModelName" name="bulkModelName" placeholder="{% trans %}Model Name{% endtrans %}">
                                                                 <!--<label id="bulkModel" name="bulkModel" class="col-sm-12 control-label"></label>-->
                                                         </div>
                                                 </div>
                                                 <div class="form-group">
-                                                        <label for="bulkCategory" class="col-sm-5 control-label">{% trans %}Category{% endtrans %}</label>
+                                                        <label for="bulkModelNumber" class="col-sm-6 control-label">{% trans %}Model Number{% endtrans %}</label>
+                                                        <div class="col-sm-6">
+                                                                <input type="text" class="form-control" disabled id="bulkModelNumber" name="bulkModelNumber" placeholder="{% trans %}Model Number{% endtrans %}">
+                                                                <!--<label id="bulkModel" name="bulkModel" class="col-sm-12 control-label"></label>-->
+                                                        </div>
+                                                </div>
+                                                <div class="form-group">
+                                                        <label for="bulkCategory" class="col-sm-6 control-label">{% trans %}Category{% endtrans %}</label>
                                                         <div class="col-sm-6">
                                                                 <input type="text" class="form-control" disabled id="bulkCategory" name="bulkCategory" placeholder="{% trans %}Category{% endtrans %}">
                                                                 <!--<label id="bulkCategory" name="bulkCategory" class="col-sm-12 control-label"></label>-->
                                                         </div>
                                                 </div>
-                                                <!--<div class="form-group">
-                                                        <label for="bulkSupplier" class="col-sm-5 control-label">{% trans %}Supplier{% endtrans %}</label>
-                                                        <div class="col-sm-6">
-                                                                <label for="bulkSupplier" class="col-sm-12 control-label">{{ supplier.s_supplier_name }}</label>
-                                                        </div>
-                                                </div>-->
                                         </div>
                                         <div class="col-md-6">
                                                 <div class="form-group">
-                                                        <label for="bulkDate" class="col-sm-5 control-label">{% trans %}Transaction Date{% endtrans %}</label>
+                                                        <label for="bulkBuyPrice" class="col-sm-5 control-label">{% trans %}Buy Price{% endtrans %}</label>
                                                         <div class="col-sm-6">
-                                                                <input type="text" class="form-control" id="bulkDate" name="bulkDate[{{i}}]" placeholder="{% trans %}Select Date{% endtrans %}" data-date-format="YYYY-MM-DD">
-                                                                <label for="bulkDate" class="bulk-error"></label>
+                                                                <input type="number" class="form-control" id="bulkBuyPrice" name="bulkBuyPrice[{{i}}]" placeholder="{% trans %}Price L.E.{% endtrans %}">
+                                                                <label for="bulkBuyPrice" class="bulk-error"></label>
                                                         </div>
                                                 </div>
                                                 <div class="form-group">
-                                                        <label for="bulkPrice" class="col-sm-5 control-label">{% trans %}Unit Price{% endtrans %}</label>
+                                                        <label for="bulkSellPrice" class="col-sm-5 control-label">{% trans %}Sell Price{% endtrans %}</label>
                                                         <div class="col-sm-6">
-                                                                <input type="number" class="form-control" id="bulkPrice" name="bulkPrice[{{i}}]" placeholder="{% trans %}Price L.E.{% endtrans %}">
-                                                                <label for="bulkPrice" class="bulk-error"></label>
+                                                                <input type="number" class="form-control" id="bulkSellPrice" name="bulkSellPrice[{{i}}]" placeholder="{% trans %}Price L.E.{% endtrans %}">
+                                                                <label for="bulkSellPrice" class="bulk-error"></label>
                                                         </div>
                                                 </div>
                                                 <div class="form-group">

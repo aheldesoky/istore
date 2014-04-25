@@ -1,0 +1,47 @@
+<div class="col-md-10">
+        <div class="form-horizontal" id="bulkForm">
+                <div class="form-container">
+                        <div class="row">
+                                <div class="col-md-8">
+                                        <div class="form-group">
+                                                <label for="transactionSupplier" class="col-sm-5 control-label">{% trans %}Supplier Name{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionSupplier" class="col-sm-12 control-label text-center-override">
+                                                                {{ supplier.s_supplier_name }}
+                                                        </label>
+                                                        <input type="hidden" class="form-control" id="transactionSupplier" name="transactionSupplier" value="{{ supplier.s_id }}">
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionTotalDue" class="col-sm-5 control-label">{% trans %}Total Transaction{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionTotalDue" class="col-sm-12 control-label text-center-override transaction-total-due"></label>
+                                                        <input type="hidden" class="form-control" id="transactionTotalDue" name="transactionTotalDue" value="">
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionDiscount" class="col-sm-5 control-label">{% trans %}Discount{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="number" class="form-control" id="transactionDiscount" name="transactionDiscount" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                                        <label for="transactionDiscount" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionPaidAmount" class="col-sm-5 control-label">{% trans %}Paid Amount{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="number" class="form-control" id="transactionPaidAmount" name="transactionPaidAmount" placeholder="{% trans %}Paid Amount L.E.{% endtrans %}">
+                                                        <label for="transactionPaidAmount" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionDate" class="col-sm-5 control-label">{% trans %}Transaction Date{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="text" class="form-control" id="transactionDate" name="transactionDate" placeholder="{% trans %}Select Date{% endtrans %}" data-date-format="YYYY-MM-DD" value="{{ "now"|date("Y-m-d") }}">
+                                                        <label for="transactionDate" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

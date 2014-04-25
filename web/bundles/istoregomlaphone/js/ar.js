@@ -62,4 +62,8 @@ var lang = {
     "Go to first page": "الذهاب للصفحة الأولى",
     "Please insert valid number": "أدخل رقم صحيح",
     "The field can not be empty": "الحقل فارغ",
+    "This model is already added": "هذا الموديل مضاف مسبقا",
+    "This is a model serial": "هذا كود موديل مدخل مسبقا",
+    "In Stock": "فى المخزن",
+    "Update": "تعديل",
 };

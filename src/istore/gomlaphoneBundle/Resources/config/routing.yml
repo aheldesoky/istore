@@ -28,6 +28,54 @@ istoregomlaphone_category_validate:
     pattern:  /category/validate
     defaults: { _controller: istoregomlaphoneBundle:Category:validate }
 
+istoregomlaphone_color_index:
+    pattern:  /color
+    defaults: { _controller: istoregomlaphoneBundle:Color:index }
+
+istoregomlaphone_color_add:
+    pattern:  /color/add
+    defaults: { _controller: istoregomlaphoneBundle:Color:add }
+
+istoregomlaphone_color_edit:
+    pattern:  /color/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Color:edit }
+
+istoregomlaphone_color_delete:
+    pattern:  /color/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Color:delete }
+
+istoregomlaphone_color_find:
+    pattern:  /color/find
+    defaults: { _controller: istoregomlaphoneBundle:Color:find }
+
+istoregomlaphone_color_validate:
+    pattern:  /color/validate
+    defaults: { _controller: istoregomlaphoneBundle:Color:validate }
+
+istoregomlaphone_brand_index:
+    pattern:  /brand
+    defaults: { _controller: istoregomlaphoneBundle:Brand:index }
+
+istoregomlaphone_brand_add:
+    pattern:  /brand/add
+    defaults: { _controller: istoregomlaphoneBundle:Brand:add }
+
+istoregomlaphone_brand_edit:
+    pattern:  /brand/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Brand:edit }
+
+istoregomlaphone_brand_delete:
+    pattern:  /brand/delete/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Brand:delete }
+
+istoregomlaphone_brand_find:
+    pattern:  /brand/find
+    defaults: { _controller: istoregomlaphoneBundle:Brand:find }
+
+istoregomlaphone_brand_validate:
+    pattern:  /brand/validate
+    defaults: { _controller: istoregomlaphoneBundle:Brand:validate }
+
 istoregomlaphone_model_index:
     pattern:  /model
     defaults: { _controller: istoregomlaphoneBundle:Model:index }
@@ -55,10 +103,14 @@ istoregomlaphone_model_validate:
 istoregomlaphone_supplier_index:
     pattern:  /supplier
     defaults: { _controller: istoregomlaphoneBundle:Supplier:index }
-
+    
 istoregomlaphone_supplier_add:
     pattern:  /supplier/add
     defaults: { _controller: istoregomlaphoneBundle:Supplier:add }
+
+istoregomlaphone_supplier_transaction:
+    pattern:  /supplier/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:index }
 
 istoregomlaphone_supplier_edit:
     pattern:  /supplier/edit/{id}
@@ -119,6 +171,10 @@ istoregomlaphone_item_find:
 istoregomlaphone_item_get:
     pattern:  /item/get
     defaults: { _controller: istoregomlaphoneBundle:Item:get }
+
+istoregomlaphone_item_wizard:
+    pattern:  /item/wizard/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Item:wizard }
 
 istoregomlaphone_sale_index:
     pattern:  /sale
@@ -279,3 +335,31 @@ istoregomlaphone_store_edit:
 istoregomlaphone_store_delete:
     pattern:  /store/delete/{id}
     defaults: { _controller: istoregomlaphoneBundle:Store:delete }
+
+istoregomlaphone_transaction:
+    pattern:  /transaction/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:view }
+
+istoregomlaphone_transaction_payment_view_add:
+    pattern:  /payment/add
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:viewAddPayment }
+
+istoregomlaphone_transaction_payment_add:
+    pattern:  /payment/add/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:addPayment }
+
+istoregomlaphone_transaction_payment_view:
+    pattern:  /sale/postpaid/view
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:viewPayments }
+
+istoregomlaphone_transaction_payment_refund:
+    pattern:  /sale/postpaid/refund/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:refundPayment }
+
+istoregomlaphone_stock_index:
+    pattern:  /stock
+    defaults: { _controller: istoregomlaphoneBundle:Stock:index }
+
+istoregomlaphone_stock_search:
+    pattern:  /stock/search
+    defaults: { _controller: istoregomlaphoneBundle:Stock:search }

@@ -16,31 +16,31 @@
                         {% for i in 1..numberOfBulks %}
                             <li><a href="#tabsleft-tab{{i}}" data-toggle="tab">{% trans %}model{% endtrans %} {{i}}</a></li>
                         {% endfor %}
+                            <li><a href="#tabsleft-tab{{numberOfBulks+1}}" data-toggle="tab">{% trans %}Transaction Info{% endtrans %}</a></li>
                     </ul>
                     
                     <div class="tab-content">
                         {% for i in 1..numberOfBulks %}
-                            <div class="tab-pane bulk{{i}}" id="tabsleft-tab{{i}}">
+                            <div class="tab-pane bulk" id="tabsleft-tab{{i}}">
                                 <input type="hidden" id="bulkNumber" value="{{i}}" />
                                 {% include('istoregomlaphoneBundle:Bulk:bulkWizard.html.twig') %}
                             </div>
                         {% endfor %}
+                            <div class="tab-pane transaction-info" id="tabsleft-tab{{numberOfBulks+1}}">
+                                {% include('istoregomlaphoneBundle:Bulk:transactionInfo.html.twig') %}
+                            </div>
                         <div class="clearfix">
                             <ul class="pager wizard">
-                                <li class="previous first"><a href="javascript:;">{% trans %}First Model{% endtrans %}</a></li>
-                                <li class="previous"><a href="javascript:;">{% trans %}Previous Model{% endtrans %}</a></li>
-                                <li class="next last"><a href="javascript:;">{% trans %}Last Model{% endtrans %}</a></li>
-                                <li class="next"><a href="javascript:;">{% trans %}Next Model{% endtrans %}</a></li>
+                                <li class="previous first"><a href="javascript:;">{% trans %}First{% endtrans %}</a></li>
+                                <li class="previous"><a href="javascript:;">{% trans %}Previous{% endtrans %}</a></li>
+                                <li class="next last"><a href="javascript:;">{% trans %}Last{% endtrans %}</a></li>
+                                <li class="next"><a href="javascript:;">{% trans %}Next{% endtrans %}</a></li>
                                 <li class="finish" style="display:none;"><a href="javascript:;">{% trans %}Finish{% endtrans %}</a></li>
                             </ul>
                         </div>
                     </div>	
                 </div>
             </div>
-            <!--<div class="modal-footer modal-footer-override">
-                <button type="button" class="btn btn-default" data-dismiss="modal">{%trans%}Close{%endtrans%}</button>
-                <button type="submit" class="btn btn-danger btn-continue">{%trans%}Continue{%endtrans%}</button>
-            </div>-->
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->

@@ -47,6 +47,7 @@
     <body>
         <div class="wrapper">
             <header id="header">
+                <!--<a class="btn btn-md btn-hide-nav"></a>-->
                 {% block navigation %}
                 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
                     <div class="container">
@@ -61,20 +62,29 @@
                         <div class="navbar-collapse collapse" id="navbar-main">
                           <ul class="nav navbar-nav {% if lang=='ar' %}ar{% endif %}">
                                 <li class="home"><a href="/">{% trans %}Home{% endtrans %}</a></li>
+                                <li class="stock"><a href="/stock">{% trans %}Stock{% endtrans %}</a></li>
                                 <li class="sale"><a href="/sale/prepaid">{% trans %}Sales{% endtrans %}</a></li>
+                                <li class="supplier"><a href="/supplier">{% trans %}Suppliers{% endtrans %}</a></li>
                                 <li class="customer"><a href="/customer">{% trans %}Customers{% endtrans %}</a></li>
-                                {% if 'ROLE_ADMIN' in app.user.roles %}
-                                        <!--<li class="item"><a href="/item">{% trans %}Items{% endtrans %}</a></li>-->
-                                        <!--<li class="search"><a href="/search">{% trans %}Search{% endtrans %}</a></li>-->
-                                        <li class="bulk"><a href="/bulk">{% trans %}Bulks{% endtrans %}</a></li>
-                                        <li class="model"><a href="/model">{% trans %}Models{% endtrans %}</a></li>
+                                <li class="warranty"><a href="/warranty">{% trans %}Warranties{% endtrans %}</a></li>
+                                <li class="report"><a href="/report">{% trans %}Reports{% endtrans %}</a></li>
+                                <li class="settings dropdown">
+                                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">{% trans %}Settings{% endtrans %} <b class="caret"></b></a>
+                                    <ul class="dropdown-menu">
                                         <li class="category"><a href="/category">{% trans %}Categories{% endtrans %}</a></li>
-                                        <li class="supplier"><a href="/supplier">{% trans %}Suppliers{% endtrans %}</a></li>
-                                        <li class="warranty"><a href="/warranty">{% trans %}Warranties{% endtrans %}</a></li>
-                                        <li class="report"><a href="/report">{% trans %}Reports{% endtrans %}</a></li>
-                                        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                        <!--<li class="user"><a href="/user">{% trans %}Users{% endtrans %}</a></li>-->
-                                        {% endif %}
+                                        <li class="color"><a href="/color">{% trans %}Colors{% endtrans %}</a></li>
+                                        <li class="color"><a href="/brand">{% trans %}Brands{% endtrans %}</a></li>
+                                        <li class="model"><a href="/model">{% trans %}Models{% endtrans %}</a></li>
+                                    </ul>
+                                </li>
+                                {% if 'ROLE_ADMIN' in app.user.roles %}
+                                        
+                                        <!--<li class="bulk"><a href="/bulk">{% trans %}Bulks{% endtrans %}</a></li>-->
+                                        <!--<li class="item"><a href="/item">{% trans %}Items{% endtrans %}</a></li>-->
+                                        
+                                {% endif %}
+                                {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+                                <!--<li class="user"><a href="/user">{% trans %}Users{% endtrans %}</a></li>-->
                                 {% endif %}
                           </ul>
                           <!-- Language button -->

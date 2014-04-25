@@ -12,7 +12,8 @@
 			<tr>
 				<th id="serial" class="{% if sort_column=='serial' and sort_type=='asc' %}sortAsc{% elseif sort_column=='serial' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Serial{% endtrans %}</th>
 				<th id="brand" class="{% if sort_column=='brand' and sort_type=='asc' %}sortAsc{% elseif sort_column=='brand' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Brand{% endtrans %}</th>
-				<th id="model" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model{% endtrans %}</th>
+				<th id="model_name" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model Name{% endtrans %}</th>
+                                <th id="model_number" class="{% if sort_column=='model' and sort_type=='asc' %}sortAsc{% elseif sort_column=='model' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Model Number{% endtrans %}</th>
 				<th id="category" class="{% if sort_column=='category' and sort_type=='asc' %}sortAsc{% elseif sort_column=='category' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Category{% endtrans %}</th>
 				<th>{% trans %}Show Specifications{% endtrans %}</th>
 				<th>{% trans %}Actions{% endtrans %}</th>
@@ -21,8 +22,9 @@
 		{% for model in models %}
 			<tr class="model_{{model.m_id}}">
 				<td>{{ model.m_model_serial }}</td>
-				<td>{{ model.m_model_brand }}</td>
-				<td>{{ model.m_model_model }}</td>
+				<td>{{ model.br_brand_name }}</td>
+				<td>{{ model.m_model_name }}</td>
+                                <td>{{ model.m_model_number }}</td>
 				<td>{{ model.c_category_name }}</td>
 				<td><button type="button" class="btn btn-default btn-popover" data-container="body" data-toggle="popover" data-placement="top" data-content="{{ model.m_model_specs }}" data-title="{{ model.m_model_brand }} {{ model.m_model_model }}">Show Specifications</button></td>
 				<td>

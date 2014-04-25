@@ -87,7 +87,7 @@
                                                                     <label class="multiselect-divider"></label>
                                                                     {% for model in models %}
                                                                     <label class="category-{{model.modelCategory.id}} {% if model.id in filter.model %}multiselect-on{% endif %} {% if filter.category and model.modelCategory.id != filter.category %}hidden{% endif %}">
-                                                                        <input type="checkbox" name="model[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}" {% if model.id in filter.model %}checked{% endif %}/>{{ model.modelBrand }} {{ model.modelModel }}
+                                                                        <input type="checkbox" name="model[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}" {% if model.id in filter.model %}checked{% endif %}/>{{ model.modelBrand.brandName }} {{ model.modelName }} {{ model.modelColor.colorName }} {{ model.modelNumber }}
                                                                     </label>
                                                                     {% endfor %}
                                                             </div>
