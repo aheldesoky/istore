@@ -153,7 +153,7 @@ $(document).ready(function(){
             var btn = $(this);
             var data = {transactionId:transactionId};
             btn.button('loading');
-            $('#addPaymentModalContainer').load("/app_dev.php/payment/add" , data , function(){
+            $('#addPaymentModalContainer').load("/payment/add" , data , function(){
                 btn.button('reset');
                 $('a.btn-save-payment').attr('href' , '/payment/add/'+transactionId);
                 $('#addPostpaidPayment').modal('show');
@@ -1648,7 +1648,7 @@ $(document).ready(function(){
         var data = {transactionId:transactionId};
         var btn = $(this);
         btn.button('loading');
-        $('#itemWizardModalContainer').load("/app_dev.php/item/wizard/"+transactionId , data , function(){
+        $('#itemWizardModalContainer').load("/item/wizard/"+transactionId , data , function(){
             btn.button('reset');
             $('#itemWizardModal').modal('show').on('shown.bs.modal', function(){
                 $('.tab-pane.active').find('#itemSerial').focus();
