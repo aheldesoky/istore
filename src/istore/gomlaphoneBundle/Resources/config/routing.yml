@@ -340,6 +340,14 @@ istoregomlaphone_transaction:
     pattern:  /transaction/{id}
     defaults: { _controller: istoregomlaphoneBundle:Transaction:view }
 
+istoregomlaphone_transaction_edit_wizard:
+    pattern:  /transaction/wizard/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:wizard }
+
+istoregomlaphone_transaction_edit:
+    pattern:  /transaction/edit/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Transaction:edit }
+
 istoregomlaphone_transaction_payment_view_add:
     pattern:  /payment/add
     defaults: { _controller: istoregomlaphoneBundle:Transaction:viewAddPayment }
@@ -349,11 +357,11 @@ istoregomlaphone_transaction_payment_add:
     defaults: { _controller: istoregomlaphoneBundle:Transaction:addPayment }
 
 istoregomlaphone_transaction_payment_view:
-    pattern:  /sale/postpaid/view
+    pattern:  /payment/view
     defaults: { _controller: istoregomlaphoneBundle:Transaction:viewPayments }
 
 istoregomlaphone_transaction_payment_refund:
-    pattern:  /sale/postpaid/refund/{id}
+    pattern:  /payment/refund/{id}
     defaults: { _controller: istoregomlaphoneBundle:Transaction:refundPayment }
 
 istoregomlaphone_stock_index:

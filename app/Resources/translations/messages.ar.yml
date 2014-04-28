@@ -529,6 +529,7 @@ Add New Item: إضافة منتج جديد
 bulk: مجموعة
 model: موديل
 New Transaction: تعامل جديد
+Edit Transaction: تعديل التعامل
 Number of models: عدد الموديلات
 Enter number of models: ادخل عدد الموديلات
 Transaction Date: تاريخ التعامل
@@ -566,3 +567,4 @@ All suppliers: كل الموردين
 Any period: أى فترة
 Buy: شراء
 Sell: بيع
+Transaction#: تعامل رقم
