@@ -302,7 +302,7 @@ $(document).ready(function(){
             var btn = $(this);
             var data = {transactionId:transactionId};
             btn.button('loading');
-            $('#viewPaymentsModalContainer').load("/app_dev.php/payment/view" , data , function(){
+            $('#viewPaymentsModalContainer').load("/payment/view" , data , function(){
                 btn.button('reset');
                 $('#viewTransactionPayments').modal('show');
                 $('div#table-payments').slimScroll({
@@ -1849,7 +1849,7 @@ $(document).ready(function(){
         var data = {transactionId:transactionId};
         var btn = $(this);
         btn.button('loading');
-        $('#itemWizardModalContainer').load("/app_dev.php/item/wizard/"+transactionId , data , function(){
+        $('#itemWizardModalContainer').load("/item/wizard/"+transactionId , data , function(){
             btn.button('reset');
             $('#itemWizardModal').modal('show').on('shown.bs.modal', function(){
                 $('.tab-pane.active').find('#itemSerial').focus();
