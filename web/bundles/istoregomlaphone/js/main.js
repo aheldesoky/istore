@@ -143,7 +143,7 @@ $(document).ready(function(){
                 $('#addPostpaidPayment').modal('show');
             });
             
-    //Add new postpaid payment        
+    //Add new transaction payment        
     }).on("click", ".btn-trans-payment-modal", function (e) {
             e.preventDefault();
             
@@ -156,8 +156,58 @@ $(document).ready(function(){
             $('#addPaymentModalContainer').load("/payment/add" , data , function(){
                 btn.button('reset');
                 $('a.btn-save-payment').attr('href' , '/payment/add/'+transactionId);
-                $('#addPostpaidPayment').modal('show');
+                $('#viewTransactionPayments').modal('hide');
+                $('#viewTransactionPayments').on('hidden.bs.modal',function(){
+                    $('#addTransactionPayment').modal('show');
+                });
             });
+            
+    }).on('click' , '.btn-add-trans-payment' , function(e){
+        e.preventDefault();
+        var element = $('#paymentAmount');
+        if(!validPostpaidAmount($(element))){
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+            $(element).focus();
+        } else {
+            $('label#paidAmount').html($(element).val());
+            $('#confirmPaymentModal').modal('show');
+        }
+    }).on('click' , '.btn-confirm-trans-payment' , function(e){
+        e.preventDefault();
+        var element = $('#paymentAmount');
+        var transactionId = $('#transactionId').val();
+        var amount = $(element).val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/payment/add/" + transactionId,
+                type: "post",
+                async: false,
+                data: {amount:amount},
+                success: function(response){
+                    if(response.error==0){
+                        $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+                        $('.payment-amount-error').html(lang['Amount successfully added']);
+                        $('#alert-message').html(alertSuccessMessage(lang['Payment has been successfully added to transaction #']+transactionId));
+                        $(element).val(0);
+                        $('#label-transaction-paid').html(response.total_paid + ' L.E.');
+                        $('#label-transaction-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
+                        $('tr.transaction-'+transactionId+' td.total-paid').html(response.total_paid + lang[' L.E.']);
+                        //$('tr.transaction-'+transactionId+' td.total-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
+                        $('#confirmPaymentModal').modal('hide');
+                        $('#addTransactionPayment').modal('hide');
+                    } else {
+                        $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+                        $('.payment-amount-error').html(lang['Amount can not be added']);
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+    }).on("keypress", "#paymentAmount", function(e){
+            if ( e.which == 13 )
+                e.preventDefault();
+            //$('#filtrationBulk').modal('show');
             
     }).on("click", ".btn-bulk-filter-modal", function(e){
             e.preventDefault();
@@ -243,7 +293,26 @@ $(document).ready(function(){
                     allowPageScroll: true,
                 });
             });
+    }).on("click", ".btn-view-trans-payments", function (e) {
+            e.preventDefault();
             
+            var _self = $(this);
+            var transactionId = _self.data('id');
+            
+            var btn = $(this);
+            var data = {transactionId:transactionId};
+            btn.button('loading');
+            $('#viewPaymentsModalContainer').load("/app_dev.php/payment/view" , data , function(){
+                btn.button('reset');
+                $('#viewTransactionPayments').modal('show');
+                $('div#table-payments').slimScroll({
+                    height: '381px',
+                    alwaysVisible: true,
+                    wheelStep: '10',
+                    railVisible: true,
+                    allowPageScroll: true,
+                });
+            });
     });
     
     //Refund payment modal
@@ -278,6 +347,48 @@ $(document).ready(function(){
                         //alert(salePaid);
                         $('#label-sale-paid').html(salePaid + ' L.E.');
                         $('#label-sale-remaining').html( parseInt(saleTotal) - parseInt(saleDiscount) - parseInt(salePaid) + ' L.E.');
+                        $('#alert-refund-message').html(alertSuccessMessage(lang['Payment has been refunded']));
+                    } else {
+                        $('#confirmRefundModal').modal('hide');
+                        $('#alert-refund-message').html(alertDangerMessage(lang['Can not refund payment at this time.']));
+                    }
+                }
+        }).always(function () {
+                btn.button('reset');
+        });
+        
+    //Refund transaction payment
+    }).on("click", ".btn-refund-trans-payment-modal", function (e) {
+        e.preventDefault();
+        var _self = $(this);
+        var paymentData = _self.data('id');
+        var payment = paymentData.split(":");
+        $('#input-payment-id').val(payment[0]);
+        $('#input-payment-amount').val(payment[1]);
+        $('label#paymentAmount').html(payment[1]);
+        $('#confirmRefundModal').modal('show');
+    }).on("click", ".btn-confirm-trans-payment-refund", function (e){
+        e.preventDefault();
+        var paymentId = $('#input-payment-id').val();
+        var paymentAmount = $('#input-payment-amount').val();
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+                url: "/payment/refund/" + paymentId,
+                type: "get",
+                async: false,
+                success: function(response){
+                    if(response.error==0){
+                        $('#confirmRefundModal').modal('hide');
+                        $('tr.payment-'+paymentId).remove();
+                        var transactionPaid = parseInt($('#transactionPaid').val()) - parseInt(paymentAmount);
+                        var transactionTotal = parseInt($('#transactionTotal').val());
+                        var transactionDiscount = parseInt($('#transactionDiscount').val());
+                        //$('#salePaid').val(parseInt(salePaid) - parseInt(paymentAmount));
+                        
+                        //alert(salePaid);
+                        $('#label-transaction-paid').html(transactionPaid + ' L.E.');
+                        $('#label-transaction-remaining').html( parseInt(transactionTotal) - parseInt(transactionDiscount) - parseInt(transactionPaid) + ' L.E.');
                         $('#alert-refund-message').html(alertSuccessMessage(lang['Payment has been refunded']));
                     } else {
                         $('#confirmRefundModal').modal('hide');
@@ -1639,6 +1750,96 @@ $(document).ready(function(){
             });
         });
         
+    }).on('click', '.btn-trans-edit-wizard', function(e){
+        e.preventDefault();
+        var _self = $(this);
+        var transactionId = _self.data('id');
+        var btn = $(this);
+        var data = {transactionId:transactionId};
+        btn.button('loading');
+        $('#transactionWizardModalContainer').load("/transaction/wizard/"+transactionId , function(){
+            btn.button('reset');
+            $('#bulkWizardModal').modal('show').on('shown.bs.modal', function(){
+                $('.tab-pane.active').find('#transactionDiscount').focus();
+            });
+            $('#tabsleft').bootstrapWizard({
+                'tabClass': 'nav nav-tabs', 
+                'debug': false,
+                onInit: function(tab, navigation, index) {
+                    
+                }, onShow: function(tab, navigation, index) {
+                    $('.tab-pane.active').find('#transactionDiscount').focus();
+                    
+                }, onNext: function(tab, navigation, index) {
+                    
+                }, onPrevious: function(tab, navigation, index) {
+                    
+                }, onLast: function(tab, navigation, index) {
+                    
+                }, onTabClick: function(tab, navigation, index) {
+                    
+                }, onTabShow: function(tab, navigation, index) {
+                    $('.tab-pane.active').find('#bulkSerial').focus();
+                    var $total = navigation.find('li').length;
+                    var $current = index+1;
+                    var $percent = ($current/$total) * 100;
+                    $('.bulk-wizard').find('.progress-bar').css({width:$percent+'%'});
+                    // If it's the last tab then hide the last button and show the finish instead
+                    if($current >= $total) {
+                        $('.transaction-info #transactionDiscount').focus();
+                        $('#tabsleft').find('.pager .next').hide();
+                        $('#tabsleft').find('.pager .finish').show();
+                        $('#tabsleft').find('.pager .finish').removeClass('disabled');
+                    } else {
+                        $('#tabsleft').find('.pager .next').show();
+                        $('#tabsleft').find('.pager .finish').hide();
+                    }
+                }
+            });
+            
+            $('#tabsleft .finish').click(function() {
+                
+                var transactionInfo = {};
+                transactionInfo.id = $('.tab-pane.active').find('#transactionId').val();
+                transactionInfo.discount = $('.tab-pane.active').find('#transactionDiscount').val();
+                transactionInfo.date = $('.tab-pane.active').find('#transactionDate').val();
+                globals.transaction.info = transactionInfo;
+                
+                var btn = $(this);
+                btn.button('loading');
+                $.ajax({
+                    async: false,
+                    url: "/transaction/edit/"+transactionInfo.id,
+                    type: "post",
+                    data: { transactionDiscount: transactionInfo.discount, transactionDate: transactionInfo.date },
+                    success: function(response){
+                        globals.transaction.info.id = response.transactionId;
+                        $.each(response.bulks , function(index, bulk){
+                            var bulkObject = {};
+                            bulkObject.model = bulk.m_id;
+                            bulkObject.serial = bulk.m_model_serial;
+                            bulkObject.buyPrice = bulk.b_bulk_buy_price;
+                            bulkObject.sellPrice = bulk.b_bulk_sell_price;
+                            bulkObject.quantity = bulk.b_bulk_quantity;
+                            bulkObject.itemHasSerial = bulk.m_model_item_has_serial;
+                            globals.transaction.bulks.push( bulkObject );
+                        });
+                        
+                        $('#bulkWizardModal').modal('hide');
+                        $('.btn-item-wizard').click();
+                        //console.log(globals.transaction);
+                    }
+                }).always(function () {
+                    //btn.button('reset');
+                });
+            });
+            
+            $('.tab-pane #transactionDate').datetimepicker({
+                pickTime: false,
+                language: 'ar'
+            });
+        });
+        
     });
     
     // Item Wizard
@@ -1648,7 +1849,7 @@ $(document).ready(function(){
         var data = {transactionId:transactionId};
         var btn = $(this);
         btn.button('loading');
-        $('#itemWizardModalContainer').load("/item/wizard/"+transactionId , data , function(){
+        $('#itemWizardModalContainer').load("/app_dev.php/item/wizard/"+transactionId , data , function(){
             btn.button('reset');
             $('#itemWizardModal').modal('show').on('shown.bs.modal', function(){
                 $('.tab-pane.active').find('#itemSerial').focus();
@@ -1669,6 +1870,7 @@ $(document).ready(function(){
                 }, onLast: function(tab, navigation, index) {
                     
                 }, onTabClick: function(tab, navigation, index) {
+                    return false;
                     
                 }, onTabShow: function(tab, navigation, index) {
                     //$('.tab-pane.active').find('#bulkSerial').focus();
@@ -1710,7 +1912,6 @@ $(document).ready(function(){
                 }, onLast: function(tab, navigation, index) {
                     
                 }, onTabClick: function(tab, navigation, index) {
-                    //console.log($(tab).find('#itemSerial'));
                     
                 }, onTabShow: function(tab, navigation, index) {
                     $('#tabsbulk .tab-pane.bulk.active .tabsitem .tab-pane.item.active #itemSerial').focus();
@@ -1734,9 +1935,7 @@ $(document).ready(function(){
             $('.tabsitem .finish-item').click(function(){
                 
             });
-            
         });
-        
     });
     
     $('#numberOfBulks #numberOfModels').on('keypress', function(e){
@@ -1850,7 +2049,7 @@ $(document).ready(function(){
                         $('tr.item_'+itemId).removeClass('info').addClass('success');
                         $('tr.item_'+itemId).find('td.item_serial_'+itemId).html('<span class="label label-default">'+itemSerial+'</span>');
                         $('tr.item_'+itemId).find('td.item_status_'+itemId).html('<span class="label label-success">'+lang['In Stock']+'</span>');
-                        $('tr.item_'+itemId+' .btn-item-edit').html(lang['Update']);
+                        $('tr.item_'+itemId+' .btn-item-edit').html(lang['Update'] + '<input type="hidden" value="'+itemId+'" id="item-'+itemId+'">');
                         //window.location.reload(true);
                     });
                 });

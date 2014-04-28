@@ -147,7 +147,19 @@ class ItemController extends Controller //implements AuthenticatedController
                 ->setParameter(1, $bulk['b_id'])
                 ->getQuery()
                 ->getScalarResult();
+            
         }
+        
+        foreach ($bulks as &$bulk) {
+            foreach ($bulk['items'] as &$item) {
+                if($bulk['m_model_item_has_serial'] == true && $item['i_item_serial'] == null){
+                    $item['active'] = true;
+                    $bulk['active'] = true;
+                    break 2;
+                }
+            }
+        }
+        
 //var_dump($bulks);die;
         
         return $this->render('istoregomlaphoneBundle:Item:wizard.html.twig' , array(
@@ -399,7 +411,8 @@ class ItemController extends Controller //implements AuthenticatedController
                 
             //Supplier Controller
             } elseif ($controller === 'supplier' && $action === 'index'){
-                $error = 'item_exists';
+                if($item[0]['i_id'] != $itemNew['itemId'])
+                    $error = 'item_exists';
             }
         //Item does not exist
         } else {

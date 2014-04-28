@@ -1,0 +1,33 @@
+<div class="modal fade bs-modal-lg" id="bulkWizardModal" tabindex="-1" role="dialog" aria-labelledby="BulkWizardModal" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">{{ transaction.transactionSupplier.supplierName }} 
+                    <small><span class="label label-primary">{%trans%}Edit Transaction{%endtrans%}</span></small>
+                </h4>
+            </div>
+            <div class="modal-body bulk-wizard">
+                <div class="progress progress-striped active">
+                    <div class="progress-bar"></div>
+                </div>
+                <div id="tabsleft" class="tabbable tabs-right">
+                    <ul>
+                        <li><a href="#tabsleft-tab" data-toggle="tab">{% trans %}Transaction Info{% endtrans %}</a></li>
+                    </ul>
+                    
+                    <div class="tab-content">
+                        <div class="tab-pane transaction-info" id="tabsleft-tab">
+                            {% include('istoregomlaphoneBundle:Transaction:transactionInfo.html.twig') %}
+                        </div>
+                        <div class="clearfix">
+                            <ul class="pager wizard">
+                                <li class="finish" style="display:none;"><a href="javascript:;">{% trans %}Finish{% endtrans %}</a></li>
+                            </ul>
+                        </div>
+                    </div>	
+                </div>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div><!-- /.modal -->

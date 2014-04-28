@@ -1,0 +1,48 @@
+<div class="col-md-10">
+        <div class="form-horizontal" id="bulkForm">
+                <div class="form-container">
+                        <input type="hidden" class="form-control" id="transactionId" name="transactionId" value="{{ transaction.id }}">
+                        <div class="row">
+                                <div class="col-md-8">
+                                        <div class="form-group">
+                                                <label for="transactionSupplier" class="col-sm-5 control-label">{% trans %}Supplier Name{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionSupplier" class="col-sm-12 control-label text-center-override">
+                                                                {{ transaction.transactionSupplier.supplierName }}
+                                                        </label>
+                                                        <input type="hidden" class="form-control" id="transactionSupplier" name="transactionSupplier" value="{{ transaction.transactionSupplier.id }}">
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionTotalDue" class="col-sm-5 control-label">{% trans %}Total Transaction{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionTotalDue" class="col-sm-12 control-label text-center-override transaction-total-due">{{ transaction.transactionTotalDue }} {% trans %}L.E.{% endtrans %}</label>
+                                                        <input type="hidden" class="form-control" id="transactionTotalDue" name="transactionTotalDue" value="{{ transaction.transactionTotalDue }}">
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionDiscount" class="col-sm-5 control-label">{% trans %}Discount{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="number" class="form-control text-center" id="transactionDiscount" name="transactionDiscount" placeholder="{% trans %}Discount L.E.{% endtrans %}" value="{{ transaction.transactionDiscount }}">
+                                                        <label for="transactionDiscount" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionPaidAmount" class="col-sm-5 control-label">{% trans %}Paid Amount{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionTotalPaid" class="col-sm-12 control-label text-center-override transaction-total-paid">{{ transaction.transactionTotalPaid }} {% trans %}L.E.{% endtrans %}</label>
+                                                        <label for="transactionPaidAmount" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionDate" class="col-sm-5 control-label">{% trans %}Transaction Date{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <input type="text" class="form-control text-center" id="transactionDate" name="transactionDate" placeholder="{% trans %}Select Date{% endtrans %}" data-date-format="YYYY-MM-DD" value="{{ transaction.transactionDate.format('Y-m-d') }}">
+                                                        <label for="transactionDate" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                </div>
+                        </div>
+                </div>
+        </div>
+</div>

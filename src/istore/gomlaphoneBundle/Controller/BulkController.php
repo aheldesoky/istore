@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 use istore\gomlaphoneBundle\Entity\Transaction;
+use istore\gomlaphoneBundle\Entity\Payment;
 use istore\gomlaphoneBundle\Entity\Bulk;
 use istore\gomlaphoneBundle\Entity\Model;
 use istore\gomlaphoneBundle\Entity\Item;
@@ -394,6 +395,9 @@ class BulkController extends Controller //implements AuthenticatedController
         }
         
         if ($request->getMethod() == 'POST') {
+            
+            $entityManager = $this->getDoctrine()->getManager();
+            
             $transactionJSON = json_decode(stripcslashes($request->request->get('transaction')));
             
             $transactionSupplier = $this->getDoctrine()
@@ -414,11 +418,15 @@ class BulkController extends Controller //implements AuthenticatedController
                         ->setTransactionDate($transactionDate)
                         ->setTransactionTotalDue($transactionTotalDue)
                         ->setTransactionDiscount($transactionDiscount)
-                        ->setTransactionPaidAmount($transactionPaidAmount)
+                        ->setTransactionTotalPaid($transactionPaidAmount)
                         ->setTransactionStore($transactionStore);
-            
-            $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($transaction);
+            
+            $payment = new Payment();
+            $payment->setPaymentTransaction($transaction)
+                    ->setPaymentAmount($transactionPaidAmount);
+            $entityManager->persist($payment);
+            
             //var_dump($transaction);die;
             $transactionItems = array();
             

@@ -15,8 +15,7 @@
                 <div id="tabsbulk" class="tabbable tabs-right">
                     <ul>
                         {% for bulk in bulks %}
-                        <li><a href="#tabsbulk-tab{{loop.index}}" data-toggle="tab">{{ bulk.br_brand_name }} {{ bulk.m_model_name }} {{ bulk.m_model_number }}</a></li>
-                        <!--<li><a href="#tabsbulk-tab{{loop.index}}" data-toggle="tab">{% trans %}model{% endtrans %} {{loop.index}}</a></li>-->
+                        <li {% if bulk.active is defined %}class="active"{% endif %}><a href="#tabsbulk-tab{{loop.index}}" data-toggle="tab">{{ bulk.br_brand_name }} {{ bulk.m_model_name }} {{ bulk.m_model_number }}</a></li>
                         {% endfor %}
                         <li><a href="#tabsbulk-tab{{bulks|length + 1}}" data-toggle="tab">{% trans %}finalize{% endtrans %}</a></li>
                     </ul>
@@ -24,12 +23,12 @@
                     <div class="tab-content">
                         {% for bulk in bulks %}
                             {% if bulk.m_model_item_has_serial == true %}
-                                <div class="tab-pane bulk" id="tabsbulk-tab{{loop.index}}">
+                                <div class="tab-pane bulk {% if bulk.active is defined %}active{% endif %}" id="tabsbulk-tab{{loop.index}}">
                                     <input type="hidden" id="bulkNumber" value="{{loop.index}}" />
                                     {% include('istoregomlaphoneBundle:Item:itemWizard.html.twig') %}
                                 </div>
                             {% else %}
-                                <div class="tab-pane bulk" id="tabsbulk-tab{{loop.index}}">
+                                <div class="tab-pane bulk {% if bulk.active is defined %}active{% endif %}" id="tabsbulk-tab{{loop.index}}">
                                     <input type="hidden" id="bulkNumber" value="{{loop.index}}" />
                                     {% include('istoregomlaphoneBundle:Item:itemWithoutSerial.html.twig') %}
                                 </div>

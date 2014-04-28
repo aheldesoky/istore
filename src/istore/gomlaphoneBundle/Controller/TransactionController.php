@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use istore\gomlaphoneBundle\Entity\Supplier;
 use istore\gomlaphoneBundle\Entity\Transaction;
+use istore\gomlaphoneBundle\Entity\Payment;
 use Doctrine\DBAL\DBALException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -613,44 +614,52 @@ class TransactionController extends Controller //implements AuthenticatedControl
         
     }
     
-    public function editAction(Request $request, $id)
+    public function wizardAction(Request $request , Transaction $transaction) 
     {
+        $user = $this->getUser();
         
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+
+//var_dump($transaction);die;
+        
+        return $this->render('istoregomlaphoneBundle:Transaction:wizard.html.twig' , array(
+            "transaction" => $transaction,
+            "action" => "wizard",
+            "controller" => "transaction"
+        ));
+    }
+    
+    public function editAction(Request $request , Transaction $transaction) 
+    {
         $user = $this->getUser();
         
         if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
         }
         
-        $governorates = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('g')
-            ->from('istoregomlaphoneBundle:Governorate', 'g')
+        $transaction->setTransactionDiscount($request->request->get('transactionDiscount'))
+                    ->setTransactionDate(new \DateTime($request->request->get('transactionDate')));
+        
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($transaction);
+        $entityManager->flush();
+        
+        $bulks = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('b , m')
+            ->from('istoregomlaphoneBundle:Bulk', 'b')
+            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
+            ->where('t.id=?1')
+            ->setParameter(1, $transaction->getId())
             ->getQuery()
             ->getScalarResult();
         
-        $supplier = $this->getDoctrine()
-            ->getRepository('istoregomlaphoneBundle:Supplier')
-            ->find($id);
-        
-        if( $request->getMethod() == 'POST')
-        {
-            $supplier->setSupplierName($request->request->get('supplierName'));
-            $supplier->setSupplierAddress($request->request->get('supplierAddress'));
-            $supplier->setSupplierPhone($request->request->get('supplierPhone'));
-            $supplier->setSupplierEmail($request->request->get('supplierEmail'));
-            $supplier->setSupplierGovernorateId($request->request->get('supplierGovernorate'));
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($supplier);
-            $entityManager->flush();
-            
-            return $this->redirect($this->generateUrl('istoregomlaphone_supplier_index'));
-        }
-        
-        return $this->render('istoregomlaphoneBundle:Supplier:edit.html.twig' , array(
-            "supplier" => $supplier,
-            'governorates' => $governorates,
-            'action'          => 'edit',
-            'controller'      => 'supplier',
+        return new JsonResponse(array('error' => 0 , 
+            'message' => 'transaction_updated' , 
+            'transactionId' => $transaction->getId(),
+            'bulks' => $bulks,
         ));
     }
     
@@ -687,7 +696,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
             ->getQuery()
             ->getScalarResult();
         
-        $postpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
+        $payment = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('SUM(p.payment_amount) AS total_paid')
             ->from('istoregomlaphoneBundle:Transaction', 't')
             ->join('istoregomlaphoneBundle:Payment', 'p' , 'WITH' , 'p.payment_transaction=t.id')
@@ -695,9 +704,10 @@ class TransactionController extends Controller //implements AuthenticatedControl
             ->setParameter(1, $request->request->get('transactionId'))
             ->getQuery()
             ->getSingleResult();
-        $transaction[0]['p_total_paid'] = $postpaid['total_paid'];
         
-var_dump($transaction[0]);die;
+        $transaction[0]['p_total_paid'] = $payment['total_paid'];
+        
+//echo '<pre>';var_dump($transaction[0]);die;
     
         return $this->render('istoregomlaphoneBundle:Transaction:addPayment.html.twig', array(
             'transaction'      => $transaction[0],
@@ -707,116 +717,80 @@ var_dump($transaction[0]);die;
 
     }
     
-    public function addPaymentAction(Request $request, $id){
+    public function addPaymentAction(Request $request, Transaction $transaction){
         
         $entityManager = $this->getDoctrine()->getManager();
         
-        $postpaid = new Postpaid();
-        $postpaid->setPostpaidSaleId($id)
-                 ->setPostpaidAmount($request->request->get('amount'));
-        $entityManager->persist($postpaid);
+        $payment = new Payment();
+        $payment->setPaymentTransaction($transaction)
+                ->setPaymentAmount($request->request->get('amount'));
+        $entityManager->persist($payment);
         
-        $sale = $entityManager->createQueryBuilder()
-            ->select('s')
-            ->from('istoregomlaphoneBundle:Sale', 's')
-            ->where('s.id=?1')
-            ->setParameter(1, $id)
-            ->getQuery()
-            ->getSingleResult();
-        
-        $saleTotalPaid = intval($sale->getSaleTotalPaid()) + intval($request->request->get('amount'));
-        $sale->setSaleTotalPaid($saleTotalPaid);
-        $entityManager->persist($sale);
+        $transactionTotalPaid = intval($transaction->getTransactionTotalPaid()) + intval($request->request->get('amount'));
+        $transaction->setTransactionTotalPaid($transactionTotalPaid);
+        $entityManager->persist($transaction);
         
         $entityManager->flush();
         
-        $totalDue = $entityManager->createQueryBuilder()
-            ->select('SUM(b.bulk_price)-s.sale_discount AS total_due')
-            ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_sale_id=s.id')
-            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
-            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
-            ->where('s.id=?1')
-            ->setParameter(1, $id)
-            ->getQuery()
-            ->getSingleResult();
-//var_dump($sale);die;
-    
-        $totalPaid = $entityManager->createQueryBuilder()
-            ->select('SUM(po.postpaid_amount) AS total_paid')
-            ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
-            ->where('s.id=?1')
-            ->setParameter(1, $id)
-            ->getQuery()
-            ->getSingleResult();
+        $totalDue = $transaction->getTransactionTotalDue();
+        $totalPaid = $transactionTotalPaid;
+        
+//var_dump($transaction);die;
         
         return new JsonResponse(array(
             'error' => 0 , 
-            'total_due' => $totalDue['total_due'] , 
-            'total_paid' => $totalPaid['total_paid']
+            'total_due' => $totalDue , 
+            'total_paid' => $totalPaid
         ));
     }
     
     public function viewPaymentsAction(Request $request){
         
-        $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s AS sale , c AS customer , SUM(b.bulk_price) AS s_sale_total')
-            ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:Customer', 'c' , 'WITH' , 's.sale_customer_id=c.id')
-            //->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
-            ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_sale_id=s.id')
-            ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
-            ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
-            ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
-            ->where('s.id=?1')
-            ->setParameter(1, $request->request->get('saleId'))
-            //->groupBy('s.id')
+        $transaction = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('t AS transaction , s AS supplier')
+            ->from('istoregomlaphoneBundle:Transaction', 't')
+            ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
+            ->where('t.id=?1')
+            ->setParameter(1, $request->request->get('transactionId'))
             ->getQuery()
             ->getScalarResult();
-        
-        $postpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('SUM(po.postpaid_amount) AS total_paid')
-            ->from('istoregomlaphoneBundle:Sale', 's')
-            ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
-            ->where('s.id=?1')
-            ->setParameter(1, $request->request->get('saleId'))
-            ->getQuery()
-            ->getSingleResult();
-        $sale[0]['po_total_paid'] = $postpaid['total_paid'];
         
         $payments = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('po')
-            ->from('istoregomlaphoneBundle:Postpaid', 'po')
-            ->where('po.postpaid_sale_id=?1')
-            ->setParameter(1, $request->request->get('saleId'))
+            ->select('p')
+            ->from('istoregomlaphoneBundle:Payment', 'p')
+            ->where('p.payment_transaction=?1')
+            ->setParameter(1, $request->request->get('transactionId'))
             ->getQuery()
             ->getScalarResult();
         
-//var_dump($sale[0]);die;
+//var_dump($transaction);die;
 //var_dump($payments);die;
     
-        return $this->render('istoregomlaphoneBundle:Sale:viewPayments.html.twig', array(
-            'sale'      => $sale[0],
+        return $this->render('istoregomlaphoneBundle:Transaction:viewPayments.html.twig', array(
+            'transaction'      => $transaction[0],
             'payments'  => $payments,
             "action" => "view-add-payment",
-            "controller" => "sale"
+            "controller" => "transaction"
         ));
     }
     
-    public function refundPaymentAction(Request $request, Postpaid $postpaid)
+    public function refundPaymentAction(Request $request, Payment $payment)
     {
-        if (!$postpaid) {
-            throw $this->createNotFoundException('No postpaid payment found');
+        if (!$payment) {
+            throw $this->createNotFoundException('No transaction payment found');
         }
-        $payment = $postpaid;
+        $paymentId = $payment->getId();
+        $transaction = $payment->getPaymentTransaction();
+        $transaction->setTransactionTotalPaid($transaction->getTransactionTotalPaid() - $payment->getPaymentAmount());
+        
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($postpaid);
+        $entityManager->persist($transaction);
+        $entityManager->remove($payment);
         $entityManager->flush();
 
         return new JsonResponse(array(
             'error' => 0 ,
-            'payment' => $payment->getId()
+            'payment' => $paymentId
         ));
     }
 }

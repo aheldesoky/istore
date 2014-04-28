@@ -4,7 +4,7 @@
 <button type="button" class="btn btn-danger toggle-search" data-toggle="button">Search</button>
 <div id="demo" class="collapse">Content</div>
 -->
-<div class="panel panel-primary">
+<div class="panel panel-info">
 	<div class="panel-heading">
 		<h4 class="">
 			{% trans %}Transactions List{% endtrans %}
@@ -53,25 +53,21 @@
 			</tr>
                     {% if transactions|length %}
                     {% for transaction in transactions %}
-                        {% if filter.item_serial %}
-                            <script>window.location = '/bulk/view/'+{{transaction.t_id}};</script>
-                        {% endif %}
-			<tr class="transaction_{{bulk.b_id}}">
+			<tr class="transaction-{{transaction.t_id}}">
 				<td>{{ transaction.s_supplier_name }}</td>
 				<td>{{ transaction.t_transaction_total_due }}</td>
 				<td>{{ transaction.t_transaction_discount }}</td>
-				<td>{{ transaction.t_transaction_paid_amount }}</td>
+				<td class="total-paid">{{ transaction.t_transaction_total_paid }}</td>
                                 <td>{{ transaction.t_transaction_date.format('Y-m-d') }}</td>
 				<td>
-                                        {% if transaction.t_transaction_total_price - transaction.t_transaction_discount - transaction.pt_total_paid %}
+                                        {#% if transaction.t_transaction_total_price - transaction.t_transaction_discount - transaction.pt_total_paid %}
                                         <a href="#" class="btn btn-success btn-sm btn-trans-payment-modal" data-id="{{transaction.t_id}}">{% trans %}New Payment{% endtrans %}</a>
                                         {% else %}
                                         <a href="#" class="btn btn-default btn-sm disabled" data-id="{{transaction.t_id}}">{% trans %}Completed{% endtrans %}</a>
-                                        {% endif %}
-                                        <a href="#" class="btn btn-primary btn-sm btn-view-trans-payments" data-id="{{transaction.t_id}}">{% trans %}View Payments{% endtrans %}</a>
-                                        
-                                        <a href="/transaction/{{transaction.t_id}}" class="btn btn-info btn-sm">{% trans %}Models{% endtrans %}</a> - 
-					<a href="/transaction/edit/{{transaction.t_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+                                        {% endif %#}
+                                        <a href="#" class="btn btn-sm btn-info btn-view-trans-payments" data-id="{{transaction.t_id}}">{% trans %}View Payments{% endtrans %}</a>
+                                        <a href="/transaction/{{transaction.t_id}}" class="btn btn-sm btn-info">{% trans %}Models{% endtrans %}</a> - 
+					<a href="#" class="btn btn-sm btn-primary btn-trans-edit-wizard" data-id="{{transaction.t_id}}">{% trans %}Edit{% endtrans %}</a>
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                         - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="transaction:{{transaction.t_id}}:{{ transaction.s_supplier_name }}">{% trans %}Delete{% endtrans %}</a>
                                         {% endif %}
@@ -110,8 +106,11 @@
     </div>
 </div>
 
+<a href="#" class="btn btn-success btn-sm btn-item-wizard hidden">{% trans %}Setup Items{% endtrans %}</a>
 <div id="addPaymentModalContainer"></div>
 <div id="viewPaymentsModalContainer"></div>
+<div id="transactionWizardModalContainer"></div>
+<div id="itemWizardModalContainer"></div>
 
 <!-- Refund Sale Modal -->
 <div class="modal fade" id="refundSaleModal" tabindex="-1" role="dialog" aria-labelledby="refundSaleModalLabel" aria-hidden="true">

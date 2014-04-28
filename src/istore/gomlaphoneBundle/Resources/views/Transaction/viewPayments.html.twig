@@ -1,57 +1,58 @@
 <!-- Postpaid view payment modal -->
-<div class="modal fade bs-modal-sm" tabindex="-1" id="viewPostpaidPayments" role="dialog" aria-labelledby="AddPostpaidPaymentModal" aria-hidden="true">
-    <div class="modal-dialog modal-sm view-payments-modal">
+<div class="modal fade bs-modal-sm" tabindex="-1" id="viewTransactionPayments" role="dialog" aria-labelledby="AddTransactionPaymentModal" aria-hidden="true">
+    <div class="modal-dialog modal-sm view-payments-modal modal-width-80">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">{%trans%}All Payments{%endtrans%}</h4>
             </div>
             <div class="modal-body">
-                <input type="hidden" id="saleId" name="saleId" value="{{sale.s_id}}">
-                <input type="hidden" id="saleTotal" name="saleTotal" value="{{sale.s_sale_total}}">
-                <input type="hidden" id="saleDiscount" name="saleDiscount" value="{{sale.s_sale_discount}}">
-                <input type="hidden" id="salePaid" name="salePaid" value="{{sale.po_total_paid}}">
+                <input type="hidden" id="transactionId" name="transactionId" value="{{transaction.t_id}}">
+                <input type="hidden" id="transactionTotal" name="transactionTotal" value="{{transaction.t_transaction_total_due}}">
+                <input type="hidden" id="transactionDiscount" name="transactionDiscount" value="{{transaction.t_transaction_discount}}">
+                <input type="hidden" id="transactionPaid" name="transactionPaid" value="{{transaction.t_transaction_total_paid}}">
                 <div class="row"><div id="alert-refund-message"></div></div>
                 <div class="row">
                     <div class="col-md-6">
                         <table class="table table-bordered">
                             <tr class="success">
-                                <td>{%trans%}Sale#{%endtrans%}</td>
-                                <td><label id="label-sale-id">{{sale.s_id}}</label></td>
+                                <td>{%trans%}Transaction#{%endtrans%}</td>
+                                <td><label id="label-transaction-id">{{transaction.t_id}}</label></td>
                             </tr>
                             <tr class="success">
                                 <td>{%trans%}Date{%endtrans%}</td>
-                                <td><label id="label-sale-date">{{sale.s_sale_date.format('Y-m-d')}}</label></td>
+                                <td><label id="label-transaction-date">{{transaction.t_transaction_date.format('Y-m-d')}}</label></td>
                             </tr>
                             <tr class="success">
                                 <td>{%trans%}Time{%endtrans%}</td>
-                                <td><label id="label-sale-time">{{sale.s_sale_date.format('l jS F Y')}}</label></td>
+                                <td><label id="label-transaction-time">{{transaction.t_transaction_date.format('l jS F Y')}}</label></td>
                             </tr>
                             <tr class="success">
-                                <td>{%trans%}Customer{%endtrans%}</td>
-                                <td><label id="label-sale-customer">{{sale.c_customer_name}}</label></td>
+                                <td>{%trans%}Supplier{%endtrans%}</td>
+                                <td><label id="label-transaction-customer">{{transaction.s_supplier_name}}</label></td>
                             </tr>
                             <tr class="warning">
                                 <td>{%trans%}Subtotal{%endtrans%}</td>
-                                <td><label id="label-sale-subtotal">{{sale.s_sale_total}} {%trans%}L.E.{%endtrans%}</label></td>
+                                <td><label id="label-transaction-subtotal">{{transaction.t_transaction_total_due}} {%trans%}L.E.{%endtrans%}</label></td>
                             </tr>
                             <tr class="warning">
                                 <td>{%trans%}Discount{%endtrans%}</td>
-                                <td><label id="label-sale-discount">{{sale.s_sale_discount}} {%trans%}L.E.{%endtrans%}</label></td>
+                                <td><label id="label-transaction-discount">{{transaction.t_transaction_discount}} {%trans%}L.E.{%endtrans%}</label></td>
                             </tr>
                             <tr class="warning">
                                 <td>{%trans%}Total Due{%endtrans%}</td>
-                                <td><label id="label-sale-total">{{sale.s_sale_total - sale.s_sale_discount}} {%trans%}L.E.{%endtrans%}</label></td>
+                                <td><label id="label-transaction-total">{{transaction.t_transaction_total_due - transaction.t_transaction_discount}} {%trans%}L.E.{%endtrans%}</label></td>
                             </tr>
                             <tr class="warning">
                                 <td>{%trans%}Total Paid{%endtrans%}</td>
-                                <td><label id="label-sale-paid">{{sale.po_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
+                                <td><label id="label-transaction-paid">{{transaction.t_transaction_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
                             </tr>
                             <tr class="danger">
                                 <th>{%trans%}Remaining{%endtrans%}</th>
-                                <td><label id="label-sale-remaining">{{sale.s_sale_total - sale.s_sale_discount - sale.po_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
+                                <td><label id="label-transaction-remaining">{{transaction.t_transaction_total_due - transaction.t_transaction_discount - transaction.t_transaction_total_paid}} {%trans%}L.E.{%endtrans%}</label></td>
                             </tr>
                         </table>
+                        <a href="#" class="btn btn-success btn-trans-payment-modal" data-id="{{transaction.t_id}}">{% trans %}New Payment{% endtrans %}</a>
                     </div>
                     <div class="col-md-6">
                         <div id="table-payments">
@@ -65,10 +66,10 @@
                                     <th>{%trans%}Refund{%endtrans%}</th>
                                 </tr>
                                 {% for payment in payments %}
-                                <tr class="payment-{{ payment.po_id }}">
-                                    <td>{{ payment.po_postpaid_date.format('Y-m-d') }}</td>
-                                    <td>{{ payment.po_postpaid_amount }} {%trans%}L.E.{%endtrans%}</td>
-                                    <td><a href="#" class="btn btn-link btn-refund-modal" data-id="{{ payment.po_id }}:{{ payment.po_postpaid_amount }}">{%trans%}refund{%endtrans%}</a></td>
+                                <tr class="payment-{{ payment.p_id }}">
+                                    <td>{{ payment.p_payment_date.format('Y-m-d') }}</td>
+                                    <td>{{ payment.p_payment_amount }} {%trans%}L.E.{%endtrans%}</td>
+                                    <td><a href="#" class="btn btn-link btn-refund-trans-payment-modal" data-id="{{ payment.p_id }}:{{ payment.p_payment_amount }}">{%trans%}refund{%endtrans%}</a></td>
                                 </tr>
                                 {% endfor %}
                             </table>
@@ -94,7 +95,7 @@
             </div>
             <div class="modal-footer">
                 <a class="btn btn-default" data-dismiss="modal">{%trans%}Cancel{%endtrans%}</a>
-                <a href="#" class="btn btn-danger btn-confirm-refund">{%trans%}Confirm Refund{%endtrans%}</a>
+                <a href="#" class="btn btn-danger btn-confirm-trans-payment-refund">{%trans%}Confirm Refund{%endtrans%}</a>
             </div>
         </div>
     </div>

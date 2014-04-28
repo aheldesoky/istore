@@ -388,3 +388,6 @@ label.transaction-error{
 .search-link:hover{
     color: #fff;
 }
+.modal-width-80{
+    width: 80%;
+}

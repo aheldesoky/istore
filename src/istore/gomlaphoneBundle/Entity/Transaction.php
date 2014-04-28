@@ -31,19 +31,19 @@ class Transaction
     protected $transaction_date;
     
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="integer", nullable=false)
      */
     protected $transaction_total_due;
     
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="integer", nullable=false)
      */
-    protected $transaction_discount;
+    protected $transaction_total_paid;
     
     /**
-     * @ORM\Column(type="string", nullable=false)
+     * @ORM\Column(type="integer", nullable=false)
      */
-    protected $transaction_paid_amount;
+    protected $transaction_discount;
     
     /**
      * @ORM\ManyToOne(targetEntity="Store")
@@ -90,7 +90,7 @@ class Transaction
     /**
      * Set transaction_total_due
      *
-     * @param string $transactionTotalDue
+     * @param integer $transactionTotalDue
      * @return Transaction
      */
     public function setTransactionTotalDue($transactionTotalDue)
@@ -103,7 +103,7 @@ class Transaction
     /**
      * Get transaction_total_due
      *
-     * @return string 
+     * @return integer 
      */
     public function getTransactionTotalDue()
     {
@@ -113,7 +113,7 @@ class Transaction
     /**
      * Set transaction_discount
      *
-     * @param string $transactionDiscount
+     * @param integer $transactionDiscount
      * @return Transaction
      */
     public function setTransactionDiscount($transactionDiscount)
@@ -126,34 +126,11 @@ class Transaction
     /**
      * Get transaction_discount
      *
-     * @return string 
+     * @return integer 
      */
     public function getTransactionDiscount()
     {
         return $this->transaction_discount;
-    }
-
-    /**
-     * Set transaction_paid_amount
-     *
-     * @param string $transactionPaidAmount
-     * @return Transaction
-     */
-    public function setTransactionPaidAmount($transactionPaidAmount)
-    {
-        $this->transaction_paid_amount = $transactionPaidAmount;
-
-        return $this;
-    }
-
-    /**
-     * Get transaction_paid_amount
-     *
-     * @return string 
-     */
-    public function getTransactionPaidAmount()
-    {
-        return $this->transaction_paid_amount;
     }
 
     /**
@@ -200,5 +177,28 @@ class Transaction
     public function getTransactionStore()
     {
         return $this->transaction_store;
+    }
+
+    /**
+     * Set transaction_total_paid
+     *
+     * @param integer $transactionTotalPaid
+     * @return Transaction
+     */
+    public function setTransactionTotalPaid($transactionTotalPaid)
+    {
+        $this->transaction_total_paid = $transactionTotalPaid;
+
+        return $this;
+    }
+
+    /**
+     * Get transaction_total_paid
+     *
+     * @return integer 
+     */
+    public function getTransactionTotalPaid()
+    {
+        return $this->transaction_total_paid;
     }
 }

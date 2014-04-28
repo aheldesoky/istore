@@ -66,4 +66,5 @@ var lang = {
     "This is a model serial": "هذا كود موديل مدخل مسبقا",
     "In Stock": "فى المخزن",
     "Update": "تعديل",
+    "Payment has been successfully added to transaction #": "تم إضافة دفعة جديدة للتعامل رقم ",
 };

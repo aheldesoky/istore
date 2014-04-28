@@ -73,29 +73,6 @@ class Payment
     }
 
     /**
-     * Set paymant_amount
-     *
-     * @param integer $paymantAmount
-     * @return Payment
-     */
-    public function setPaymantAmount($paymantAmount)
-    {
-        $this->paymant_amount = $paymantAmount;
-
-        return $this;
-    }
-
-    /**
-     * Get paymant_amount
-     *
-     * @return integer 
-     */
-    public function getPaymantAmount()
-    {
-        return $this->paymant_amount;
-    }
-
-    /**
      * Set payment_transaction
      *
      * @param \istore\gomlaphoneBundle\Entity\Transaction $paymentTransaction
