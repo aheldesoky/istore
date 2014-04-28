@@ -1663,8 +1663,9 @@ $(document).ready(function(){
                     
                 }, onNext: function(tab, navigation, index) {
                     var bulk = $('.tab-pane.active');
-                    if(!isValidBulk(bulk)) return false;
-                    else {
+                    if(!isValidBulk(bulk)) 
+                        return false;
+                    else if(!isDuplicatedModel($(bulk).find('#bulkSerial').val() , $(bulk).find('bulkNumber').val())){
                         var bulkObject = {};
                         bulkObject.model = $(bulk).find('#modelId').val();
                         bulkObject.serial = $(bulk).find('#bulkSerial').val();
@@ -2294,7 +2295,7 @@ $(document).ready(function(){
     function isDuplicatedModel(serial , bulkNumber){
         var duplicted = false;
         $.each(globals.transaction.bulks , function(index, bulk){
-            console.log(bulkNumber + ' ---- ' + parseInt(index+1));
+            //console.log(bulkNumber + ' ---- ' + parseInt(index+1));
             if(bulk.serial === serial && bulkNumber != index+1)
                 duplicted = true;
         });
