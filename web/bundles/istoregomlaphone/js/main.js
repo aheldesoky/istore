@@ -2139,7 +2139,7 @@ $(document).ready(function(){
             return false;
             
         //Validate model duplication
-        } else if(isDuplicatedModel($(bulkSerial).val())){
+        } else if(isDuplicatedModel($(bulkSerial).val() , $(bulk).find('#bulkNumber').val())){
             $('#alert-message').html('');
             $(bulkSerial).closest('.alert-serial-model').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $(bulkSerial).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -2291,10 +2291,11 @@ $(document).ready(function(){
         return validQuantity;
     };
     
-    function isDuplicatedModel(serial){
+    function isDuplicatedModel(serial , bulkNumber){
         var duplicted = false;
         $.each(globals.transaction.bulks , function(index, bulk){
-            if(bulk.serial === serial)
+            console.log(bulkNumber + ' ---- ' + parseInt(index+1));
+            if(bulk.serial === serial && bulkNumber != index+1)
                 duplicted = true;
         });
         return duplicted;
