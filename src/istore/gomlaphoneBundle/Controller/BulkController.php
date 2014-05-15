@@ -450,6 +450,22 @@ class BulkController extends Controller //implements AuthenticatedController
                     $itemBuyPrice = $bulkJSON->buyPrice;
                     $itemSellPrice = $bulkJSON->sellPrice;
                     
+                    for($i=0 ; $i<$quantity ; $i++){
+                        
+                        $item = new Item();
+                        $item->setItemBulk($bulk)
+                             ->setItemHasWarranty(0)
+                             ->setItemBuyPrice($itemBuyPrice)
+                             ->setItemSellPrice($itemSellPrice);
+                        
+                        if($bulkModel->getModelItemHasSerial())
+                            $item->setItemStatus('pending_info');
+                        else
+                            $item->setItemStatus('in_stock');
+                        
+                        $entityManager->persist($item);
+                    }
+                    
                     //Calculating the average price for in stock items of this model
                     /*
                     $stockModelPrices = $this->getDoctrine()->getManager()->createQueryBuilder()
@@ -492,8 +508,8 @@ class BulkController extends Controller //implements AuthenticatedController
                         ->getQuery()
                         ->getScalarResult();
                     
-                    $sumPrice = $stockModelPrices[0]['sum_price'] + $bulkJSON->buyPrice;
-                    $countPrice = $stockModelPrices[0]['count_price'] + 1;
+                    $sumPrice = $stockModelPrices[0]['sum_price'];
+                    $countPrice = $stockModelPrices[0]['count_price'];
                     $itemAveragePrice = ceil($sumPrice / $countPrice);
 
 //echo $sumPrice . '/' . $countPrice . ' | '; echo $itemAveragePrice;die;
@@ -527,22 +543,6 @@ class BulkController extends Controller //implements AuthenticatedController
                     
 //echo json_encode($stockModelItems[0]);die;
                     
-                    for($i=0 ; $i<$quantity ; $i++)
-                    {
-                        $item = new Item();
-                        $item->setItemBulk($bulk)
-                             ->setItemHasWarranty(0)
-                             ->setItemBuyPrice($itemBuyPrice)
-                             ->setItemSellPrice($itemSellPrice)
-                             ->setItemAveragePrice($itemAveragePrice);
-                        
-                        if($bulkModel->getModelItemHasSerial())
-                            $item->setItemStatus('pending_info');
-                        else
-                            $item->setItemStatus('in_stock');
-                        
-                        $entityManager->persist($item);
-                    }
             }
             
             $entityManager->flush();

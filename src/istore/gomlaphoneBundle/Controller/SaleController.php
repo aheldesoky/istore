@@ -52,7 +52,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , cu , SUM(b.bulk_price) as s_sale_total')
+            ->select('s , cu , SUM(i.item_sell_price) as s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
@@ -280,7 +280,7 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function viewAddPaymentAction(Request $request){
         $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s AS sale , c AS customer , SUM(b.bulk_price) AS s_sale_total')
+            ->select('s AS sale , c AS customer , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'c' , 'WITH' , 's.sale_customer_id=c.id')
             //->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
@@ -338,7 +338,7 @@ class SaleController extends Controller //implements AuthenticatedController
         $entityManager->flush();
         
         $totalDue = $entityManager->createQueryBuilder()
-            ->select('SUM(b.bulk_price)-s.sale_discount AS total_due')
+            ->select('SUM(i.i_sell_price)-s.sale_discount AS total_due')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -368,7 +368,7 @@ class SaleController extends Controller //implements AuthenticatedController
     public function viewPaymentsAction(Request $request){
         
         $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s AS sale , c AS customer , SUM(b.bulk_price) AS s_sale_total')
+            ->select('s AS sale , c AS customer , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'c' , 'WITH' , 's.sale_customer_id=c.id')
             //->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
