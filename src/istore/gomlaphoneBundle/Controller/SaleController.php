@@ -338,7 +338,7 @@ class SaleController extends Controller //implements AuthenticatedController
         $entityManager->flush();
         
         $totalDue = $entityManager->createQueryBuilder()
-            ->select('SUM(i.i_sell_price)-s.sale_discount AS total_due')
+            ->select('SUM(i.item_sell_price)-s.sale_discount AS total_due')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
