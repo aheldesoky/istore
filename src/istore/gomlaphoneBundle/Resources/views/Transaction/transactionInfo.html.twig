@@ -30,8 +30,15 @@
                                         <div class="form-group">
                                                 <label for="transactionPaidAmount" class="col-sm-5 control-label">{% trans %}Paid Amount{% endtrans %}</label>
                                                 <div class="col-sm-6">
-                                                        <label for="transactionTotalPaid" class="col-sm-12 control-label text-center-override transaction-total-paid">{{ transaction.transactionTotalPaid }} {% trans %}L.E.{% endtrans %}</label>
+                                                        <label for="transactionPaidAmount" class="col-sm-12 control-label text-center-override transaction-total-paid">{{ transaction.transactionTotalPaid }} {% trans %}L.E.{% endtrans %}</label>
                                                         <label for="transactionPaidAmount" class="transaction-error"></label>
+                                                </div>
+                                        </div>
+                                        <div class="form-group">
+                                                <label for="transactionRemainingAmount" class="col-sm-5 control-label">{% trans %}Remaining Amount{% endtrans %}</label>
+                                                <div class="col-sm-6">
+                                                        <label for="transactionRemainingAmount" class="col-sm-12 control-label text-center-override transaction-total-paid">{{ transaction.transactionTotalDue - transaction.transactionDiscount - transaction.transactionTotalPaid }} {% trans %}L.E.{% endtrans %}</label>
+                                                        <label for="transactionRemainingAmount" class="transaction-error"></label>
                                                 </div>
                                         </div>
                                         <div class="form-group">

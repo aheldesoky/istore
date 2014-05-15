@@ -108,7 +108,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , cu , SUM(b.bulk_price) as s_sale_total , SUM(b.bulk_price) as s_sale_subtotal')
+            ->select('s , cu , SUM(i.item_sell_price) as s_sale_total , SUM(i.item_sell_price) as s_sale_subtotal')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
@@ -171,7 +171,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , cu , SUM(b.bulk_price) as s_sale_total')
+            ->select('s , cu , SUM(i.item_sell_price) as s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->leftJoin('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
@@ -179,6 +179,8 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
@@ -223,7 +225,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('DISTINCT s , cu , SUM(b.bulk_price) AS s_sale_total')
+            ->select('DISTINCT s , cu , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -251,7 +253,7 @@ class SaleController extends Controller //implements AuthenticatedController
             $temp['po_total_paid'] = $postpaid['total_paid'];
             
             $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
-                ->select('SUM(b.bulk_price) AS total_sale')
+                ->select('SUM(i.item_sell_price) AS total_sale')
                 ->from('istoregomlaphoneBundle:Sale', 's')
                 ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
                 ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -428,7 +430,7 @@ class SaleController extends Controller //implements AuthenticatedController
                 $customer = array(new Customer());
                 $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
                 $customer[0]->setCustomerName($request->request->get('customerName'));
-                $customer[0]->setCustomerNotes($request->request->get('customerNotes'));
+                //$customer[0]->setCustomerNotes($request->request->get('customerNotes'));
                 $entityManager->persist($customer[0]);
                 $entityManager->flush();
             }
@@ -451,7 +453,7 @@ class SaleController extends Controller //implements AuthenticatedController
                 $postpaid->setPostpaidSaleId($sale->getId());
                 $postpaid->setPostpaidAmount($request->request->get('amountPaid'));
                 $entityManager->persist($postpaid);
-                $entityManager->flush();
+                //$entityManager->flush();
             }
             
             //var_dump($customer);die;
@@ -471,9 +473,9 @@ class SaleController extends Controller //implements AuthenticatedController
                     $soldItem->setItemStatus('sold');
                 else
                     $soldItem->setItemStatus('pending_discount');*/
-                $saleTotalPrice += intval($soldItem->getItemPrice());
+                $saleTotalPrice += intval($item->sellPrice);
                 
-                $soldItem->setItemStatus('sold');
+                $soldItem->setItemStatus('sold')->setItemSellPrice($item->sellPrice);
                 $entityManager->persist($soldItem);
                 //$entityManager->flush();
                 
@@ -487,7 +489,10 @@ class SaleController extends Controller //implements AuthenticatedController
             $entityManager->persist($sale);
             $entityManager->flush();
             
-            return $this->redirect('/sale/bill/'.$sale->getId().'/true' );
+            //return $this->redirect('/sale/bill/'.$sale->getId().'/true' );
+            return new JsonResponse(array(
+                'url' => '/sale/bill/'.$sale->getId().'/true',
+            ));
             
         }
         
@@ -616,7 +621,7 @@ class SaleController extends Controller //implements AuthenticatedController
         $entityManager = $this->getDoctrine()->getManager();
         
         $sale = $entityManager->createQueryBuilder()
-            ->select('s , c , st , SUM(b.bulk_price) AS s_sale_total')
+            ->select('s , c , st , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'c' , 'WITH' , 's.sale_customer_id=c.id')
             //->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
@@ -642,11 +647,13 @@ class SaleController extends Controller //implements AuthenticatedController
         $sale[0]['po_total_paid'] = $postpaid['total_paid'];
         
         $sale[0]['items']['with_serial'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca , COUNT(i.id) AS quantity')
+            ->select('i , b , m , br , co , ca , COUNT(i.id) AS quantity')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
             ->where('ca.category_store_id=?1')
             ->andWhere('si.saleitem_sale_id=?2')
@@ -659,11 +666,13 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $sale[0]['items']['without_serial'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca , COUNT(i.id) AS quantity')
+            ->select('i , b , m , br , co , ca , COUNT(i.id) AS quantity')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
             ->where('ca.category_store_id=?1')
             ->andWhere('si.saleitem_sale_id=?2')

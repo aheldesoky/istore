@@ -350,10 +350,12 @@ class ItemController extends Controller //implements AuthenticatedController
         $user = $this->getUser();
         //echo $request->request->get('serial');die;
         $items = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('i , b , m , c')
+            ->select('i , b , m , br , co , c')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
             ->where('st.id=?1')

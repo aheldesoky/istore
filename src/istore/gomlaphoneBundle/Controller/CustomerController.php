@@ -79,7 +79,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->getSingleResult();
     
         $paginatorPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('s , cu , SUM(b.bulk_price) as s_sale_total')
+            ->select('s , cu , SUM(i.item_sell_price) as s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
@@ -129,7 +129,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $paginatorPostpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('DISTINCT s , cu , SUM(b.bulk_price) AS s_sale_total')
+            ->select('DISTINCT s , cu , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -159,7 +159,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             $temp['po_total_paid'] = $postpaid['total_paid'];
             
             $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
-                ->select('SUM(b.bulk_price) AS total_sale')
+                ->select('SUM(i.item_sell_price) AS total_sale')
                 ->from('istoregomlaphoneBundle:Sale', 's')
                 ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
                 ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -230,14 +230,48 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->select('c')
             ->from('istoregomlaphoneBundle:Customer', 'c')
             ->where('c.customer_phone = ?1')
+            ->orWhere('c.customer_name LIKE ?2')
             ->setParameter(1 , $request->request->get('phone'))
+            ->setParameter(2 , '%'.$request->request->get('name').'%')
             ->getQuery()
             ->getScalarResult();
+        
+var_dump($customer);die;
+        
         if(count($customer)){
             return new JsonResponse(array('count' => count($customer) , 'customer' => $customer[0]));
         } else {
             return new JsonResponse(array('count' => count($customer)));
         }
+        
+    }
+    
+    public function queryAction(Request $request)
+    {
+        //echo $request->request->get('serial');die;
+        if($request->query->get('param') === 'phone'){
+            $customer = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('c.customer_phone AS value , c.customer_name AS data')
+                ->from('istoregomlaphoneBundle:Customer', 'c')
+                ->where('c.customer_phone LIKE ?1')
+                ->setParameter(1 , '%'.$request->query->get('query').'%')
+                ->getQuery()
+                ->getScalarResult();
+            
+        } elseif ($request->query->get('param') === 'name'){
+            $customer = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('c.customer_name AS value , c.customer_phone AS data')
+                ->from('istoregomlaphoneBundle:Customer', 'c')
+                ->where('c.customer_name LIKE ?1')
+                ->setParameter(1 , '%'.$request->query->get('query').'%')
+                ->getQuery()
+                ->getScalarResult();
+        }
+        
+        return new JsonResponse(array(
+            'query' => $request->query->get('query') ,
+            'suggestions' => $customer
+        ));
         
     }
 }

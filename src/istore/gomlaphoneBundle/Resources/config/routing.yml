@@ -240,6 +240,10 @@ istoregomlaphone_customer_find:
     pattern:  /customer/find
     defaults: { _controller: istoregomlaphoneBundle:Customer:find }
 
+istoregomlaphone_customer_query:
+    pattern:  /customer/query
+    defaults: { _controller: istoregomlaphoneBundle:Customer:query }
+
 istoregomlaphone_customer_edit:
     pattern:  /customer/edit/{id}
     defaults: { _controller: istoregomlaphoneBundle:Customer:edit }

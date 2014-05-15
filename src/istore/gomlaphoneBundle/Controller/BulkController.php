@@ -428,9 +428,10 @@ class BulkController extends Controller //implements AuthenticatedController
             $entityManager->persist($payment);
             
             //var_dump($transaction);die;
-            $transactionItems = array();
+            //$transactionItems = array();
             
             foreach ($transactionJSON->bulks as $bulkJSON) {
+
                     $bulk = new Bulk();
                     $bulkModel = $this->getDoctrine()
                         ->getRepository('istoregomlaphoneBundle:Model')
@@ -448,10 +449,93 @@ class BulkController extends Controller //implements AuthenticatedController
                     $quantity = $bulkJSON->quantity;
                     $itemBuyPrice = $bulkJSON->buyPrice;
                     $itemSellPrice = $bulkJSON->sellPrice;
+                    
+                    //Calculating the average price for in stock items of this model
+                    /*
+                    $stockModelPrices = $this->getDoctrine()->getManager()->createQueryBuilder()
+                        ->select('DISTINCT(i.item_buy_price) AS buy_price')
+                        ->from('istoregomlaphoneBundle:Item', 'i')
+                        ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+                        ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                        ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                        ->where('m.id=?1')
+                        ->andWhere('i.item_status=?2')
+                        ->setParameter(1, $bulkJSON->model)
+                        ->setParameter(2, 'in_stock')
+                        ->getQuery()
+                        ->getScalarResult();
+                    
+                    $stockModelPrices[]['buy_price'] = $bulkJSON->buyPrice;
+                    
+                    $sumPrice = 0;
+                    foreach ($stockModelPrices as $price){
+                        $sumPrice += $price['buy_price'];
+                    }
+                    
+                    $averagePrice = $sumPrice / count($stockModelPrices);
+                    
+//echo $sumPrice . '/' . count($stockModelPrices) . ' | '; echo $averagePrice;die;
+//var_dump($stockModelPrices);die;
+                    */
+                    
+                    $stockModelPrices = $this->getDoctrine()->getManager()->createQueryBuilder()
+                        ->select('SUM(i.item_buy_price) AS sum_price , COUNT(i.item_buy_price) AS count_price')
+                        ->from('istoregomlaphoneBundle:Item', 'i')
+                        ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+                        ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                        ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                        ->where('m.id=?1')
+                        ->andWhere('i.item_status=?2 OR i.item_status=?3')
+                        ->setParameter(1, $bulkJSON->model)
+                        ->setParameter(2, 'pending_info')
+                        ->setParameter(3, 'in_stock')
+                        ->getQuery()
+                        ->getScalarResult();
+                    
+                    $sumPrice = $stockModelPrices[0]['sum_price'] + $bulkJSON->buyPrice;
+                    $countPrice = $stockModelPrices[0]['count_price'] + 1;
+                    $itemAveragePrice = ceil($sumPrice / $countPrice);
+
+//echo $sumPrice . '/' . $countPrice . ' | '; echo $itemAveragePrice;die;
+//var_dump($stockModelPrices);die;
+                    
+                    $stockModelItems = $this->getDoctrine()->getManager()->createQueryBuilder()
+                        ->select('i.id')
+                        ->from('istoregomlaphoneBundle:Item', 'i')
+                        ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
+                        ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+                        ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
+                        ->where('m.id=?1')
+                        ->andWhere('i.item_status=?2 OR i.item_status=?3')
+                        ->setParameter(1, $bulkJSON->model)
+                        ->setParameter(2, 'pending_info')
+                        ->setParameter(3, 'in_stock')
+                        ->getQuery()
+                        ->getScalarResult();
+//var_dump($stockModelItems);die;
+
+                    foreach ($stockModelItems as $item){
+                        $this->getDoctrine()->getManager()->createQueryBuilder()
+                        ->update('istoregomlaphoneBundle:Item', 'i')
+                        ->set('i.item_average_price', '?1')
+                        ->where('i.id=?2')
+                        ->setParameter(1, $itemAveragePrice)
+                        ->setParameter(2, $item['id'])
+                        ->getQuery()
+                        ->execute();
+                    }
+                    
+//echo json_encode($stockModelItems[0]);die;
+                    
                     for($i=0 ; $i<$quantity ; $i++)
                     {
                         $item = new Item();
-                        $item->setItemBulk($bulk)->setItemHasWarranty(0)->setItemBuyPrice($itemBuyPrice)->setItemSellPrice($itemSellPrice);
+                        $item->setItemBulk($bulk)
+                             ->setItemHasWarranty(0)
+                             ->setItemBuyPrice($itemBuyPrice)
+                             ->setItemSellPrice($itemSellPrice)
+                             ->setItemAveragePrice($itemAveragePrice);
+                        
                         if($bulkModel->getModelItemHasSerial())
                             $item->setItemStatus('pending_info');
                         else
@@ -463,7 +547,7 @@ class BulkController extends Controller //implements AuthenticatedController
             
             $entityManager->flush();
             
-            $transactionItems = $this->getDoctrine()->getManager()->createQueryBuilder()
+            /*$transactionItems = $this->getDoctrine()->getManager()->createQueryBuilder()
                     ->select('i , b , t , m , c , s')
                     ->from('istoregomlaphoneBundle:Item', 'i')
                     ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
@@ -475,7 +559,7 @@ class BulkController extends Controller //implements AuthenticatedController
                     ->where('t.id=?1')
                     ->setParameter(1, $transaction->getId())
                     ->getQuery()
-                    ->getScalarResult();
+                    ->getScalarResult();*/
 //var_dump($transactionItems);die;
             return new JsonResponse(array('error' => 0 , 'transactionId' => $transaction->getId()));
             //return $this->redirect($this->generateUrl('istoregomlaphone_bulk_view', array('id' => $bulk->getId()) ));

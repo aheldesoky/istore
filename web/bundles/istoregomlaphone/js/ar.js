@@ -67,4 +67,5 @@ var lang = {
     "In Stock": "فى المخزن",
     "Update": "تعديل",
     "Payment has been successfully added to transaction #": "تم إضافة دفعة جديدة للتعامل رقم ",
+    "Customer is invalid": "من فضلك ادخل بيانات العميل بشكل صحيح",
 };

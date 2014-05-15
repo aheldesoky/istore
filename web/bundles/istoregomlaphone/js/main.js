@@ -511,33 +511,6 @@ $(document).ready(function(){
         }
     });
     
-    $('#saleForm').submit(function(e){
-        e.preventDefault();
-        $(this).ajaxForm({ 
-            //target:        '_blank',   // target element(s) to be updated with server response 
-            beforeSubmit:  function(){
-                //alert('before submittt');
-            },
-            success:       function(){ 
-                //alert('sdddsddsd')
-                window.location.reload();
-                self.close();
-                return false;
-            },
-
-            // other available options: 
-            url:       '/sale/add',         // override for form's 'action' attribute 
-            type:      'post'        // 'get' or 'post', override for form's 'method' attribute 
-            //dataType:  null        // 'xml', 'script', or 'json' (expected server response type) 
-            //clearForm: true        // clear all form fields after successful submit 
-            //resetForm: true        // reset the form after successful submit 
-
-            // $.ajax options can be used here too, for example: 
-            //timeout:   3000 
-        });
-        
-    });
-    
     //Calculate discount
     $('#saleDiscount').change(function(){
         if( /^\d+$/.test($(this).val()) && parseInt($(this).val()) <= globals.subtotal && parseInt($(this).val()) >= 0 ){
@@ -587,64 +560,39 @@ $(document).ready(function(){
             $(this).val(parseInt($(this).val(), 10));
         }
     });*/
-    
-    var customerValidator = $('#saleForm').validate({
-        submitHandler: function(form){
-            form.submit();
-        },
-        rules: {
-            customerPhone: {
-                required: true,
-                number: true,
-            },
-            customerName: {
-                required: true,
-                alphanumericspace: true,
-            },
-            customerNotes: {
-                alphanumericspace: true,
-            },
-        },
-        highlight: function (element) {
-            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
-        },
-        success: function (element) {
-            $(element).text(lang['ok']).addClass('valid')
-                .closest('.form-group').removeClass('has-error').addClass('has-success');
-        }
+    $('#customerName, #customerPhone').on('keypress', function(event){
+        if(event.which == 13)
+            $('.btn-find-customer').click();
     });
-    $('#customerPhone').keypress(function(){customerValidator.element('#customerPhone');});
-    $('#customerName').keypress(function(){customerValidator.element('#customerName');});
-    $('#customerNotes').keypress(function(){customerValidator.element('#customerNotes');});
-    
-    $('.btn-find-phone').click(function(e){
+    $('.btn-clear-customer').click(function(e){
+        $('#customerPhone').val('');
+        $('#customerName').val('');
+    });
+    $('.btn-find-customer').click(function(e){
         var customerPhone = $('#customerPhone').val();
+        var customerName = $('#customerName').val();
         var btn = $(this);
         btn.button('loading');
         $.ajax({
                 url: "/customer/find",
                 type: "post",
-                data: {phone:customerPhone},
+                data: {phone:customerPhone, name:customerName},
                 success: function(response){
                     if(response.count===1){
+                        $('#customerPhone').val(response.customer.c_customer_phone);
                         $('#customerName').val(response.customer.c_customer_name);
-                        $('#customerNotes').val(response.customer.c_customer_notes);
-                        $('.alert-message-modal').html(alertInfoMessage(lang['Customer is available.']));
+                        //$('#customerNotes').val(response.customer.c_customer_notes);
+                        $('#alert-message').html(alertInfoMessage(lang['Customer is available.']));
                     } else {
-                        $('#customerName').val('');
-                        $('#customerNotes').val('');
-                        $('.alert-message-modal').html(alertDangerMessage(lang['Customer is not found.']));
+                        //$('#customerPhone').val('');
+                        //$('#customerName').val('');
+                        //$('#customerNotes').val('');
+                        $('#alert-message').html(alertDangerMessage(lang['Customer is not found.']));
                     }
-                    customerValidator.element('#customerPhone');
-                    customerValidator.element('#customerName');
-                    customerValidator.element('#customerNotes');
                 }
         }).always(function () {
                     btn.button('reset');
         });
-        customerValidator.element('#customerPhone');
-        //customerValidator.element('#customerName');
-        //customerValidator.element('#customerNotes');
         e.preventDefault(); // prevents default
         return false;
     });
@@ -738,10 +686,84 @@ $(document).ready(function(){
         });
     };
     
+    $('#customerPhone').autocomplete({
+	serviceUrl:'/customer/query',
+	minChars:1,
+	delimiter: /(,|;)\s*/, // regex or character
+	maxHeight:400,
+	//width:300,
+	zIndex: 9999,
+	deferRequestBy: 0, //miliseconds
+	params: { param:'phone' }, //aditional parameters
+	noCache: false, //default is false, set to true to disable caching
+	onSelect: function(customer){$('#customerName').val(customer.data);}
+    });
+    
+    $('#customerName').autocomplete({
+	serviceUrl:'/customer/query',
+	minChars:1,
+	delimiter: /(,|;)\s*/, // regex or character
+	maxHeight:400,
+	//width:300,
+	zIndex: 9999,
+	deferRequestBy: 0, //miliseconds
+	params: { param:'name' }, //aditional parameters
+	noCache: false, //default is false, set to true to disable caching
+	onSelect: function(customer){$('#customerPhone').val(customer.data);}
+    });
+    
+    $("#saleForm").submit(function(event){
+        event.preventDefault();
+    });
+    
     //Checkout sale
     $('.btn-checkout').click(function(e){
-        if(validCheckout(e)){
-            $('.bs-modal-lg').modal('show');
+        var checkoutForm = $('#saleForm');
+        var btn = $(this);
+        //e.preventDefault();
+        
+        if(validCheckout(checkoutForm)){
+            $(checkoutForm).submit(function(event){
+                
+                // Stop form from submitting normally
+                event.preventDefault();
+                
+                // Get some values from elements on the page:
+                var $form = $( this ),
+                    itemList = $form.find("input[name='itemList']").val(),
+                    saleDiscount = $form.find( "input[name='saleDiscount']" ).val(),
+                    paymentMethod = $form.find( "select[name='paymentMethod']" ).val(),
+                    amountPaid = $form.find( "input[name='amountPaid']" ).val(),
+                    customerPhone = $form.find( "input[name='customerPhone']" ).val(),
+                    customerName = $form.find( "input[name='customerName']" ).val(),
+                    action = $form.find("input[name='action']").val(),
+                    controller = $form.find("input[name='controller']").val(),
+                    url = $form.attr( "action" );
+                    
+                // Send the data using post
+                btn.button('loading');
+                var posting = $.post( url, {
+                    itemList: itemList,
+                    saleDiscount: saleDiscount,
+                    paymentMethod: paymentMethod,
+                    amountPaid: amountPaid,
+                    customerPhone: customerPhone,
+                    customerName: customerName,
+                    action: action,
+                    controller: controller,
+                });
+                
+                // Put the results in a div
+                posting.done(function( response ) {
+                    //console.log(response);
+                    $('a#bill-link').attr('href' , response.url).on('click' , function(event) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        window.open(this.href, '_blank');
+                    }).trigger('click');
+                    window.location.reload();
+                });
+            });
         }
     });
     
@@ -783,15 +805,6 @@ $(document).ready(function(){
                     }
                 }
             });
-            if(flag === true){
-                $('#alert-message').html(alertInfoMessage(lang['Item already added to list.']));
-                //$(".table-view-sale tr:eq("+ itemIndex +")").effect("highlight", {}, 1500);
-                clearItem();
-            } else {
-                addItem();
-            }
-        } else {
-            addItem();
         }
     });
 
@@ -801,6 +814,73 @@ $(document).ready(function(){
         removeItem(itemSerial);
         $('#alert-message').html(alertInfoMessage(lang['Item removed from list.']));
         $(this).closest('tr').remove();
+        
+    }).on('change', 'input.item-sell-price', function(){
+        var _self = $(this);
+        var id = _self.data('id');
+        var sellPrice = $(_self).val();
+        
+        if(!globals.isPositiveInteger(sellPrice)){
+            $(_self).val(0);
+            return false;
+        }
+        
+        globals.itemListRequired = new Array();
+        $.each(globals.itemList , function(index , item){
+            if(item.m_model_item_has_serial){
+                if(item.i_id == id)
+                    globals.itemList[index].i_item_sell_price = sellPrice;
+            } else {
+                if(item.m_id == id)
+                    globals.itemList[index].i_item_sell_price = sellPrice;
+            }
+            var requiredItem = {
+                itemId: item.i_id ,
+                sellPrice: item.i_item_sell_price
+            };
+            globals.itemListRequired.push(requiredItem);
+        });
+        $('#itemList').val(JSON.stringify(globals.itemListRequired));
+        $('#subtotal').html(globals.calculateSubtotal() + lang[' L.E.']);
+        $('#total').html(globals.calculateTotal() + lang[' L.E.']);
+        
+    }).on('change', 'input.item-quantity', function(){
+        var _self = $(this);
+        var modelId = _self.data('id');
+        var quantity = $(_self).val();
+        
+        var sellPrice = $('.model-'+modelId).find('.item-sell-price').val();
+        
+        if(!globals.isPositiveInteger(quantity) || quantity == 0){
+            $(_self).val(1);
+            return false;
+        } else if(quantity > globals.bulkList[modelId].length) {
+            $(_self).val(globals.bulkList[modelId].length);
+            return false;
+        }
+        
+        for(var i=globals.itemList.length-1 ; i>=0 ; i--){
+            if(globals.itemList[i].m_id == modelId){
+                globals.itemList.splice(i , 1);
+            }
+        }
+        for(var i=0 ; i<quantity ; i++){
+            globals.bulkList[modelId][i].i_item_sell_price = sellPrice;
+            globals.itemList.push(globals.bulkList[modelId][i]);
+        }
+        
+        globals.itemListRequired = new Array();
+        $.each(globals.itemList , function(index , item){
+            var requiredItem = {
+                itemId: item.i_id ,
+                sellPrice: item.i_item_sell_price
+            };
+            globals.itemListRequired.push(requiredItem);
+        });
+        $('#itemList').val(JSON.stringify(globals.itemListRequired));
+        $('#subtotal').html(globals.calculateSubtotal() + lang[' L.E.']);
+        $('#total').html(globals.calculateTotal() + lang[' L.E.']);
+        
     });
     
     $('.alert-serial-sale #itemSerial').keypress(function(e){
@@ -821,58 +901,90 @@ $(document).ready(function(){
             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
             return false;
-            
+        }
+        
         //Validate letters, numbers and dashes
-        } else if(!/^[a-zA-Z0-9-]+$/.test(itemSerial)){
+        if(!/^[a-zA-Z0-9-]+$/.test(itemSerial)){
             $(".serial-error").html(lang['Please enter a valid serial first.']);
             $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
             $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
             $("#itemSerial").focus();
             return false;
-        } else {
-            var btn = $(this);
-            btn.button('loading');
-            $.ajax({
-                    url: "/item/get",
-                    type: "post",
-                    data: {serial:itemSerial},
-                    success: function(response){
-                        if(response.count){
-                            globals.item = response.items[0];
-                            if(!globals.item.m_model_item_has_serial)
-                                globals.bulk = response.items;
-                            
-                            $('#itemBrand').html(globals.item.m_model_brand);
-                            $('#itemModel').html(globals.item.m_model_model);
-                            $('#itemCategory').html(globals.item.c_category_name);
-                            $('#itemPrice').html(globals.item.b_bulk_price+lang[' L.E.']);
-                            $('#alert-message').html('');
-                            $(".serial-error").html(lang['Item is available.']);
-                            $('#itemSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
-                            $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
-                            if(!globals.item.m_model_item_has_serial){
-                                $('.quantity-field').removeClass('hidden');
-                                $('#bulkQuantity').html(lang[' of '] + response.count);
-                                $('#bulk-qty').val(response.count);
-                                globals.bulkQty = response.count;
-                            } else {
-                                $('.quantity-field').addClass('hidden');
-                                $('#bulk-qty').val(0);
-                            }
-                            
-                        } else {
-                            $('#alert-message').html('');
-                            $(".serial-error").html(lang['Item is not found.']);
-                            $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
-                            $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
-                        }
-                    }
-                }).always(function () {
-                        btn.button('reset');
-            });
         }
+        
+        var btn = $(this);
+        btn.button('loading');
+        $.ajax({
+            url: "/item/get",
+            type: "post",
+            data: {serial:itemSerial},
+            success: function(response){
+                if(response.count){
+                    globals.item = response.items[0];
+                    globals.item.quantity = response.count;
+                    if(!globals.item.m_model_item_has_serial)
+                        globals.bulk = response.items;
+                    /*
+                    $('#itemBrand').html(globals.item.br_brand_name);
+                    $('#itemModel').html(globals.item.m_model_name);
+                    $('#itemCategory').html(globals.item.c_category_name);
+                    $('#itemPrice').html(globals.item.b_bulk_price+lang[' L.E.']);
+                    $('#alert-message').html('');
+                    $(".serial-error").html(lang['Item is available.']);
+                    $('#itemSerial').closest('.form-group').removeClass('has-error').addClass('has-success');
+                    $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-danger').addClass('alert-success');
+                    */
+                    if(globals.itemList.length > 0){
+                        var flag = false;
+                        var itemIndex;
+                        $.each(globals.itemList , function(index , value){
+                            if(globals.item.m_model_item_has_serial){
+                                if(value.i_item_serial===globals.item.i_item_serial){
+                                    flag = true;
+                                    itemIndex = index+1;
+                                    return false;
+                                }
+                            } else {
+                                if(value.m_model_serial===globals.item.m_model_serial) {
+                                    flag = true;
+                                    itemIndex = index+1;
+                                    return false;
+                                }
+                            }
+                        });
+                        if(flag === true){
+                            $('#alert-message').html(alertInfoMessage(lang['Item already added to list.']));
+                            //$(".table-view-sale tr:eq("+ itemIndex +")").effect("highlight", {}, 1500);
+                            clearItem();
+                        } else {
+                            addItem();
+                        }
+                    } else {
+                        addItem();
+                    }
+                     
+                    /*if(!globals.item.m_model_item_has_serial){
+                        $('.quantity-field').removeClass('hidden');
+                        $('#bulkQuantity').html(lang[' of '] + response.count);
+                        $('#bulk-qty').val(response.count);
+                        globals.bulkQty = response.count;
+                    } else {
+                        $('.quantity-field').addClass('hidden');
+                        $('#bulk-qty').val(0);
+                    }*/
+                    
+                } else {
+                    $('#alert-message').html('');
+                    $(".serial-error").html(lang['Item is not found.']);
+                    $('#itemSerial').closest('.form-group').removeClass('has-success').addClass('has-error');
+                    $('.alert-serial-sale').removeClass('alert-info').removeClass('alert-success').addClass('alert-danger');
+                }
+            }
+        }).always(function () {
+                btn.button('reset');
+        });
     });
-       
+    
     // Check Model Serial
     $('#modelForm #check-model-serial').on('click', function () {
         return validateModelSerial();
@@ -1356,40 +1468,56 @@ $(document).ready(function(){
     }
     function addItem(){
         var displayedSerial;
-        var itemQuantity = $('#itemQuantity').val();
-        globals.item['s_sale_quantity'] = itemQuantity;
+        //var itemQuantity = $('#itemQuantity').val();
+        //globals.item['s_sale_quantity'] = itemQuantity;
         
         if(globals.item.m_model_item_has_serial)
             displayedSerial = globals.item.i_item_serial;
         else
             displayedSerial = globals.item.m_model_serial;
-
+        
         if(globals.item.m_model_item_has_serial)
             globals.itemList.push(globals.item);
-        else
-            for(var i=0 ; i<itemQuantity ; i++){
-                globals.itemList.push(globals.bulk[i]);
-                globals.bulkList.push(globals.bulk[i]);
-            }
-       //console.log(globals.itemList)     
-        var tableRow = "<tr>" +
+        else {
+            globals.itemList.push(globals.bulk[0]);
+            globals.bulkList[globals.bulk[0].m_id] = globals.bulk;
+        }
+        //console.log(globals.itemList)     
+        var tableRow =  "<tr class='model-" + globals.item.m_id + "'>" +
                             "<td>" + displayedSerial + "</td>" +
-                            "<td>" + globals.item.m_model_brand + ' ' + globals.item.m_model_model + "</td>" +
+                            "<td>" + globals.item.br_brand_name + ' '
+                                   + globals.item.m_model_name + ' '
+                                   + globals.item.co_color_name + ' '
+                                   + globals.item.m_model_number +
+                            "</td>"+
                             "<td>" + globals.item.c_category_name + "</td>" +
-                            "<td>" + itemQuantity + "</td>" +
-                            "<td>" + globals.item.b_bulk_price + lang[" L.E."] + "</td>" +
+                            "<td>" +
+                                     (globals.item.m_model_item_has_serial ? globals.item.quantity : "<input type='number' class='form-control text-center item-quantity' data-id='" + globals.item.m_id + "' value='1'/>") +
+                            "</td>"+
+                            "<td>" + '<label class="average-buy-price">' + globals.item.i_item_average_price + '</label>'
+                                   + '<input type="hidden" class="item-buy-price" value="'+ globals.item.i_item_average_price +'">' +
+                            "</td>"+
+                            "<td><input type='number' class='form-control text-center item-sell-price' data-id='" + (globals.item.m_model_item_has_serial ? globals.item.i_id : globals.item.m_id) + "' value='" + globals.item.i_item_sell_price + "'/></td>" +
                             "<td>" +
                                 "<a class='btn btn-sm btn-danger btn-remove-item'>"+ lang['Remove'] +"</a>" +
-                            "</td>" +
+                            "</td>"+
                         "</tr>";
         $('.table-view-sale .table-footer').before(tableRow);
+        /*if ($(".table-view-sale tbody tr").length > 0)
+            $(".table-view-sale").tablesorter({
+                widgets        : ['zebra', 'columns'],
+                usNumberFormat : false,
+                sortReset      : true,
+                sortRestart    : true
+            });*/
         $('.table-empty-row').addClass('hidden');
         clearItem();
-        $('#alert-message').html(alertInfoMessage(lang['Item added to list.']));
+        $('#alert-message').html(alertSuccessMessage(lang['Item added to list.']));
         globals.itemListRequired = new Array();
-        $.each(globals.itemList , function (index, value){
+        $.each(globals.itemList , function (index , value){
             var requiredItem = {
-                itemId: value.i_id , 
+                itemId: value.i_id ,
+                sellPrice: value.i_item_sell_price 
             };
             globals.itemListRequired.push(requiredItem);
             $('#itemList').val(JSON.stringify(globals.itemListRequired));
@@ -1399,26 +1527,25 @@ $(document).ready(function(){
         $('#subtotal').html(globals.calculateSubtotal() + lang[' L.E.']);
         $('#total').html(globals.calculateTotal() + lang[' L.E.']);
         //console.log(globals.itemListRequired);
-    }
-    function removeItem(itemSerial){
-        var x = 0;
-        /*$.each(globals.itemList , function(index , value){ console.log(x++);
-            if(value.m_model_item_has_serial){
-                console.log('aaaaaa')
-                if(value.i_item_serial===itemSerial){
-                    console.log('bbbbbb')
-                    globals.itemList.splice(index , 1);
-                }
-            } else {
-                if(value.m_model_serial===itemSerial){
-                    console.log('cccccc')
-                    globals.itemList.splice(index , 1);
-                }
-                console.log('dddddd')
-            }
-            console.log(globals.itemList);
+        
+        //Calculate Buy Price Average
+        /*
+        var models = new Array();
+        $.each(globals.itemList , function (index , item){
+            if($.inArray(item.m_id , models) < 0)
+                models.push(item.m_id);
+        });
+        $.each(models , function(index , value){
+            var priceSum = 0;
+            var length = $('tr.model-'+value+' .item-buy-price').length;
+            $('tr.model-'+value+' .item-buy-price').each(function(index){
+                priceSum += parseInt($(this).val());
+            });
+            $('tr.model-'+value+' label.average-buy-price').html(priceSum / length);
         });*/
-        //console.log(globals.itemList);
+    }
+    
+    function removeItem(itemSerial){
         
         for(var i=globals.itemList.length-1 ; i>=0 ; i--){
             if(globals.itemList[i].m_model_item_has_serial){
@@ -1442,6 +1569,8 @@ $(document).ready(function(){
             globals.itemListRequired.push(requiredItem);
         });
         $('#itemList').val(JSON.stringify(globals.itemListRequired));
+        if (globals.itemList.length === 0)
+            $('.table-empty-row').removeClass('hidden');
     }
     function clearItem(){
         $('#itemSerial').val('').closest('.form-group').removeClass('has-success');
@@ -1469,7 +1598,7 @@ $(document).ready(function(){
     globals.calculateSubtotal = function(){
         globals.subtotal = 0;
         $.each(globals.itemList , function (index, value){
-            globals.subtotal += parseInt(value.b_bulk_price);
+            globals.subtotal += parseInt(value.i_item_sell_price);
         });
         return globals.subtotal;
     }
@@ -1477,31 +1606,45 @@ $(document).ready(function(){
         globals.total = globals.subtotal-globals.discount;
         return globals.total;
     }
-    function validCheckout(e){
+    function validCheckout(form){
         var isValid = true;
-        var paymentMethod = $('#paymentMethod').val();
+        
+        var $form = $( form ),
+            //itemList = $form.find("input[name='itemList']").val(),
+            saleDiscount = $form.find( "input[name='saleDiscount']" ).val(),
+            paymentMethod = $form.find( "select[name='paymentMethod']" ).val(),
+            amountPaid = $form.find( "input[name='amountPaid']" ).val(),
+            customerPhone = $form.find( "input[name='customerPhone']" ).val(),
+            customerName = $form.find( "input[name='customerName']" ).val();
+        
         if(globals.itemList.length > 0){
-            if( !/^\d+$/.test(globals.discount) || globals.discount>globals.subtotal || globals.discount<0 ){
+            if( !globals.isPositiveInteger(globals.discount) || globals.discount>globals.subtotal || globals.discount<0 ){
                 isValid = false;
                 $('#alert-message').html(alertDangerMessage(lang['Discount is invalid.']));
                 $('#saleDiscount').focus();
-                e.preventDefault();
+                //e.preventDefault();
             }
             
             if(paymentMethod === 'postpaid'){
                 globals.amountPaid = $('#amountPaid').val();
-                if( !/^\d+$/.test(globals.amountPaid) || globals.amountPaid>=globals.total || globals.amountPaid<0){
+                if( !globals.isPositiveInteger(globals.amountPaid) || globals.amountPaid>=globals.total || globals.amountPaid<0){
                     isValid = false;
                     $('#alert-message').html(alertDangerMessage(lang['Amount Paid is invalid.']));
                     $('#amountPaid').focus();
-                    e.preventDefault();
+                    //e.preventDefault();
                 }
             }
+            
+            if(globals.isEmpty(customerName) || globals.isEmpty(customerPhone)){
+                isValid = false;
+                $('#alert-message').html(alertDangerMessage(lang['Customer is invalid']));
+            }
+            
             //alert(isValid);
         } else {
             $('#alert-message').html(alertDangerMessage(lang['The list is empty, Please check items to list.']));
             $('#itemSerial').focus();
-            e.preventDefault();
+            //e.preventDefault();
             isValid = false;
         }
         return isValid;
@@ -2381,56 +2524,77 @@ $(document).ready(function(){
     };
     
     globals.isEmpty = function (element){
-        if($(element).val() == '')
-            return true;
-        else
-            return false;
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
+        if(value == '') return true;
+        else return false;
     };
     
     globals.isAlphanumeric = function (element){
-        if(/^[a-zA-Z0-9-]+$/.test($(element).val()))
-            return true;
-        else
-            return false;
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
+        if(/^[a-zA-Z0-9-]+$/.test(value)) return true;
+        else return false;
     };
     
     globals.isAlphanumericSpace = function (element){
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
         //lang["The field must contain only letters, numbers, or dashes."];
-        if(/^[a-z0-9\u0600-\u06FF\-\s]+$/i.test($(element).val()))
-            return true;
-        else
-            return false;
+        if(/^[a-z0-9\u0600-\u06FF\-\s]+$/i.test(value)) return true;
+        else return false;
     };
     
     //Alphanumeric with Space and Comma
     globals.isAlphanumericSpaceComma = function (element){
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
         //lang["The field must contain only letters, numbers, dashes or commas."];
-        if(/^[a-z0-9\u0600-\u06FF\-,\s]+$/i.test($(element).val())) 
-            return true;
-        else 
-            return false;
+        if(/^[a-z0-9\u0600-\u06FF\-,\s]+$/i.test(value)) return true;
+        else return false;
     };
     
     globals.isDate = function (element){
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
         //lang["Please enter a valid date. (e.g. 2014-02-16)"];
-        if(/^(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])$/.test($(element).val()))
-            return true;
-        else
-            return false;
+        if(/^(19|20)\d\d[\-\/.](0[1-9]|1[012])[\-\/.](0[1-9]|[12][0-9]|3[01])$/.test(value)) return true;
+        else return false;
     };
     
     globals.isPositiveInteger = function (element){
-        if(/^\d+$/.test($(element).val()))
-            return true;
-        else
-            return false;
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
+        if(/^\d+$/.test(value)) return true;
+        else return false;
     };
     
     globals.isNumber = function (element){
-        if(/^\d+$/.test($(element).val()))
-            return true;
-        else
-            return false;
+        var value;
+        
+        if(typeof element == 'object') value = $(element).val();
+        else value = element;
+        
+        if(/^\d+$/.test(value)) return true;
+        else return false;
     };
     
 });

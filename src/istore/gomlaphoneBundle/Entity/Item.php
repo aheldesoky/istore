@@ -57,6 +57,11 @@ class Item
     /**
      * @ORM\Column(type="string", nullable=false)
      */
+    protected $item_average_price;
+    
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
     protected $item_status;
     
     /**
@@ -284,5 +289,28 @@ class Item
     public function getItemSellPrice()
     {
         return $this->item_sell_price;
+    }
+
+    /**
+     * Set item_average_price
+     *
+     * @param string $itemAveragePrice
+     * @return Item
+     */
+    public function setItemAveragePrice($itemAveragePrice)
+    {
+        $this->item_average_price = $itemAveragePrice;
+
+        return $this;
+    }
+
+    /**
+     * Get item_average_price
+     *
+     * @return string 
+     */
+    public function getItemAveragePrice()
+    {
+        return $this->item_average_price;
     }
 }
