@@ -467,6 +467,7 @@ class BulkController extends Controller //implements AuthenticatedController
                         $entityManager->persist($item);
                     }
                     
+                    $entityManager->flush();
                     //Calculating the average price for in stock items of this model
                     /*
                     $stockModelPrices = $this->getDoctrine()->getManager()->createQueryBuilder()
