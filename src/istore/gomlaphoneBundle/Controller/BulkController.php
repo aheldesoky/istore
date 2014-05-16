@@ -456,7 +456,8 @@ class BulkController extends Controller //implements AuthenticatedController
                         $item->setItemBulk($bulk)
                              ->setItemHasWarranty(0)
                              ->setItemBuyPrice($itemBuyPrice)
-                             ->setItemSellPrice($itemSellPrice);
+                             ->setItemSellPrice($itemSellPrice)
+                             ->setItemAveragePrice($itemBuyPrice);
                         
                         if($bulkModel->getModelItemHasSerial())
                             $item->setItemStatus('pending_info');
