@@ -17,12 +17,12 @@
                                 </div>-->
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control text-center {% if customer is not null %}disabled{% endif %}" id="customerPhone" name="customerPhone" placeholder="{%trans%}Phone Number{%endtrans%}" value="{{customer.customerPhone}}">
+                                        <input type="text" class="form-control text-center" id="customerPhone" name="customerPhone" placeholder="{%trans%}Phone Number{%endtrans%}" {% if customer is not null %}disabled{% endif %} value="{{customer.customerPhone}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control text-center {% if customer is not null %}disabled{% endif %}" id="customerName" name="customerName" placeholder="{%trans%}Customer Name{%endtrans%}" value="{{customer.customerName}}">
+                                        <input type="text" class="form-control text-center" id="customerName" name="customerName" placeholder="{%trans%}Customer Name{%endtrans%}" {% if customer is not null %}disabled{% endif %} value="{{customer.customerName}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
