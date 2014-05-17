@@ -236,10 +236,6 @@ istoregomlaphone_customer_index:
     pattern:  /customer
     defaults: { _controller: istoregomlaphoneBundle:Customer:index }
 
-istoregomlaphone_customer_sale:
-    pattern:  /customer/{id}
-    defaults: { _controller: istoregomlaphoneBundle:Default:index }
-
 istoregomlaphone_customer_find:
     pattern:  /customer/find
     defaults: { _controller: istoregomlaphoneBundle:Customer:find }
@@ -247,6 +243,10 @@ istoregomlaphone_customer_find:
 istoregomlaphone_customer_query:
     pattern:  /customer/query
     defaults: { _controller: istoregomlaphoneBundle:Customer:query }
+
+istoregomlaphone_customer_sale:
+    pattern:  /customer/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Default:index }
 
 istoregomlaphone_customer_edit:
     pattern:  /customer/edit/{id}
