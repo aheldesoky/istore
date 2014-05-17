@@ -17,12 +17,12 @@
                                 </div>-->
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control text-center" id="customerPhone" name="customerPhone" placeholder="{%trans%}Phone Number{%endtrans%}">
+                                        <input type="text" class="form-control text-center" id="customerPhone" name="customerPhone" placeholder="{%trans%}Phone Number{%endtrans%}" disabled value="{{customer.customerPhone}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
                                     <div class="col-md-12">
-                                        <input type="text" class="form-control text-center" id="customerName" name="customerName" placeholder="{%trans%}Customer Name{%endtrans%}">
+                                        <input type="text" class="form-control text-center" id="customerName" name="customerName" placeholder="{%trans%}Customer Name{%endtrans%}" disabled value="{{customer.customerName}}">
                                     </div>
                                 </div>
                                 <div class="form-group">
@@ -33,8 +33,8 @@
                                         </div>
                                     </div>-->
                                     <div class="col-md-12">
-                                        <a class="btn btn-warning btn-md btn-find-customer">{%trans%}Find{%endtrans%}</a>
-                                        <a class="btn btn-default btn-md btn-clear-customer">{%trans%}Clear{%endtrans%}</a>
+                                        <a class="btn btn-warning btn-md btn-find-customer {% if customer is not null %}disabled{% endif %}">{%trans%}Find{%endtrans%}</a>
+                                        <a class="btn btn-default btn-md btn-clear-customer {% if customer is not null %}disabled{% endif %}">{%trans%}Clear{%endtrans%}</a>
                                     </div>
                                 </div>
                             </div>
