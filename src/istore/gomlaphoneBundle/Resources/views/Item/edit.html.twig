@@ -46,7 +46,7 @@
                                                     {% elseif item.i_item_status=='pending_discount' %}
                                                     label-info
                                                     {% elseif item.i_item_status=='sold' %}
-                                                    label-active
+                                                    label-default
                                                     {% elseif item.i_item_status=='warranty' %}
                                                     label-warning
                                                     {% elseif item.i_item_status=='warranty_replaced' %}
@@ -69,7 +69,7 @@
                                             </span>
                                         </div>
                                     </div>
-                                    <div class="form-group">
+                                    <!--<div class="form-group">
                                         <label for="itemHasWarranty" class="col-sm-4 control-label">{%trans%}Has Warranty{%endtrans%}:</label>
                                         <div class="col-sm-6">
                                             <select class="form-control" id="itemHasWarranty" name="itemHasWarranty">
@@ -90,19 +90,33 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </div>
+                                    </div>-->
                                     {% if item.i_item_status!='pending_info' %}
-                                    <div class="{% if item.i_item_has_warranty==0 %}hidden{% endif %}" id="change-status-field">
+                                    <div class="{#% if item.i_item_has_warranty==0 %}hidden{% endif %#}" id="change-status-field">
                                         <div class="form-group">
                                             <label for="itemStatus" class="col-sm-4 control-label">{%trans%}Change Status{%endtrans%}:</label>
                                             <div class="col-sm-6">
                                                 <select class="form-control" id="itemStatus" name="itemStatus">
                                                     <option value="{{ item.i_item_status }}">{%trans%}Select status{%endtrans%}</option>
                                                     {% if item.i_item_status=='warranty' %}
-                                                    <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                        {% if item.si_id==null %}
+                                                            <option value="in_stock">{%trans%}In Stock{%endtrans%}</option>
+                                                            <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                        {% else %}
+                                                            <option value="sold">{%trans%}Sold{%endtrans%}</option>
+                                                            <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                        {% endif %}
+                                                    {% elseif item.i_item_status=='warranty_replaced' %}
+                                                        {% if item.si_id==null %}
+                                                            <option value="in_stock">{%trans%}In Stock{%endtrans%}</option>
+                                                            <option value="warranty">{%trans%}Warranty{%endtrans%}</option>
+                                                        {% else %}
+                                                            <option value="sold">{%trans%}Sold{%endtrans%}</option>
+                                                            <option value="warranty">{%trans%}Warranty{%endtrans%}</option>
+                                                        {% endif %}
                                                     {% else %}
-                                                    <option value="warranty">{%trans%}Warranty{%endtrans%}</option>
-                                                    <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
+                                                        <option value="warranty">{%trans%}Warranty{%endtrans%}</option>
+                                                        <option value="warranty_replaced">{%trans%}Warranty - Replaced{%endtrans%}</option>
                                                     {% endif %}
                                                 </select>
                                             </div>

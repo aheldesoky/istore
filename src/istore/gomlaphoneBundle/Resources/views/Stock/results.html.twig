@@ -14,7 +14,7 @@
 				<th>{% trans %}Model{% endtrans %}</th>
 				<th>{% trans %}Category{% endtrans %}</th>
 				<th>{% trans %}Price{% endtrans %} ({% trans %}Buy{% endtrans %} - {% trans %}Sell{% endtrans %})</th>
-                                <th>{% trans %}Date{% endtrans %}</th>
+                                <th>{% trans %}Entry Date{% endtrans %}</th>
 				<th>{% trans %}Status{% endtrans %}</th>
 				<th>{% trans %}Actions{% endtrans %}</th>
 			</tr>
@@ -59,15 +59,18 @@
                                     {% elseif item.i_item_status=='pending_discount' %}
                                     <span class="label label-info">{% trans %}Pending Discount{% endtrans %}</span>
                                     {% elseif item.i_item_status=='sold' %}
-                                    <span class="label label-default">{% trans %}Sold{% endtrans %}</span>
+                                    <span class="label label-default btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ item.s_sale_date.format('Y-m-d h:i:s A') }}">{% trans %}Sold{% endtrans %}</span>
                                     {% elseif item.i_item_status=='warranty' %}
-                                    <span class="label label-warning">{% trans %}Warranty{% endtrans %}</span>
+                                    <span class="label label-warning btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ item.wi_warrantyitem_date.format('Y-m-d h:i:s A') }}">{% trans %}Warranty{% endtrans %}</span>
                                     {% elseif item.i_item_status=='warranty_replaced' %}
-                                    <span class="label label-danger">{% trans %}Warranty - Replaced{% endtrans %}</span>
+                                    <span class="label label-danger btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ item.wi_warrantyitem_date.format('Y-m-d h:i:s A') }}">{% trans %}Warranty - Replaced{% endtrans %}</span>
                                     {% endif %}
                                 </td>
                                 <!--<td>{{ item.t_transaction_date.format('Y-m-d') }}</td>-->
 				<td>
+                                    {% if item.s_id is not null %}
+                                        <a class="btn btn-sm btn-info" href="/sale/bill/{{item.s_id}}" target="_blank">{%trans%}View Bill{%endtrans%}</a> - 
+                                    {% endif %}
                                     <button type="button" class="btn btn-primary btn-sm btn-item-edit">
                                         {% if item.i_item_status=='pending_info' %}
                                         {% trans %}Update Info{% endtrans %}

@@ -1,0 +1,64 @@
+<tr 
+{% if item.itemStatus=='pending_info' %}
+class="info item_{{item.id}}"
+{% elseif item.itemStatus=='in_stock' %}
+class="success item_{{item.id}}"
+{% elseif item.itemStatus=='sold' %}
+class="active item_{{item.id}}"
+{% elseif item.itemStatus=='warranty' %}
+class="warning item_{{item.id}}"
+{% elseif item.itemStatus=='warranty_replaced' %}
+class="danger item_{{item.id}}"
+{% endif %}
+>
+    <td>
+            <span class="label label-default">{{ item.itemBulk.bulkModel.modelSerial }}</span>
+    </td>
+    <td class="item_serial_{{item.id}}">
+        {% if item.itemBulk.bulkModel.modelItemHasSerial %}
+            {% if item.itemSerial==null %}
+            <span class="label label-primary">{% trans %}Not Set{% endtrans %}</span>
+            {% else %}
+            <span class="label label-default">{{ item.itemSerial }}</span>
+            {% endif %}
+        {% else %}
+            <span class="label label-default">-</span>
+        {% endif %}
+    </td>
+    <td>{{ item.itemBulk.bulkModel.modelBrand.brandName }} {{ item.itemBulk.bulkModel.modelName }} {{ item.itemBulk.bulkModel.modelColor.colorName }} {{ item.itemBulk.bulkModel.modelNumber }}</td>
+    <td>{{ item.itemBulk.bulkModel.modelCategory.categoryName }}</td>
+    <td>{{ item.itemBuyPrice }} - {{ item.itemSellPrice }}</td>
+    <td>{{ item.itemBulk.bulkTransaction.transactionDate.format('Y-m-d') }}</td>
+    <td  class="item_status_{{item.id}}">
+        {% if item.itemStatus=='pending_info' %}
+        <span class="label label-primary">{% trans %}Pending Info{% endtrans %}</span>
+        {% elseif item.itemStatus=='in_stock' %}
+        <span class="label label-success">{% trans %}In Stock{% endtrans %}</span>
+        {% elseif item.itemStatus=='pending_discount' %}
+        <span class="label label-info">{% trans %}Pending Discount{% endtrans %}</span>
+        {% elseif item.itemStatus=='sold' %}
+        <span class="label label-default btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ saleitem.s_sale_date.format('Y-m-d h:i:s A') }}">{% trans %}Sold{% endtrans %}</span>
+        {% elseif item.itemStatus=='warranty' %}
+        <span class="label label-warning btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ warrantyitem.warrantyitemDate.format('Y-m-d h:i:s A') }}">{% trans %}Warranty{% endtrans %}</span>
+        {% elseif item.itemStatus=='warranty_replaced' %}
+        <span class="label label-danger btn-tooltip" data-toggle="tooltip" data-placement="top" title="{{ warrantyitem.warrantyitemDate.format('Y-m-d h:i:s A') }}">{% trans %}Warranty - Replaced{% endtrans %}</span>
+        {% endif %}
+    </td>
+    <!--<td>{{ item.itemBulk.bulkTransaction.transactionDate.format('Y-m-d') }}</td>-->
+    <td>
+        {% if saleitem is not null %}
+            <a class="btn btn-sm btn-info" href="/sale/bill/{{saleitem.s_id}}" target="_blank">{%trans%}View Bill{%endtrans%}</a> - 
+        {% endif %}
+        <button type="button" class="btn btn-primary btn-sm btn-item-edit">
+            {% if item.itemStatus=='pending_info' %}
+            {% trans %}Update Info{% endtrans %}
+            {% else %}
+            {% trans %}Edit{% endtrans %}
+            {% endif %}
+            <input type="hidden" value="{{ item.id }}" id="item-{{ item.id }}">
+        </button>
+        {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
+         - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.id}}:{{ item.itemBulk.bulkModel.modelBrand.brandName }} {{ item.itemBulk.bulkModel.modelName }} #{{ item.itemSerial }}">{% trans %}Delete{% endtrans %}</a>
+        {% endif %}
+    </td>
+</tr>

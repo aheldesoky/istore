@@ -620,6 +620,11 @@ $(document).ready(function(){
 
     $('#itemSerial:focus').focus();
     $('.btn-specs').popover('toggle');
+    $(document).on('mouseenter' , '.btn-tooltip' , function(){
+        $(this).tooltip('show');
+    }).on('mouseleave' , '.btn-tooltip' , function(){
+        $(this).tooltip('hide');
+    });
 
     var total_pages = $('#total_pages').val();
     var current_page = $('#current_page').val();
@@ -1115,7 +1120,7 @@ $(document).ready(function(){
     }, lang["Quantity must be greater than zero."]);
     
     //Validate Item    
-    $('.btn-item-edit').on('click', function () {
+    $(document).on('click', '.btn-item-edit' , function () {
         globals.itemId = $(this).children()[0].value;
         var btn = $(this);
         var data = {itemId:globals.itemId};
@@ -2172,28 +2177,33 @@ $(document).ready(function(){
                     itemId = $form.find("input[name='itemId']").val(),
                     itemHasSerial = $form.find( "input[name='itemHasSerial']" ).val(),
                     itemSerial = $form.find( "input[name='itemSerial']" ).val(),
-                    itemHasWarranty = $form.find( "select[name='itemHasWarranty']" ).val(),
+                    //itemHasWarranty = $form.find( "select[name='itemHasWarranty']" ).val(),
+                    itemStatus = $form.find( "select[name='itemStatus']" ).val(),
                     action = $form.find("input[name='action']").val(),
                     controller = $form.find("input[name='controller']").val(),
                     url = $form.attr( "action" );
+                    
                 // Send the data using post
-                var posting = $.post( url, {
+                var posting = $.post( '/item/edit', {
                     itemId: itemId,
                     itemHasSerial: itemHasSerial,
                     itemSerial: itemSerial,
-                    itemHasWarranty: itemHasWarranty,
+                    //itemHasWarranty: itemHasWarranty,
+                    itemStatus: itemStatus,
                     action: action,
                     controller: controller,
                 });
+                
                 // Put the results in a div
                 posting.done(function( data ) {
                     console.log(data);
                     $('#editModal').modal('hide');
                     $('#editModal').on('hidden.bs.modal' , function(){
-                        $('tr.item_'+itemId).removeClass('info').addClass('success');
-                        $('tr.item_'+itemId).find('td.item_serial_'+itemId).html('<span class="label label-default">'+itemSerial+'</span>');
-                        $('tr.item_'+itemId).find('td.item_status_'+itemId).html('<span class="label label-success">'+lang['In Stock']+'</span>');
-                        $('tr.item_'+itemId+' .btn-item-edit').html(lang['Update'] + '<input type="hidden" value="'+itemId+'" id="item-'+itemId+'">');
+                        $('tr.item_'+itemId).replaceWith(data);
+                        //$('tr.item_'+itemId).removeClass('info').addClass('success');
+                        //$('tr.item_'+itemId).find('td.item_serial_'+itemId).html('<span class="label label-default">'+itemSerial+'</span>');
+                        //$('tr.item_'+itemId).find('td.item_status_'+itemId).html('<span class="label label-success">'+lang['In Stock']+'</span>');
+                        //$('tr.item_'+itemId+' .btn-item-edit').html(lang['Update'] + '<input type="hidden" value="'+itemId+'" id="item-'+itemId+'">');
                         //window.location.reload(true);
                     });
                 });

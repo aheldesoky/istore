@@ -248,15 +248,18 @@ class StockController extends Controller //implements AuthenticatedController
             $viewParameters['total_pages'] = ceil($count['total_items']/20);
 
             $paginatorQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
-                ->select('i , b , t , m , br , co , c , s')
+                ->select('i , s , b , t , m , br , co , c , sp , wi')
                 ->from('istoregomlaphoneBundle:Item', 'i')
+                ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_item_id=i.id')
+                ->leftJoin('istoregomlaphoneBundle:Sale', 's' , 'WITH' , 'si.saleitem_sale_id=s.id')
                 ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
                 ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
                 ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
                 ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
                 ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
                 ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
-                ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
+                ->join('istoregomlaphoneBundle:Supplier', 'sp' , 'WITH' , 't.transaction_supplier=sp.id')
+                ->leftJoin('istoregomlaphoneBundle:WarrantyItem', 'wi' , 'WITH' , 'wi.warrantyitem_item_id=i.id')
                 ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
                 ->where('st.id=?1')
                 ->setParameter(1, $user->getStoreId());
