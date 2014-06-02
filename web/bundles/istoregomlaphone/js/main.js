@@ -64,7 +64,8 @@ $(document).ready(function(){
         $('.navbar').collapse('hide');
     });*/
     
-    $('div#reportModel').slimScroll({
+    $('div#reportModel , div#reportSupplier , div#reportCustomer').slimScroll({
+        position: 'left',
         height: '135px',
         alwaysVisible: false,
         wheelStep: '10',
@@ -490,13 +491,13 @@ $(document).ready(function(){
         return passedValidation;
     }
     
-    $("#clockbox").flipcountdown({
+    /*$("#clockbox").flipcountdown({
         size: 'xs',
         showHour:true,
         showMinute:true,
         showSecond:false,
         am:false
-    });
+    });*/
     //var currentDate = new Date();
     //$('#datebox').html(currentDate.getDay() + '-' + currentDate.getMonth() + '-' + currentDate.getFullYear());
 
@@ -560,7 +561,8 @@ $(document).ready(function(){
             $(this).val(parseInt($(this).val(), 10));
         }
     });*/
-    $('#customerName, #customerPhone').on('keypress', function(event){
+    /*
+    $('.customer-data #customerName, .customer-data #customerPhone').on('keypress', function(event){
         if(event.which == 13)
             $('.btn-find-customer').click();
     });
@@ -584,9 +586,6 @@ $(document).ready(function(){
                         //$('#customerNotes').val(response.customer.c_customer_notes);
                         $('#alert-message').html(alertInfoMessage(lang['Customer is available.']));
                     } else {
-                        //$('#customerPhone').val('');
-                        //$('#customerName').val('');
-                        //$('#customerNotes').val('');
                         $('#alert-message').html(alertDangerMessage(lang['Customer is not found.']));
                     }
                 }
@@ -596,7 +595,7 @@ $(document).ready(function(){
         e.preventDefault(); // prevents default
         return false;
     });
-    
+    */
     $('#itemQuantity').change(function(){
         var itemQty = $(this).val()
         if(!/^\d+$/.test(itemQty) || itemQty<=0){
@@ -691,7 +690,7 @@ $(document).ready(function(){
         });
     };
     
-    $('#customerPhone').autocomplete({
+    $('.customer-data #customerPhone').autocomplete({
 	serviceUrl:'/customer/query',
 	minChars:1,
 	delimiter: /(,|;)\s*/, // regex or character
@@ -704,7 +703,7 @@ $(document).ready(function(){
 	onSelect: function(customer){$('#customerName').val(customer.data);}
     });
     
-    $('#customerName').autocomplete({
+    $('.customer-data #customerName').autocomplete({
 	serviceUrl:'/customer/query',
 	minChars:1,
 	delimiter: /(,|;)\s*/, // regex or character
@@ -1146,7 +1145,7 @@ $(document).ready(function(){
         var element = $('#categoryForm input');
         if(!validateCategory(element)){
             e.preventDefault();
-            element.focus();
+            $(element).focus();
         }
     });
     
@@ -1170,7 +1169,7 @@ $(document).ready(function(){
             return passedValidation;
         }
         
-        var btn = $('.btn-categroy-add');
+        var btn = $('.btn-category-add');
         btn.button('loading');
         $.ajax({
             url: "/category/validate",
@@ -1198,6 +1197,99 @@ $(document).ready(function(){
             btn.button('reset');
         });
         return passedValidation;
+    }
+    
+    //Validate Customer
+    $('#customerForm #customerPhone').keyup(function(e){
+        if(!globals.isNumber($(this))){
+            $(this).next(".customer-error").html(lang['Customer phone can not be empty']);
+            $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else {
+            $(this).next(".customer-error").html(lang['ok']).removeClass('hidden');
+            $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+    
+    $('#customerForm #customerName').change(function(e){
+        if(!globals.isAlphanumericSpace($(this))){
+            $(this).next(".customer-error").html(lang['Please enter a valid name']).removeClass('hidden');
+            $(this).closest('.form-group').removeClass('has-success').addClass('has-error');
+        } else {
+            $(this).next(".customer-error").html(lang['ok']).removeClass('hidden');
+            $(this).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+    });
+    
+    $('#customerForm').submit(function(e){
+        var form = $(this);
+        if(!validateCustomer(form)){
+            e.preventDefault();
+        }
+    });
+    
+    //Validate Customer Phone & Name
+    function validateCustomer(customerForm){
+        var customerPhone = $(customerForm).find('#customerPhone');
+        var customerName = $(customerForm).find('#customerName');
+        var customerId = $(customerForm).find('#customerId').val();
+        var action = $('#action').val();
+        var controller = $('#controller').val();
+        var passedValidation = false;
+        
+        //Validate empty customer phone
+        if(globals.isEmpty(customerPhone)){
+            $(customerPhone).next(".customer-error").html(lang['Customer phone can not be empty']);
+            $(customerPhone).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+        } else if(!globals.isNumber(customerPhone)){
+            $(customerPhone).next(".customer-error").html(lang['Please enter a valid phone number']).removeClass('hidden');
+            $(customerPhone).closest('.form-group').removeClass('has-success').addClass('has-error');
+            return passedValidation;
+        } else {
+            var btn = $('.btn-customer-add');
+            btn.button('loading');
+            $.ajax({
+                url: "/customer/validate",
+                type: "post",
+                async: false,
+                data: {
+                    customerPhone:$(customerPhone).val(),
+                    //customerName:customerName,
+                    customerId:customerId,
+                    action:action,
+                    controller:controller
+                },
+                success: function(response){
+                    if(response.error==='customer_exists'){
+                        $(customerPhone).next(".customer-error").html(lang['Customer already exists'] );
+                        $(customerPhone).closest('.form-group').removeClass('has-success').addClass('has-error');
+                        
+                    } else if (response.error==='not_found'){
+                        $(customerPhone).next(".customer-error").html(lang['Customer name is valid']);
+                        $(customerPhone).closest('.form-group').removeClass('has-error').addClass('has-success');
+                        passedValidation = true;
+                    }
+                }
+            }).always(function () {
+                btn.button('reset');
+            });
+            return passedValidation;
+        }
+        
+        //Validate empty customer name
+        if(globals.isEmpty(customerName)){
+            $(customerName).next(".customer-error").html(lang['Customer name can not be empty']);
+            $(customerName).closest('.form-group').removeClass('has-success').addClass('has-error').focus();
+            return passedValidation;
+        } else if(!globals.isAlphanumericSpace(customerName)){
+            $(customerName).next(".customer-error").html(lang['Please enter a valid name']).removeClass('hidden');
+            $(customerName).closest('.form-group').removeClass('has-success').addClass('has-error');
+            return passedValidation;
+        } else {
+            //$(customerName).next(".customer-error").html(lang['ok']).removeClass('hidden');
+            $(customerName).closest('.form-group').removeClass('has-error').addClass('has-success');
+        }
+        
     }
     
     //Validate Warranty
@@ -1323,24 +1415,43 @@ $(document).ready(function(){
     // View Report
     $('#viewReport').click(function(e){
         e.preventDefault();
-        var models = new Array();
-        $.each($('div#reportModel input:checked') , function(index, value){
-            if(value.value)
-                models.push(value.value);
-        })
+        
+        var reportCategory = $('#reportCategory').val(),
+            reportType = $('#reportType').val(),
+            reportPayment = $('#reportPayment').val(),
+            reportStatus = $('#reportStatus').val(),
+            reportRange = $('#reportRange').val(),
+            reportFromDate = $('#reportFromDate').val(),
+            reportToDate = $('#reportToDate').val(),
+            action = $('#action').val(),
+            controller = $('#controller').val();
+        
+        var models = new Array(), 
+            suppliers = new Array(), 
+            customers = new Array();
+        if(reportType === 'stock' || reportType === 'sales'){
+            $.each($('div#reportModel input:checked') , function(index, value){
+                if(value.value)
+                    models.push(value.value);
+            });
+        } else if (reportType === 'suppliers') {
+            $.each($('div#reportSupplier input:checked') , function(index, value){
+                if(value.value)
+                    suppliers.push(value.value);
+            });
+        } else if (reportType === 'customers') {
+            $.each($('div#reportCustomer input:checked') , function(index, value){
+                if(value.value)
+                    customers.push(value.value);
+            })
+        }
+        
         var reportModel = models;
-        var reportCategory = $('#reportCategory').val();
-        var reportType = $('#reportType').val();
-        var reportPayment = $('#reportPayment').val();
-        var reportStatus = $('#reportStatus').val();
-        var reportRange = $('#reportRange').val();
-        var reportFromDate = $('#reportFromDate').val();
-        var reportToDate = $('#reportToDate').val();
-        var action = $('#action').val();
-        var controller = $('#controller').val();
+        var reportSupplier = suppliers;
+        var reportCustomer = customers;
         
         var isValid = true;
-        if(reportModel.length === 0 && reportPayment != 'amount'){
+        if(reportModel.length === 0 && reportPayment != 'amount' && reportType != 'suppliers' && reportType != 'customers'){
             $('.report-model-error').html(lang['Please select model.']);
             $('div#reportModel').closest('.form-group').removeClass('has-success').addClass('has-error');
             isValid = false;
@@ -1360,7 +1471,7 @@ $(document).ready(function(){
         
         if(!isValid) return isValid;
         
-        var url = '/report/view';
+        var url = '/app_dev.php/report/view';
         var btn = $(this);
         btn.button('loading');
         $.ajax({
@@ -1371,6 +1482,8 @@ $(document).ready(function(){
                 reportType:reportType,
                 reportPayment:reportPayment,
                 reportModel:reportModel,
+                reportSupplier:reportSupplier,
+                reportCustomer:reportCustomer,
                 reportCategory:reportCategory,
                 reportStatus:reportStatus,
                 reportRange:reportRange,
@@ -1676,17 +1789,19 @@ $(document).ready(function(){
     };
     $(".multiselect").multiselect();
     $(".multiselect input.checkall").change(function(){
+        var multiselect = $(this).closest('.multiselect');
         if($(this).prop('checked')){
-            $(".multiselect input").prop('checked', true);
-            $(".multiselect label").addClass("multiselect-on");
-            $(".multiselect label.hidden input").prop('checked', false);
-            $(".multiselect label.hidden").removeClass("multiselect-on");
+            $(multiselect).find("input").prop('checked', true);
+            $(multiselect).find("label").addClass("multiselect-on");
+            $(multiselect).find("label.hidden input").prop('checked', false);
+            $(multiselect).find("label.hidden").removeClass("multiselect-on");
         }else{
-            $(".multiselect input").prop('checked', false);
-            $(".multiselect label").removeClass("multiselect-on");
+            $(multiselect).find("input").prop('checked', false);
+            $(multiselect).find("label").removeClass("multiselect-on");
         }
     });
     $(".multiselect input").change(function(){
+        //var multiselect = $(this).closest('.multiselect');
         if(!$(this).hasClass('checkall')){
             if(!$(this).prop('checked')){
                 $(".multiselect input.checkall").prop('checked', false);
@@ -1708,20 +1823,43 @@ $(document).ready(function(){
     });
     $("select#reportType").change(function(){
         if($(this).val() === "stock"){
-            $(".report-status").removeClass("hidden");
-            $(".report-status select").prop("disabled", false);
-            $(".report-payment, .report-range, .report-from-date, .report-to-date").addClass("hidden");
+            $(".report-status, .report-category, .report-model").removeClass("hidden");
+            $(".report-status select, .report-category select").prop("disabled", false);
+            $(".report-supplier, .report-customer, .report-payment, .report-range, .report-from-date, .report-to-date").addClass("hidden");
             $(".report-payment select, .report-range select, .report-from-date select, .report-to-date select").prop("disabled", true);
             //Category & Models
             $("select#reportCategory").prop("disabled" , false);
-            $(".multiselect input").prop('disabled', false);
+            $(".report-model .multiselect input").prop('disabled', false);
+            $(".report-supplier .multiselect input, .report-customer .multiselect input").prop('disabled', true);
             $('.multiselect').css('background-color', '#fff');
             $("select#reportPayment").val('prepaid');
+            
         } else if($(this).val() === "sales") {
-            $(".report-payment, .report-range").removeClass("hidden");
-            $(".report-payment select, .report-range select").prop("disabled", false);
-            $(".report-status, .report-from-date, .report-to-date").addClass("hidden");
+            $(".report-payment, .report-range, .report-category, .report-model").removeClass("hidden");
+            $(".report-payment select, .report-range select, .report-category select").prop("disabled", false);
+            $(".report-status, .report-from-date, .report-to-date, .report-supplier, .report-customer").addClass("hidden");
             $(".report-status select, .report-from-date select, .report-to-date select").prop("disabled", true);
+            $(".report-model .multiselect input").prop('disabled', false);
+            $(".report-supplier .multiselect input, .report-customer .multiselect input").prop('disabled', true);
+            $('.multiselect').css('background-color', '#fff');
+            
+        } else if($(this).val() === "suppliers") {
+            $(".report-range, .report-supplier").removeClass("hidden");
+            $(".report-range select").prop("disabled", false);
+            $(".report-status, .report-range, .report-from-date, .report-to-date, .report-category, .report-model, .report-customer, .report-payment").addClass("hidden");
+            $(".report-status select, .report-range select, .report-from-date select, .report-to-date select, .report-category select, .report-payment select").prop("disabled", true);
+            $(".report-supplier .multiselect input").prop('disabled', false);
+            $(".report-model .multiselect input, .report-customer .multiselect input").prop('disabled', true);
+            $('.multiselect').css('background-color', '#fff');
+            
+        } else if($(this).val() === "customers") {
+            $(".report-range, .report-customer").removeClass("hidden");
+            $(".report-range select").prop("disabled", false);
+            $(".report-status, .report-range, .report-from-date, .report-to-date, .report-category, .report-model, .report-supplier, .report-payment").addClass("hidden");
+            $(".report-status select, .report-range select, .report-from-date select, .report-to-date select, .report-category select, .report-payment select").prop("disabled", true);
+            $(".report-customer .multiselect input").prop('disabled', false);
+            $(".report-model .multiselect input, .report-supplier .multiselect input").prop('disabled', true);
+            $('.multiselect').css('background-color', '#fff');
         }
     });
     $("select#reportRange").change(function(){

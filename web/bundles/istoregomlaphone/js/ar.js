@@ -68,4 +68,5 @@ var lang = {
     "Update": "تعديل",
     "Payment has been successfully added to transaction #": "تم إضافة دفعة جديدة للتعامل رقم ",
     "Customer is invalid": "من فضلك ادخل بيانات العميل بشكل صحيح",
+    "Customer phone can not be empty": "من فضلك ادخل رقم هاتف العميل",
 };
