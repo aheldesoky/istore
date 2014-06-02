@@ -33,6 +33,15 @@ class Customer
     protected $customer_notes;
     
     /**
+     * @ORM\Column(nullable=false)
+     * @ORM\ManyToOne(targetEntity="Store")
+     * @ORM\JoinTable(name="store" , 
+     *                joinColumns={@ORM\JoinColumn(name="customer_store_id", 
+     *                                         referencedColumnName="id")})
+     */
+    protected $customer_store;
+    
+    /**
      * Get id
      *
      * @return integer 
@@ -109,5 +118,28 @@ class Customer
     public function getCustomerNotes()
     {
         return $this->customer_notes;
+    }
+
+    /**
+     * Set customer_store
+     *
+     * @param string $customerStore
+     * @return Customer
+     */
+    public function setCustomerStore($customerStore)
+    {
+        $this->customer_store = $customerStore;
+
+        return $this;
+    }
+
+    /**
+     * Get customer_store
+     *
+     * @return string 
+     */
+    public function getCustomerStore()
+    {
+        return $this->customer_store;
     }
 }

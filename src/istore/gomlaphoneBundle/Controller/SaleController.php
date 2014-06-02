@@ -46,7 +46,7 @@ class SaleController extends Controller //implements AuthenticatedController
             //->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
 //            //->groupBy('s.id')
             ->getQuery()
             ->getSingleResult();
@@ -62,7 +62,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('s.id')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
@@ -102,7 +102,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('s.sale_discount>0')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
 //            //->groupBy('s.id')
             ->getQuery()
             ->getSingleResult();
@@ -119,7 +119,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('s.sale_discount>0')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('s.id')
             ->orderBy('s.id', 'DESC')
             ->getQuery()
@@ -165,7 +165,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('po.id IS NULL')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
 //            //->groupBy('s.id')
             ->getQuery()
             ->getSingleResult();
@@ -185,7 +185,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
             ->andWhere('po.id IS NULL')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('s.id')
             ->orderBy('s.id', 'DESC')
             ->getQuery()
@@ -219,7 +219,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             //->groupBy('s.id')
             ->getQuery()
             ->getScalarResult();
@@ -234,7 +234,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('st.id=?1')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->groupBy('s.id')
             ->orderBy('s.id', 'DESC')
             ->getQuery()
@@ -431,6 +431,10 @@ class SaleController extends Controller //implements AuthenticatedController
                 $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
                 $customer[0]->setCustomerName($request->request->get('customerName'));
                 //$customer[0]->setCustomerNotes($request->request->get('customerNotes'));
+                $customerStore = $this->getDoctrine()
+                    ->getRepository('istoregomlaphoneBundle:Store')
+                    ->find($user->getStoreId());
+                $customer[0]->setCustomerStore($customerStore);
                 $entityManager->persist($customer[0]);
                 $entityManager->flush();
             }
@@ -557,7 +561,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             //->groupBy('m.model_serial')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $id)
             ->setParameter(3, false)
             ->getQuery()
@@ -574,7 +578,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('m.model_serial')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $id)
             ->setParameter(3, false)
             ->getQuery()

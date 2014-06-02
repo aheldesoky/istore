@@ -185,42 +185,70 @@ class CustomerController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function editAction(Request $request, $id)
+    public function addAction(Request $request)
     {
-        $supplier = $this->getDoctrine()
-            ->getRepository('istoregomlaphoneBundle:Supplier')
-            ->find($id);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         if( $request->getMethod() == 'POST')
         {
-            $supplier->setSupplierName($request->request->get('supplierName'));
-            $supplier->setSupplierAddress($request->request->get('supplierAddress'));
-            $supplier->setSupplierPhone($request->request->get('supplierPhone'));
+            $customer = new Customer();
+            $customer->setCustomerName($request->request->get('customerName'));
+            $customer->setCustomerPhone($request->request->get('customerPhone'));
+            //$customer->setCustomerNotes($request->request->get('customerNotes'));
+            $customerStore = $this->getDoctrine()
+                    ->getRepository('istoregomlaphoneBundle:Store')
+                    ->find($user->getStoreId());
+            $customer->setCustomerStore($customerStore);
             $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->persist($supplier);
+            $entityManager->persist($customer);
             $entityManager->flush();
 
-            return $this->redirect($this->generateUrl('istoregomlaphone_supplier_index'));
+            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
         }
         
-        return $this->render('istoregomlaphoneBundle:Supplier:edit.html.twig' , array(
-            "supplier" => $supplier,
+        return $this->render('istoregomlaphoneBundle:Customer:add.html.twig' , array(
+            'action'  => 'add',
+            'controller' => 'customer',
+        ));
+    }
+    
+    public function editAction(Request $request, Customer $customer)
+    {
+        
+        if( $request->getMethod() == 'POST')
+        {
+            $customer->setCustomerName($request->request->get('customerName'));
+            $customer->setCustomerPhone($request->request->get('customerPhone'));
+            //$customer->setCustomerNotes($request->request->get('customerNotes'));
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->persist($customer);
+            $entityManager->flush();
+
+            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
+        }
+        
+        return $this->render('istoregomlaphoneBundle:Customer:edit.html.twig' , array(
+            "customer" => $customer,
             'action'  => 'edit',
             'controller' => 'customer',
         ));
     }
     
-    public function deleteAction(Request $request, Supplier $supplier)
+    public function deleteAction(Request $request, Customer $customer)
     {
         
-        if (!$supplier) {
-            throw $this->createNotFoundException('No supplier found');
+        if (!$customer) {
+            throw $this->createNotFoundException('No customer found');
         }
         $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($supplier);
+        $entityManager->remove($customer);
         $entityManager->flush();
 
-        return $this->redirect($this->generateUrl('istoregomlaphone_supplier_index'));
+        return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
     }
     
     public function findAction(Request $request)
@@ -272,6 +300,54 @@ var_dump($customer);die;
             'query' => $request->query->get('query') ,
             'suggestions' => $customer
         ));
+        
+    }
+    
+    public function validateAction(Request $request)
+    {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        //var_dump($request);die;
+        $customerNew['customerId'] = $request->request->get('customerId');
+        $customerNew['customerPhone'] = $request->request->get('customerPhone');
+        
+        $action = $request->request->get('action');
+        $controller = $request->request->get('controller');
+//echo $controller.'/'.$action;die;
+        $error = null;
+        if($customerNew['customerPhone'] == '')
+            $error = 'is_null';
+        
+        $customer = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('cu')
+            ->from('istoregomlaphoneBundle:Customer', 'cu')
+            ->where('cu.customer_phone = ?1')
+            ->setParameter(1 , $customerNew['customerPhone'])
+            ->getQuery()
+            ->getScalarResult();
+//var_dump($category);die;
+        
+        //Customer exists
+        if(count($customer)) {
+            if($action === 'add')
+                $error = 'customer_exists';
+                
+            elseif($action === 'edit' && $customer[0]['cu_id'] != $customerNew['customerId'])
+                $error = 'customer_exists';
+                
+            else 
+                $error = 'not_found';
+        //Category does not exist
+        } else {
+            $error = 'not_found';
+        }
+    //var_dump($category);die;
+        return new JsonResponse(array('error' => $error , 'customer' => $customer[0]));
         
     }
 }

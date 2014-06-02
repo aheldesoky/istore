@@ -113,7 +113,7 @@
                                                 <a href="/sale/{{sale.s_id}}" class="btn btn-danger btn-sm btn-discount-modal {% if sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}:{{ sale.s_sale_discount }}">{% trans %}Confirm Discount{% endtrans %}</a>
                                                 <a href="#" class="btn btn-default btn-sm disabled btn-discount-confirmed {% if not sale.s_sale_discount_confirmed %}hidden{% endif %}" data-id="{{sale.s_id}}">{% trans %}Confirmed{% endtrans %}</a>
                                             {% endif %}
-                                            <a href="/sale/bill/{{sale.s_id}}" class="btn btn-primary btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
+                                            <a href="/sale/bill/{{sale.s_id}}" class="btn btn-info btn-sm" target="_blank">{% trans %}View Bill{% endtrans %}</a>
                                             {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
                                             <a href="#" data-id="{{sale.s_id}}" class="btn btn-danger btn-sm btn-refund-sale-modal">{% trans %}Refund{% endtrans %}</a>
                                             {% endif %}

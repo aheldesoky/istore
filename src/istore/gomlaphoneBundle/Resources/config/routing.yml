@@ -244,6 +244,14 @@ istoregomlaphone_customer_query:
     pattern:  /customer/query
     defaults: { _controller: istoregomlaphoneBundle:Customer:query }
 
+istoregomlaphone_customer_add:
+    pattern:  /customer/add
+    defaults: { _controller: istoregomlaphoneBundle:Customer:add }
+
+istoregomlaphone_customer_validate:
+    pattern:  /customer/validate
+    defaults: { _controller: istoregomlaphoneBundle:Customer:validate }
+
 istoregomlaphone_customer_sale:
     pattern:  /customer/{id}
     defaults: { _controller: istoregomlaphoneBundle:Default:index }
