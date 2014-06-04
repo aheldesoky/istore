@@ -55,23 +55,46 @@ class ReportController extends Controller //implements AuthenticatedController
             ->where('s.id=?1')
             ->setParameter(1, $user->getStoreId())
             ->getQuery()
-            ->getResult();
+            ->getScalarResult();
+//var_dump($categories);die;        
         
         $models = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('m')
+            ->select('m , br , co , ca')
             ->from('istoregomlaphoneBundle:Model', 'm')
-            ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'ca', 'WITH', 'm.model_category=ca.id')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('s.id=?1')
             ->setParameter(1, $user->getStoreId())
             ->orderBy('m.id', 'ASC')
             ->getQuery()
-            ->getResult();
-//var_dump($models);die;
+            ->getScalarResult();
+    //echo'<pre>';var_dump($models);die;
+        
+        $suppliers = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('sp')
+            ->from('istoregomlaphoneBundle:Supplier', 'sp')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'sp.supplier_store_id=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->getQuery()
+            ->getScalarResult();
+        
+        $customers = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('cu')
+            ->from('istoregomlaphoneBundle:Customer', 'cu')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'cu.customer_store=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->getQuery()
+            ->getScalarResult();
         
         return $this->render('istoregomlaphoneBundle:Report:index.html.twig', array(
             'categories'      => $categories,
             'models'          => $models,
+            'suppliers'       => $suppliers,
+            'customers'       => $customers,
             'action'          => 'index',
             'controller'      => 'report',
         ));
@@ -111,11 +134,17 @@ class ReportController extends Controller //implements AuthenticatedController
                     return $this->render('istoregomlaphoneBundle:Report:viewAmount.html.twig', array('report' => $report));
                     
                 }
+            } elseif($type === 'suppliers'){
+                $report = $this->getSupplierReport($request);
+                return $this->render('istoregomlaphoneBundle:Report:viewSuppliers.html.twig', array('report' => $report));
+            } elseif($type === 'customers'){
+                $report = $this->getCustomerReport($request);
+                return $this->render('istoregomlaphoneBundle:Report:viewCustomers.html.twig', array('report' => $report));
             }
         }
     }
     
-        public function printAction(Request $request) {
+    public function printAction(Request $request) {
 
         $user = $this->getUser();
         
@@ -169,44 +198,46 @@ class ReportController extends Controller //implements AuthenticatedController
     {
         
 //var_dump($request->request);die;
-            $user = $this->getUser();
-        
-            if(!in_array('ROLE_ADMIN', $user->getRoles())){
-                return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-            }
-            
-            $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
-                ->select('m , i , b , c , 
-                    SUM(CASE WHEN i.item_status=\'pending_info\' THEN 1 ELSE 0 END) AS pending_info ,
-                    SUM(CASE WHEN i.item_status=\'in_stock\' THEN 1 ELSE 0 END) AS in_stock ,
-                    SUM(CASE WHEN i.item_status=\'sold\' THEN 1 ELSE 0 END) AS sold ,
-                    SUM(CASE WHEN i.item_status=\'warranty\' THEN 1 ELSE 0 END) AS warranty ,
-                    SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN 1 ELSE 0 END) AS warranty_replaced ,
-                    SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count ')
-                ->from('istoregomlaphoneBundle:Model', 'm')
-                ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
-                ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
-                ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
-                ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
-                ->where('st.id=?1')
-                ->setParameter(1, $user->getStoreId())
-                ->groupBy('m.id');
-            
-            //Model filter
-            $models = $request->request->get('reportModel');
-            if($models){
-                $reportQuery->andWhere('m.id IN (:models)')->setParameter('models', $models);
-            }
-            
-            //Category filter
-            $category = $request->request->get('reportCategory');
-            if($category){
-                $reportQuery->andWhere('c.id=:category')->setParameter('category', $category);
-            }
-            
-            $report = $reportQuery->orderBy('m.id', 'ASC')
-                ->getQuery()
-                ->getScalarResult();
+        $user = $this->getUser();
+
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+
+        $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('m , br , co , i , b , c , 
+                SUM(CASE WHEN i.item_status=\'pending_info\' THEN 1 ELSE 0 END) AS pending_info ,
+                SUM(CASE WHEN i.item_status=\'in_stock\' THEN 1 ELSE 0 END) AS in_stock ,
+                SUM(CASE WHEN i.item_status=\'sold\' THEN 1 ELSE 0 END) AS sold ,
+                SUM(CASE WHEN i.item_status=\'warranty\' THEN 1 ELSE 0 END) AS warranty ,
+                SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN 1 ELSE 0 END) AS warranty_replaced ,
+                SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count ')
+            ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
+            ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
+            ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
+            ->join('istoregomlaphoneBundle:Category', 'c', 'WITH', 'm.model_category=c.id')
+            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'm.model_store_id=st.id')
+            ->where('st.id=?1')
+            ->setParameter(1, $user->getStoreId())
+            ->groupBy('m.id');
+
+        //Model filter
+        $models = $request->request->get('reportModel');
+        if($models){
+            $reportQuery->andWhere('m.id IN (:models)')->setParameter('models', $models);
+        }
+
+        //Category filter
+        $category = $request->request->get('reportCategory');
+        if($category){
+            $reportQuery->andWhere('c.id=:category')->setParameter('category', $category);
+        }
+
+        $report = $reportQuery->orderBy('m.id', 'ASC')
+            ->getQuery()
+            ->getScalarResult();
 //echo $reportQuery->getQuery()->getSQL();//die;
 //var_dump($report);die;
         return $report;
@@ -304,9 +335,11 @@ class ReportController extends Controller //implements AuthenticatedController
         }
         
         //SUM(CASE WHEN i.item_status='warranty' AND po.id IS NULL AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_warranty
-        $prepaidQuery = $queryBuilder->select("m , i , b , c , s ,
+        $prepaidQuery = $queryBuilder->select("m , br , co , i , b , c , s ,
                 SUM(CASE WHEN po.id IS NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_sold")
             ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
             ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
             ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
             ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')    
@@ -432,9 +465,11 @@ class ReportController extends Controller //implements AuthenticatedController
         }
         
         // Doctrine Query Language DQL
-        $postpaidQuery = $queryBuilder->select("DISTINCT(po.id) AS temp , m , i , b , c , s , si , po ,
+        $postpaidQuery = $queryBuilder->select("DISTINCT(po.id) AS temp , m , br , co , i , b , c , s , si , po ,
             SUM(CASE WHEN po.id IS NOT NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS postpaid_count_sold")
             ->from('istoregomlaphoneBundle:Model', 'm')
+            ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')
             ->leftJoin('istoregomlaphoneBundle:Bulk', 'b', 'WITH', 'b.bulk_model=m.id')
             ->leftJoin('istoregomlaphoneBundle:Item', 'i', 'WITH', 'i.item_bulk=b.id')
             ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')    
@@ -697,6 +732,72 @@ class ReportController extends Controller //implements AuthenticatedController
         
         return $grouparr;
         */
+    }
+    
+    public function getSupplierReport(Request $request){
+//var_dump($request->request->get('reportSupplier'));die;
+            $user = $this->getUser();
+        
+            if(!in_array('ROLE_ADMIN', $user->getRoles())){
+                return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+            }
+            
+            $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('sp , 
+                    SUM(t.transaction_total_due) AS transaction_total_due ,
+                    SUM(t.transaction_total_paid) AS transaction_total_paid ')
+                ->from('istoregomlaphoneBundle:Supplier', 'sp')
+                ->leftJoin('istoregomlaphoneBundle:Transaction', 't', 'WITH', 't.transaction_supplier=sp.id')
+                ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 't.transaction_store=st.id')
+                ->where('st.id=?1')
+                ->setParameter(1, $user->getStoreId())
+                ->groupBy('sp.id');
+            
+            //Supplier filter
+            $suppliers = $request->request->get('reportSupplier');
+            if($suppliers){
+                $reportQuery->andWhere('sp.id IN (:suppliers)')->setParameter('suppliers', $suppliers);
+            }
+            
+            $report = $reportQuery->orderBy('sp.id', 'ASC')
+                ->getQuery()
+                ->getScalarResult();
+//echo $reportQuery->getQuery()->getSQL();//die;
+//var_dump($report);die;
+        return $report;
+    }
+    
+    public function getCustomerReport(Request $request){
+//var_dump($request->request->get('reportCustomer'));die;
+            $user = $this->getUser();
+        
+            if(!in_array('ROLE_ADMIN', $user->getRoles())){
+                return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+            }
+            
+            $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('cu , 
+                    SUM(s.sale_total_price) AS sale_total_due ,
+                    SUM(s.sale_total_paid) AS sale_total_paid ')
+                ->from('istoregomlaphoneBundle:Customer', 'cu')
+                ->leftJoin('istoregomlaphoneBundle:Sale', 's', 'WITH', 's.sale_customer_id=cu.id')
+                ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 's.sale_store_id=st.id')
+                ->where('st.id=?1')
+                ->setParameter(1, $user->getStoreId())
+                ->groupBy('cu.id');
+            
+            //Supplier filter
+            $customers = $request->request->get('reportCustomer');
+            if($customers){
+                $reportQuery->andWhere('cu.id IN (:customers)')->setParameter('customers', $customers);
+            }
+            
+            $report = $reportQuery->orderBy('cu.id', 'ASC')
+                ->getQuery()
+                ->getScalarResult();
+//echo $reportQuery->getQuery()->getSQL();//die;
+//var_dump($report);die;
+        return $report;
     }
     
     public function exportAction(Request $request)

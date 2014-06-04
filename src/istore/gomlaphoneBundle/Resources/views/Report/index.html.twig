@@ -18,6 +18,8 @@
                                                                         <select class="form-control" id="reportType" name="reportType">
                                                                                 <option value="stock" selected>{% trans %}Stock{% endtrans %}</option>
                                                                                 <option value="sales">{% trans %}Sales{% endtrans %}</option>
+                                                                                <option value="suppliers">{% trans %}Suppliers{% endtrans %}</option>
+                                                                                <option value="customers">{% trans %}Customers{% endtrans %}</option>
                                                                         </select>
                                                                 </div>
                                                         </div>
@@ -75,33 +77,67 @@
                                                         </div>
                                                 </div>
                                                 <div class="col-md-6">
-                                                        <div class="form-group">
-                                                                <label for="reportCategory" class="col-sm-4 control-label">{% trans %}Category{% endtrans %}</label>
+                                                        <div class="form-group report-category">
+                                                                <label for="reportCategory" class="col-sm-2 control-label">{% trans %}Category{% endtrans %}</label>
                                                                 <div class="col-sm-6">
                                                                         <select class="form-control" id="reportCategory" name="reportCategory">
                                                                                 <option value="" selected>{% trans %}All categories{% endtrans %}</option>
                                                                                 {% for category in categories %}
-                                                                                <option value="{{ category.id }}">{{ category.categoryName }}</option>
+                                                                                <option value="{{ category.c_id }}">{{ category.c_category_name }}</option>
                                                                                 {% endfor %}
                                                                         </select>
                                                                 </div>
                                                         </div>
-                                                        <div class="form-group">
-                                                                <label for="reportModel" class="col-sm-4 control-label">{% trans %}Models{% endtrans %}</label>
-                                                                <div class="col-sm-6">
+                                                        <div class="form-group report-model">
+                                                                <label for="reportModel" class="col-sm-2 control-label">{% trans %}Models{% endtrans %}</label>
+                                                                <div class="col-sm-9">
                                                                         <div class="multiselect" id="reportModel" name="reportModel">
                                                                                 <label class="checkall">
                                                                                     <input type="checkbox" name="" value="" class="checkall"/>{% trans %}(un)check all{% endtrans %}
                                                                                 </label>
                                                                                 <label class="multiselect-divider"></label>
                                                                                 {% for model in models %}
-                                                                                <label class="category-{{model.modelCategory.id}}">
-                                                                                    <input type="checkbox" name="reportModel[]" value="{{ model.id }}" class="category-{{model.modelCategory.id}}"/>{{ model.modelBrand }} {{ model.modelModel }}
+                                                                                <label class="category-{{model.ca_id}}">
+                                                                                    <input type="checkbox" name="reportModel[]" value="{{ model.m_id }}" class="category-{{model.ca_id}}"/>{{ model.br_brand_name }} {{ model.m_model_name }} {{ model.co_color_name }} {{ model.m_model_number }}
                                                                                 </label>
                                                                                 {% endfor %}
                                                                         </div>
                                                                 </div>
                                                                 <label for="reportModel" class="report-model-error control-label"></label>
+                                                        </div>
+                                                        <div class="form-group report-supplier hidden">
+                                                                <label for="reportSupplier" class="col-sm-2 control-label">{% trans %}Suppliers{% endtrans %}</label>
+                                                                <div class="col-sm-9">
+                                                                        <div class="multiselect" id="reportSupplier" name="reportSupplier">
+                                                                                <label class="checkall">
+                                                                                    <input type="checkbox" name="" value="" class="checkall"/>{% trans %}(un)check all{% endtrans %}
+                                                                                </label>
+                                                                                <label class="multiselect-divider"></label>
+                                                                                {% for supplier in suppliers %}
+                                                                                <label class="supplier-{{supplier.sp_id}}">
+                                                                                    <input type="checkbox" name="reportSupplier[]" value="{{ supplier.sp_id }}" class="supplier-{{supplier.sp_id}}"/>{{ supplier.sp_supplier_name }} 
+                                                                                </label>
+                                                                                {% endfor %}
+                                                                        </div>
+                                                                </div>
+                                                                <label for="reportSupplier" class="report-supplier-error control-label"></label>
+                                                        </div>
+                                                        <div class="form-group report-customer hidden">
+                                                                <label for="reportCustomer" class="col-sm-2 control-label">{% trans %}Customers{% endtrans %}</label>
+                                                                <div class="col-sm-9">
+                                                                        <div class="multiselect" id="reportCustomer" name="reportCustomer">
+                                                                                <label class="checkall">
+                                                                                    <input type="checkbox" name="" value="" class="checkall"/>{% trans %}(un)check all{% endtrans %}
+                                                                                </label>
+                                                                                <label class="multiselect-divider"></label>
+                                                                                {% for customer in customers %}
+                                                                                <label class="customer-{{customer.cu_id}}">
+                                                                                    <input type="checkbox" name="reportCustomer[]" value="{{ customer.cu_id }}" class="customer-{{customer.cu_id}}"/>{{ customer.cu_customer_name }}
+                                                                                </label>
+                                                                                {% endfor %}
+                                                                        </div>
+                                                                </div>
+                                                                <label for="reportCustomer" class="report-customer-error control-label"></label>
                                                         </div>
                                                 </div>
                                         </div>

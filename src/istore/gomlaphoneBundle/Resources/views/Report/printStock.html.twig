@@ -87,7 +87,7 @@
                         
                 <tr class="text-center">
                         <td >{{ model.m_model_serial }}</td>
-                        <td >{{ model.m_model_brand }} {{ model.m_model_model }}</td>
+                        <td >{{ model.br_brand_name }} {{ model.m_model_name }} {{ model.co_color_name }} {{ model.m_model_number }}</td>
                         <td >{{ model.c_category_name }}</td>
                         {% if status == null %}
                             <td class="text-center">{{ model.pending_info }}</td>

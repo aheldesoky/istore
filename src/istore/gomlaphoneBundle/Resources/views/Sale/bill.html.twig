@@ -65,9 +65,9 @@
                     {% if item.i_item_status != 'warranty_replaced' %}
                     <tr class="item-row">
                         <td class="item-name">{{ item.i_item_serial }}</td>
-                        <td class="description">{{ item.m_model_brand }} {{ item.m_model_model }} {{ item.i_item_color }}</td>
+                        <td class="description">{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}</td>
                         <td>{{ item.ca_category_name }}</td>
-                        <td>{{ item.quantity }} &times; {{ item.b_bulk_price }}</td>
+                        <td>{{ item.quantity }} &times; {{ item.i_item_sell_price }}</td>
                     </tr>
                     {% endif %}
                 {% endfor %}
@@ -75,7 +75,7 @@
                     {% if item.i_item_status != 'warranty_replaced' %}
                     <tr class="item-row">
                         <td class="item-name">{{ item.m_model_serial }}</td>
-                        <td class="description">{{ item.br_brand_name }} {{ item.m_model_name }}  {{ item.co_color_name }} {{ item.m_model_number }}</td>
+                        <td class="description">{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}</td>
                         <td>{{ item.ca_category_name }}</td>
                         <td>{{ item.quantity }} &times; {{ item.i_item_sell_price }}</td>
                     </tr>

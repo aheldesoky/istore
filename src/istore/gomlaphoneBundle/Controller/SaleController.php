@@ -149,8 +149,11 @@ class SaleController extends Controller //implements AuthenticatedController
     public function prepaidAction(Request $request)
     {
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -207,9 +210,11 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function postpaidAction(Request $request)
     {
+        $user = $this->getUser();
         
-        //$language = $request->query->get('lang');
-        //$request->setLocale($language);
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -489,7 +494,10 @@ class SaleController extends Controller //implements AuthenticatedController
                 $entityManager->persist($saleItem);
                 //$entityManager->flush();
             }
+            
             $sale->setSaleTotalPrice($saleTotalPrice);
+            if($request->request->get('paymentMethod') === 'prepaid')
+                $sale->setSaleTotalPaid($saleTotalPrice);
             $entityManager->persist($sale);
             $entityManager->flush();
             
@@ -622,6 +630,12 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function billAction(Request $request , $id , $first = false){
         
+        $user = $this->getUser();
+        
+        /*if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }*/
+        
         $entityManager = $this->getDoctrine()->getManager();
         
         $sale = $entityManager->createQueryBuilder()
@@ -637,7 +651,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->where('s.id=?1')
             ->andWhere('st.id=?2')
             ->setParameter(1, $id)
-            ->setParameter(2, 1)
+            ->setParameter(2, $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         

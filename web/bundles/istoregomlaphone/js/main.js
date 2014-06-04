@@ -1452,12 +1452,30 @@ $(document).ready(function(){
         
         var isValid = true;
         if(reportModel.length === 0 && reportPayment != 'amount' && reportType != 'suppliers' && reportType != 'customers'){
-            $('.report-model-error').html(lang['Please select model.']);
+            $('.report-model-error').html(lang['Please select model']);
             $('div#reportModel').closest('.form-group').removeClass('has-success').addClass('has-error');
             isValid = false;
         } else {
             $('.report-model-error').html('');
             $('div#reportModel').closest('.form-group').removeClass('has-error');
+        }
+        
+        if(reportSupplier.length === 0 && reportType === 'suppliers'){
+            $('.report-supplier-error').html(lang['Please select supplier']);
+            $('div#reportSupplier').closest('.form-group').removeClass('has-success').addClass('has-error');
+            isValid = false;
+        } else {
+            $('.report-supplier-error').html('');
+            $('div#reportSupplier').closest('.form-group').removeClass('has-error');
+        }
+        
+        if(reportCustomer.length === 0 && reportType === 'customers'){
+            $('.report-customer-error').html(lang['Please select customer']);
+            $('div#reportCustomer').closest('.form-group').removeClass('has-success').addClass('has-error');
+            isValid = false;
+        } else {
+            $('.report-customer-error').html('');
+            $('div#reportCustomer').closest('.form-group').removeClass('has-error');
         }
         
         if(!$('#reportRange').prop('disabled') && reportRange === ''){
