@@ -189,6 +189,14 @@ class ReportController extends Controller //implements AuthenticatedController
                     ));
                     
                 }
+                
+            } elseif($type === 'suppliers'){
+                $report = $this->getSupplierReport($request);
+                return $this->render('istoregomlaphoneBundle:Report:printSupplier.html.twig', array( 'report' => $report ));
+                
+            } elseif($type === 'customers'){
+                $report = $this->getCustomerReport($request);
+                return $this->render('istoregomlaphoneBundle:Report:printCustomer.html.twig', array( 'report' => $report ));
             }
         }
         

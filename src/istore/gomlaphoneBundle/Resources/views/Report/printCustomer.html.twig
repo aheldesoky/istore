@@ -35,43 +35,35 @@
             </div>
 
 {% if report|length %}
-<table class="table table-bordered table-report-view-compact">
+<table class="table table-striped table-bordered table-report-view-compact">
         <tr class="active">
-                <th class="text-center">{% trans %}From{% endtrans %}</th>
-                <th class="text-center">{% trans %}To{% endtrans %}</th>
-                <th class="text-center">{% trans %}Payment Method{% endtrans %}</th>
-                <th class="text-center">{% trans %}Subtotal{% endtrans %}</th>
-                <th class="text-center">{% trans %}Total Discount{% endtrans %}</th>
+                <th class="text-center">{% trans %}Customer Name{% endtrans %}</th>
+                <th class="text-center">{% trans %}Customer Phone{% endtrans %}</th>
                 <th class="text-center">{% trans %}Total Due{% endtrans %}</th>
                 <th class="text-center">{% trans %}Total Paid{% endtrans %}</th>
                 <th class="text-center">{% trans %}Total Remaining{% endtrans %}</th>
         </tr>
-        <tr class="">
-                <td rowspan="2" class="vertical-middle text-center">{{ report.from_date }}</td>
-                <td rowspan="2" class="vertical-middle text-center">{{ report.to_date }}</td>
-                <td class="text-center">{% trans %}Prepaid{% endtrans %}</td>
-                <td class="text-center">{{ report.prepaid.subtotal }}</td>
-                <td class="text-center">{{ report.prepaid.discount }}</td>
-                <td class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount }}</td>
-                <td class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount }}</td>
-                <td class="text-center">-</td>
-        </tr>
-        <tr class="">
-                
-                <td class="text-center">{% trans %}Postpaid{% endtrans %}</td>
-                <td class="text-center">{{ report.postpaid.subtotal }}</td>
-                <td class="text-center">{{ report.postpaid.discount }}</td>
-                <td class="text-center">{{ report.postpaid.subtotal - report.postpaid.discount }}</td>
-                <td class="text-center">{{ report.postpaid.total_paid }}</td>
-                <td class="text-center">{{ report.postpaid.subtotal - report.postpaid.discount - report.postpaid.total_paid }}</td>
-        </tr>
-        <tr class="">
-                <th colspan="3" class="text-center">{% trans %}Sum{% endtrans %}</th>
-                <th class="text-center">{{ report.prepaid.subtotal + report.postpaid.subtotal }}</th>
-                <th class="text-center">{{ report.prepaid.discount + report.postpaid.discount }}</th>
-                <th class="text-center">{{ report.prepaid.subtotal - report.prepaid.discount + report.postpaid.subtotal - report.postpaid.discount }}</th>
-                <th class="text-center success">{{ report.prepaid.subtotal - report.prepaid.discount + report.postpaid.total_paid }}</th>
-                <th class="text-center danger">{{ report.postpaid.subtotal - report.postpaid.discount - report.postpaid.total_paid }}</th>
+        
+        {% set total_due = 0 %}
+        {% set total_paid = 0 %}
+        
+        {% for customer in report %}
+                {% set total_due = total_due + customer.sale_total_due %}
+                {% set total_paid = total_paid + customer.sale_total_paid %}
+                        
+                <tr class="text-center">
+                        <td >{{ customer.cu_customer_name }}</td>
+                        <td >{{ customer.cu_customer_phone }}</td>
+                        <td >{{ customer.sale_total_due }}</td>
+                        <td >{{ customer.sale_total_paid }}</td>
+                        <td >{{ customer.sale_total_due - customer.sale_total_paid }}</td>
+                </tr>
+        {% endfor %}
+        <tr>
+                <th colspan="2" class="text-center"> {% trans %}Total{% endtrans %}</th>
+                <th class="text-center">{{ total_due }}</th>
+                <th class="text-center">{{ total_paid }}</th>
+                <th class="text-center">{{ total_due - total_paid }}</th>
         </tr>
 </table>
 {% else %}
@@ -81,7 +73,6 @@
         </tr>
 </table>
 {% endif %}
-            
             
             <div class="print-control">
                 <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">{% trans %}Print{% endtrans %}</a>
