@@ -1489,7 +1489,7 @@ $(document).ready(function(){
         
         if(!isValid) return isValid;
         
-        var url = '/app_dev.php/report/view';
+        var url = '/report/view';
         var btn = $(this);
         btn.button('loading');
         $.ajax({
