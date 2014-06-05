@@ -64,23 +64,29 @@ class CustomerController extends Controller //implements AuthenticatedController
     }
     
     public function prepaidAction(Request $request, Customer $customer) {
+        
+        $user = $this->getUser();
+        
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
         $countPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(s) AS total_sales')
             ->from('istoregomlaphoneBundle:Sale', 's')
+            ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('cu.id=?1')
-            ->setParameter(1, $customer->getId())
+            ->andWhere('po.id IS NULL')
             ->andWhere('st.id=?2')
-            ->setParameter(2, 1)
+            ->setParameter(1, $customer->getId())
+            ->setParameter(2, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
     
         $paginatorPrepaid = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s , cu , SUM(i.item_sell_price) as s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
+            ->leftJoin('istoregomlaphoneBundle:Postpaid', 'po' , 'WITH' , 'po.postpaid_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Customer', 'cu' , 'WITH' , 's.sale_customer_id=cu.id')
             ->join('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_sale_id=s.id')
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
@@ -89,9 +95,10 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('cu.id=?1')
-            ->setParameter(1, $customer->getId())
+            ->andWhere('po.id IS NULL')
             ->andWhere('st.id=?2')
-            ->setParameter(2, 1)
+            ->setParameter(1, $customer->getId())
+            ->setParameter(2, $user->getStoreId())
             ->groupBy('s.id')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
@@ -113,6 +120,9 @@ class CustomerController extends Controller //implements AuthenticatedController
     
     
     public function postpaidAction(Request $request, Customer $customer) {
+        
+        $user = $this->getUser();
+        
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
         $countPostpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
@@ -123,7 +133,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->where('s.sale_customer_id=?1')
             ->setParameter(1, $customer->getId())
             ->andWhere('st.id=?2')
-            ->setParameter(2, 1)
+            ->setParameter(2, $user->getStoreId())
             //->groupBy('s.id')
             ->getQuery()
             ->getScalarResult();
@@ -140,7 +150,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->where('cu.id=?1')
             ->setParameter(1, $customer->getId())
             ->andWhere('st.id=?2')
-            ->setParameter(2, 1)
+            ->setParameter(2, $user->getStoreId())
             ->groupBy('s.id')
             ->orderBy('s.id', 'DESC')
             ->getQuery()
