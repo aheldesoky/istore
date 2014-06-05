@@ -765,7 +765,7 @@ $(document).ready(function(){
                         event.stopPropagation();
                         window.open(this.href, '_blank');
                     }).trigger('click');
-                    //window.location.reload();
+                    window.location.reload();
                 });
             });
         }
