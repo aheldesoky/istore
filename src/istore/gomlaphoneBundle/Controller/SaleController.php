@@ -446,10 +446,10 @@ class SaleController extends Controller //implements AuthenticatedController
                 $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
                 $customer[0]->setCustomerName($request->request->get('customerName'));
                 //$customer[0]->setCustomerNotes($request->request->get('customerNotes'));
-                $customerStore = $this->getDoctrine()
-                    ->getRepository('istoregomlaphoneBundle:Store')
-                    ->find($user->getStoreId());
-                $customer[0]->setCustomerStore($customerStore);
+                //$customerStore = $this->getDoctrine()
+                //    ->getRepository('istoregomlaphoneBundle:Store')
+                //    ->find($user->getStoreId());
+                $customer[0]->setCustomerStore($user->getStoreId());
                 $entityManager->persist($customer[0]);
                 $entityManager->flush();
             }

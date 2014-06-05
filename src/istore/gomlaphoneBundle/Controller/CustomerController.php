@@ -199,10 +199,10 @@ class CustomerController extends Controller //implements AuthenticatedController
             $customer->setCustomerName($request->request->get('customerName'));
             $customer->setCustomerPhone($request->request->get('customerPhone'));
             //$customer->setCustomerNotes($request->request->get('customerNotes'));
-            $customerStore = $this->getDoctrine()
-                    ->getRepository('istoregomlaphoneBundle:Store')
-                    ->find($user->getStoreId());
-            $customer->setCustomerStore($customerStore);
+            //$customerStore = $this->getDoctrine()
+            //        ->getRepository('istoregomlaphoneBundle:Store')
+            //        ->find($user->getStoreId());
+            $customer->setCustomerStore($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customer);
             $entityManager->flush();
