@@ -31,7 +31,7 @@ class SaleController extends Controller //implements AuthenticatedController
 
     public function indexAction(Request $request)
     {
-        
+        $user = $this->getUser();
         //$language = $request->query->get('lang');
         //$request->setLocale($language);
         
@@ -284,6 +284,9 @@ class SaleController extends Controller //implements AuthenticatedController
     }
     
     public function viewAddPaymentAction(Request $request){
+        
+        $user = $this->getUser();
+        
         $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s AS sale , c AS customer , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
@@ -320,6 +323,8 @@ class SaleController extends Controller //implements AuthenticatedController
     }
     
     public function addPaymentAction(Request $request, $id){
+        
+        $user = $this->getUser();
         
         $entityManager = $this->getDoctrine()->getManager();
         
@@ -372,6 +377,8 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function viewPaymentsAction(Request $request){
         
+        $user = $this->getUser();
+        
         $sale = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s AS sale , c AS customer , SUM(i.item_sell_price) AS s_sale_total')
             ->from('istoregomlaphoneBundle:Sale', 's')
@@ -418,6 +425,9 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function addAction(Request $request) {
 //var_dump($request->request);die;
+        
+        $user = $this->getUser();
+        
         if ($request->getMethod() == 'POST') {
             
             $entityManager = $this->getDoctrine()->getManager();
@@ -512,7 +522,7 @@ class SaleController extends Controller //implements AuthenticatedController
     }
     
     public function editAction(Request $request , $id){
-        
+        $user = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
         
         $sale = $entityManager->createQueryBuilder()
@@ -614,6 +624,7 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function refundPaymentAction(Request $request, Postpaid $postpaid)
     {
+        $user = $this->getUser();
         if (!$postpaid) {
             throw $this->createNotFoundException('No postpaid payment found');
         }
@@ -738,8 +749,8 @@ class SaleController extends Controller //implements AuthenticatedController
     }
     
     function refundAction(Request $request , Sale $sale) {
-        
         try{
+            $user = $this->getUser();
             if (!$sale) {
                 throw $this->createNotFoundException('No sale found');
             }
@@ -786,6 +797,7 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function confirmDiscountAction(Request $request , Sale $sale){
         try{
+            $user = $this->getUser();
             if (!$sale) {
                 throw $this->createNotFoundException('No sale found');
             }
@@ -804,6 +816,7 @@ class SaleController extends Controller //implements AuthenticatedController
     
     public function mailerAction($name)
     {
+        $user = $this->getUser();
         $message = \Swift_Message::newInstance()
             ->setSubject('Hello Email')
             ->setFrom('notifications@istorems.com')
