@@ -765,7 +765,7 @@ $(document).ready(function(){
                         event.stopPropagation();
                         window.open(this.href, '_blank');
                     }).trigger('click');
-                    window.location.reload();
+                    window.location.reload(true);
                 });
             });
         }
@@ -1651,6 +1651,10 @@ $(document).ready(function(){
         $('.table-empty-row').addClass('hidden');
         clearItem();
         $('#alert-message').html(alertSuccessMessage(lang['Item added to list.']));
+        
+        $('#itemSerial').closest('.form-group').removeClass('has-success').removeClass('has-error');
+        $('.alert-serial-sale').removeClass('alert-danger').removeClass('alert-success').addClass('alert-info');
+        
         globals.itemListRequired = new Array();
         $.each(globals.itemList , function (index , value){
             var requiredItem = {
@@ -2198,7 +2202,7 @@ $(document).ready(function(){
             });
             
             $('#tabsbulk .finish').click(function() {
-                window.location.reload();
+                window.location.reload(true);
             });
             
             $('.tabsitem').bootstrapWizard({
