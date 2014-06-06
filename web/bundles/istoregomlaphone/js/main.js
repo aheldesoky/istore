@@ -888,6 +888,7 @@ $(document).ready(function(){
     });
     
     $('.alert-serial-sale #itemSerial').keypress(function(e){
+        e.preventDefault();
         if ( e.which == 13 ) 
             $('#item-serial-sale').click();
     })//.focusout(function(){
