@@ -752,7 +752,7 @@ class ReportController extends Controller //implements AuthenticatedController
             
             $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('sp , 
-                    SUM(t.transaction_total_due) AS transaction_total_due ,
+                    SUM(t.transaction_total_due-t.transaction_discount) AS transaction_total_due ,
                     SUM(t.transaction_total_paid) AS transaction_total_paid ')
                 ->from('istoregomlaphoneBundle:Supplier', 'sp')
                 ->leftJoin('istoregomlaphoneBundle:Transaction', 't', 'WITH', 't.transaction_supplier=sp.id')
@@ -785,7 +785,7 @@ class ReportController extends Controller //implements AuthenticatedController
             
             $reportQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('cu , 
-                    SUM(s.sale_total_price) AS sale_total_due ,
+                    SUM(s.sale_total_price-s.sale_discount) AS sale_total_due ,
                     SUM(s.sale_total_paid) AS sale_total_paid ')
                 ->from('istoregomlaphoneBundle:Customer', 'cu')
                 ->leftJoin('istoregomlaphoneBundle:Sale', 's', 'WITH', 's.sale_customer_id=cu.id')
