@@ -888,9 +888,10 @@ $(document).ready(function(){
     });
     
     $('.alert-serial-sale #itemSerial').keypress(function(e){
-        e.preventDefault();
-        if ( e.which == 13 ) 
+        if ( e.which == 13 ) {
+            e.preventDefault();
             $('#item-serial-sale').click();
+        }
     })//.focusout(function(){
         //$('#item-serial-sale').click();
     //});
