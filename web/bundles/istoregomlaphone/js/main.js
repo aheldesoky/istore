@@ -2028,6 +2028,20 @@ $(document).ready(function(){
                 transactionInfo.discount = $('.tab-pane.active').find('#transactionDiscount').val();
                 transactionInfo.paidAmount = $('.tab-pane.active').find('#transactionPaidAmount').val();
                 transactionInfo.date = $('.tab-pane.active').find('#transactionDate').val();
+                
+                var transactionTotalDue = $('.tab-pane.active').find('#transactionTotalDue');
+                var transactionDiscount = $('.tab-pane.active').find('#transactionDiscount');
+                
+                if( !globals.isPositiveInteger(transactionInfo.discount) ){
+                    $(transactionDiscount).closest('.form-group').addClass('has-error');
+                    $(transactionDiscount).next('.transaction-error').html(lang['Discount is invalid.']).show();
+                    return false;
+                } else if ( transactionInfo.discount > parseInt($(transactionTotalDue).val()) ){
+                    $(transactionDiscount).closest('.form-group').addClass('has-error');
+                    $(transactionDiscount).next('.transaction-error').html(lang['Discount is invalid.']).show();
+                    return false;
+                }
+                
                 globals.transaction.info = transactionInfo;
                 //console.log(globals.transaction);
                 
@@ -2114,6 +2128,19 @@ $(document).ready(function(){
                 transactionInfo.id = $('.tab-pane.active').find('#transactionId').val();
                 transactionInfo.discount = $('.tab-pane.active').find('#transactionDiscount').val();
                 transactionInfo.date = $('.tab-pane.active').find('#transactionDate').val();
+                var transactionTotalDue = $('.tab-pane.active').find('#transactionTotalDue');
+                var transactionDiscount = $('.tab-pane.active').find('#transactionDiscount');
+                
+                if( !globals.isPositiveInteger(transactionInfo.discount) ){
+                    $(transactionDiscount).closest('.form-group').addClass('has-error');
+                    $(transactionDiscount).next('.transaction-error').html(lang['Discount is invalid.']).show();
+                    return false;
+                } else if ( transactionInfo.discount > parseInt($(transactionTotalDue).val()) ){
+                    $(transactionDiscount).closest('.form-group').addClass('has-error');
+                    $(transactionDiscount).next('.transaction-error').html(lang['Discount is invalid.']).show();
+                    return false;
+                }
+                
                 globals.transaction.info = transactionInfo;
                 
                 var btn = $(this);
