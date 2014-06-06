@@ -47,19 +47,20 @@
 	</div>
 </div>
 <!-- Delete Confirmation modal -->
-<div class="modal fade bs-modal-sm" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
-    <div class="modal-dialog modal-sm">
+<div class="modal fade bs-modal-md" tabindex="-1" id="deleteConfirmation" role="dialog" aria-labelledby="DeleteConfirmationModal" aria-hidden="true">
+    <div class="modal-dialog modal-md">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Delete Confirmation</h4>
+                <h4 class="modal-title">{% trans %}Delete Confirmation{% endtrans %}</h4>
             </div>
             <div class="modal-body">
-                Are you sure you want to delete <label id="entityName"></label>?
+                {% trans %}Are you sure you want to delete {% endtrans %}<label id="entityName"></label>?
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">Cancel</button>
-                <a href="" class="btn btn-danger btn-sm btn-delete-confirm">Delete</a>
+                <button type="button" class="btn btn-default btn-sm" data-dismiss="modal">{% trans %}Cancel{% endtrans %}</button>
+                <a href="#" class="btn btn-danger btn-sm btn-delete-confirm">{% trans %}Delete{% endtrans %}</a>
+                <input type="hidden" id="entityId" name="entityId">
             </div>
         </div>
     </div>

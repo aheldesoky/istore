@@ -248,19 +248,6 @@ class CustomerController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function deleteAction(Request $request, Customer $customer)
-    {
-        
-        if (!$customer) {
-            throw $this->createNotFoundException('No customer found');
-        }
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->remove($customer);
-        $entityManager->flush();
-
-        return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
-    }
-    
     public function findAction(Request $request)
     {
         //echo $request->request->get('serial');die;
@@ -359,5 +346,28 @@ var_dump($customer);die;
     //var_dump($category);die;
         return new JsonResponse(array('error' => $error , 'customer' => $customer[0]));
         
+    }
+    
+    public function deleteAction(Request $request, Customer $customer)
+    {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        try{
+            if (!$customer) {
+                throw $this->createNotFoundException('No customer found');
+            }
+            $entityManager = $this->getDoctrine()->getManager();
+            $entityManager->remove($customer);
+            $entityManager->flush();
+
+            return new JsonResponse(array('error' => 0 , 'message' => 'Customer has been successfully deleted'));
+        } catch (DBALException $e){
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete customer that already has transactions'));
+        }
     }
 }

@@ -11,7 +11,7 @@
                         {% if filter|length %}
                         <a href="/bulk" class="btn btn-warning btn-md col-lg-offset-8">{% trans %}Return to all data{% endtrans %}</a>
                         {% endif %}
-                        <a href="#" class="btn btn-warning btn-md btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-8{% endif %}">{% trans %}Search{% endtrans %}</a>
+                        <!-- <a href="#" class="btn btn-warning btn-md btn-bulk-filter-modal {% if filter|length == 0 %}col-lg-offset-8{% endif %}">{% trans %}Search{% endtrans %}</a> -->
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_bulks }}) {% trans %}bulks{% endtrans %}</span>
 		</h4>
 	</div>
@@ -41,10 +41,10 @@
 				<td>{{ bulk.s_supplier_name }}</td>
                                 <td>{{ bulk.t_transaction_date.format('Y-m-d') }}</td>
 				<td>
-                                        <a href="/bulk/view/{{bulk.b_id}}" class="btn btn-info btn-sm">{% trans %}View{% endtrans %}</a> - 
-					<a href="/bulk/edit/{{bulk.b_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
+                                        <a href="/bulk/view/{{bulk.b_id}}" class="btn btn-info btn-sm">{% trans %}View{% endtrans %}</a>
+					<!-- - <a href="/bulk/edit/{{bulk.b_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> -->
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="bulk:{{bulk.b_id}}:{{ bulk.br_brand_name }} {{ bulk.m_model_name }} {{ bulk.co_color_name }}  {{ bulk.m_model_number }}">{% trans %}Delete{% endtrans %}</a>
+                                        <!-- - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="bulk:{{bulk.b_id}}:{{ bulk.br_brand_name }} {{ bulk.m_model_name }} {{ bulk.co_color_name }}  {{ bulk.m_model_number }}">{% trans %}Delete{% endtrans %}</a> -->
                                         {% endif %}
 				</td>
 			</tr>
@@ -60,7 +60,7 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a>
+		<!-- <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a> -->
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>

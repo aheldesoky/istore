@@ -176,7 +176,7 @@ class SupplierController extends Controller //implements AuthenticatedController
 
             return new JsonResponse(array('error' => 0 , 'message' => 'Supplier has been successfully deleted'));
         } catch (DBALException $e){
-            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete supplier that already has bulk'));
+            return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete supplier that already has transactions'));
         }
     }
 }

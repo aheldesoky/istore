@@ -166,13 +166,20 @@ $(document).ready(function(){
     }).on('click' , '.btn-add-trans-payment' , function(e){
         e.preventDefault();
         var element = $('#paymentAmount');
-        if(!validPostpaidAmount($(element))){
+        if(!validPaymentAmount($(element))){
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
             $(element).focus();
         } else {
             $('label#paidAmount').html($(element).val());
             $('#confirmPaymentModal').modal('show');
         }
+    
+    }).on('keypress' , '#paymentAmount' , function(e){
+        if(e.which == 13){
+            e.preventDefault();
+            $('.btn-add-trans-payment').click();
+        }
+        
     }).on('click' , '.btn-confirm-trans-payment' , function(e){
         e.preventDefault();
         var element = $('#paymentAmount');
@@ -191,10 +198,10 @@ $(document).ready(function(){
                         $('.payment-amount-error').html(lang['Amount successfully added']);
                         $('#alert-message').html(alertSuccessMessage(lang['Payment has been successfully added to transaction #']+transactionId));
                         $(element).val(0);
-                        $('#label-transaction-paid').html(response.total_paid + ' L.E.');
+                        $('#label-transaction-paid').html(response.total_paid + lang[' L.E.']);
                         $('#label-transaction-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
-                        $('tr.transaction-'+transactionId+' td.total-paid').html(response.total_paid + lang[' L.E.']);
-                        //$('tr.transaction-'+transactionId+' td.total-remaining').html(response.total_due - response.total_paid + lang[' L.E.']);
+                        $('tr.transaction-'+transactionId+' td.total-paid').html(response.total_paid);
+                        $('tr.transaction-'+transactionId+' td.remaining-amount').html(response.total_due - response.discount - response.total_paid );
                         $('#confirmPaymentModal').modal('hide');
                         $('#addTransactionPayment').modal('hide');
                     } else {
@@ -483,6 +490,33 @@ $(document).ready(function(){
             passedValidation = false;
         } else {
             $('.postpaid-amount-error').html('');
+        }
+        if(!passedValidation)
+            $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
+        else
+            $(element).closest('.form-group').removeClass('has-error').addClass('has-success');
+        return passedValidation;
+    }
+    
+    // valid transaction payment amount
+    function validPaymentAmount(element){
+        var transactionTotal = $('#transactionTotal').val();
+        var transactionDiscount = $('#transactionDiscount').val();
+        var transactionPaid = $('#transactionPaid').val();
+        var transactionRemaining = transactionTotal - transactionDiscount - transactionPaid;
+        var passedValidation = true;
+        
+        if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) > transactionRemaining){
+            $('.payment-amount-error').html(lang['Amount can not be greater than the remaining value']);
+            passedValidation = false;
+        } else if(/^\d+$/.test($(element).val()) && parseInt($(element).val()) <= 0 ){
+            $('.payment-amount-error').html(lang['Amount must be greater than zero']);
+            passedValidation = false;
+        } else if(!/^\d+$/.test($(element).val())){
+            $('.payment-amount-error').html(lang['Amount must be a number']);
+            passedValidation = false;
+        } else {
+            $('.payment-amount-error').html('');
         }
         if(!passedValidation)
             $(element).closest('.form-group').removeClass('has-success').addClass('has-error');
@@ -1408,11 +1442,11 @@ $(document).ready(function(){
                     .closest('.form-group').removeClass('has-error').addClass('has-success');
             }
     });
-    $('input#supplierName').keypress(function(){supplierValidator.element('#supplierName');});
-    $('input#supplierPhone').keypress(function(){supplierValidator.element('#supplierPhone');});
-    $('input#supplierEmail').keypress(function(){supplierValidator.element('#supplierEmail');});
-    $('input#supplierGovernorate').keypress(function(){supplierValidator.element('#supplierGovernorate');});
-    $('input#supplierAddress').keypress(function(){supplierValidator.element('#supplierAddress');});
+    $('input#supplierName').keyup(function(){supplierValidator.element('#supplierName');});
+    $('input#supplierPhone').keyup(function(){supplierValidator.element('#supplierPhone');});
+    $('input#supplierEmail').keyup(function(){supplierValidator.element('#supplierEmail');});
+    $('input#supplierGovernorate').keyup(function(){supplierValidator.element('#supplierGovernorate');});
+    $('input#supplierAddress').keyup(function(){supplierValidator.element('#supplierAddress');});
 
     // View Report
     $('#viewReport').click(function(e){
@@ -1574,6 +1608,7 @@ $(document).ready(function(){
     }
 
     function alertSuccessMessage(message){
+        $('body').animate({scrollTop:'0px'});
         alertBox =  '<div class="alert alert-success">';
         alertBox += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
         alertBox += message;
@@ -1582,6 +1617,7 @@ $(document).ready(function(){
     }
 
     function alertWarningMessage(message){
+        $('body').animate({scrollTop:'0px'});
         alertBox =  '<div class="alert alert-warning">';
         alertBox += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
         alertBox += message;
@@ -1590,6 +1626,7 @@ $(document).ready(function(){
     }
 
     function alertInfoMessage(message){
+        $('body').animate({scrollTop:'0px'});
         alertBox =  '<div class="alert alert-info">';
         alertBox += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
         alertBox += message;
@@ -1598,6 +1635,7 @@ $(document).ready(function(){
     }
 
     function alertDangerMessage(message){
+        $('body').animate({scrollTop:'0px'});
         alertBox =  '<div class="alert alert-danger">';
         alertBox += '<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>';
         alertBox += message;

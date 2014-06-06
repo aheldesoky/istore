@@ -133,7 +133,7 @@
                                         <input type="hidden" value="{{ item.i_id }}" id="item-{{ item.i_id }}">
                                     </button>
                                     {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                     - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}">{% trans %}Delete{% endtrans %}</a>
+                                     <!-- - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} {{ item.co_color_name }} {{ item.m_model_number }}">{% trans %}Delete{% endtrans %}</a>-->
                                     {% endif %}
 				</td>
 			</tr>
@@ -149,11 +149,11 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-                {% if bulk|length %}
+                {#% if bulk|length %}
                 <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Bulk{% endtrans %}</a>
                 {% else %}
                 <a href="/bulk/add" class="btn btn-success btn-lg">+ {% trans %}Add New Items{% endtrans %}</a>
-                {% endif %}
+                {% endif %#}
                 <div id="editModalContainer"></div>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">

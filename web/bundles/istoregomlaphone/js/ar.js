@@ -71,4 +71,8 @@ var lang = {
     "Payment has been successfully added to transaction #": "تم إضافة دفعة جديدة للتعامل رقم ",
     "Customer is invalid": "من فضلك ادخل بيانات العميل بشكل صحيح",
     "Customer phone can not be empty": "من فضلك ادخل رقم هاتف العميل",
+    "Customer has been successfully deleted": "تم حذف العميل بنجاح",
+    "Supplier has been successfully deleted": "تم حذف المورد بنجاح",
+    "Can not delete customer that already has transactions": "لا يمكن حذف العميل لأنه مرتبط بتعاملات",
+    "Can not delete supplier that already has transactions": "لا يمكن حذف المورد لأنه مرتبط بتعاملات",
 };

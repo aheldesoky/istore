@@ -115,6 +115,7 @@ class StockController extends Controller //implements AuthenticatedController
         //var_dump($request->request);
 
         if( $request->getMethod() == 'POST'){
+            //var_dump($filters);die;
             //Date Range filter
             $dateFilter = null;
             $rangeDate = $request->request->get('stockDateRange');
@@ -201,13 +202,16 @@ class StockController extends Controller //implements AuthenticatedController
             $countQuery = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('COUNT(i.id) AS total_items')
                 ->from('istoregomlaphoneBundle:Item', 'i')
+                ->leftJoin('istoregomlaphoneBundle:SaleItem', 'si' , 'WITH' , 'si.saleitem_item_id=i.id')
+                ->leftJoin('istoregomlaphoneBundle:Sale', 's' , 'WITH' , 'si.saleitem_sale_id=s.id')
                 ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
                 ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
                 ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
                 ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
                 ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
                 ->join('istoregomlaphoneBundle:Transaction', 't' , 'WITH' , 'b.bulk_transaction=t.id')
-                ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
+                ->join('istoregomlaphoneBundle:Supplier', 'sp' , 'WITH' , 't.transaction_supplier=sp.id')
+                ->leftJoin('istoregomlaphoneBundle:WarrantyItem', 'wi' , 'WITH' , 'wi.warrantyitem_item_id=i.id')
                 ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 'm.model_store_id=st.id')
                 ->where('st.id=?1')
                 ->setParameter(1, $user->getStoreId());
@@ -219,7 +223,7 @@ class StockController extends Controller //implements AuthenticatedController
                 $countQuery->andWhere('c.id=?2')->setParameter(2, $filters['category']);
 
             if($filters['supplier'])
-                $countQuery->andWhere('s.id=?3')->setParameter(3, $filters['supplier']);
+                $countQuery->andWhere('sp.id=?3')->setParameter(3, $filters['supplier']);
 
             if($filters['serial'])
                 $countQuery->andWhere('i.item_serial=?4 OR m.model_serial=?4')->setParameter(4, $filters['serial']);
@@ -271,7 +275,7 @@ class StockController extends Controller //implements AuthenticatedController
                 $paginatorQuery->andWhere('c.id=?2')->setParameter(2, $filters['category']);
 
             if($filters['supplier'])
-                $paginatorQuery->andWhere('s.id=?3')->setParameter(3, $filters['supplier']);
+                $paginatorQuery->andWhere('sp.id=?3')->setParameter(3, $filters['supplier']);
 
             if($filters['serial'])
                 $paginatorQuery->andWhere('i.item_serial=?4 OR m.model_serial=?4')->setParameter(4, $filters['serial']);
@@ -296,6 +300,7 @@ class StockController extends Controller //implements AuthenticatedController
             
 //echo $paginatorQuery->getQuery()->getSql();die;
             $paginator = $paginatorQuery//->orderBy($column , $sortType)
+                ->orderBy('t.transaction_date', 'DESC')
                 ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*20)
                 ->setMaxResults(20)
                 ->getQuery()

@@ -733,6 +733,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
         $entityManager->flush();
         
         $totalDue = $transaction->getTransactionTotalDue();
+        $discount = $transaction->getTransactionDiscount();
         $totalPaid = $transactionTotalPaid;
         
 //var_dump($transaction);die;
@@ -740,6 +741,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
         return new JsonResponse(array(
             'error' => 0 , 
             'total_due' => $totalDue , 
+            'discount' => $discount,
             'total_paid' => $totalPaid
         ));
     }
