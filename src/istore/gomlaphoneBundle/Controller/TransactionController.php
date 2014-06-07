@@ -49,7 +49,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
             case 'supplier': $column = 's.supplier_name'; break;
             case 'total_due': $column = 't.transaction_total_due'; break;
             case 'discount': $column = 't.transaction_discount'; break;
-            case 'paid_amount': $column = 't.transaction_paid_amount'; break;
+            case 'paid_amount': $column = 't.transaction_total_paid'; break;
             case 'date': $column = 't.transaction_date'; break;
         }
         //echo $sortColumn.' by '.$sortType;die;

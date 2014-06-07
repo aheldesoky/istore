@@ -34,7 +34,8 @@ $(document).ready(function(){
         }
         
         var controller = $('#controller').val();
-        var url = '/'+controller;
+        //var url = '/'+controller;
+        var url = window.location.pathname;
         
         if(globals.currentPage>0)
             url += '?page='+globals.currentPage;
