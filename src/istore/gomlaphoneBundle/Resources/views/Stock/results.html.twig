@@ -80,7 +80,7 @@
                                         <input type="hidden" value="{{ item.i_id }}" id="item-{{ item.i_id }}">
                                     </button>
                                     {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                     - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a>
+                                    <!-- - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="item:{{item.i_id}}:{{ item.br_brand_name }} {{ item.m_model_name }} #{{ item.i_item_serial }}">{% trans %}Delete{% endtrans %}</a> -->
                                     {% endif %}
 				</td>
 			</tr>
