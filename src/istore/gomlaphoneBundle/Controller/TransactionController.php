@@ -50,6 +50,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
             case 'total_due': $column = 't.transaction_total_due'; break;
             case 'discount': $column = 't.transaction_discount'; break;
             case 'paid_amount': $column = 't.transaction_total_paid'; break;
+            case 'remaining_amount': $column = 'remaining_amount'; break;
             case 'date': $column = 't.transaction_date'; break;
         }
         //echo $sortColumn.' by '.$sortType;die;
@@ -282,7 +283,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('t , s , st')
+            ->select('t , s , st , (t.transaction_total_due - t.transaction_total_paid) AS remaining_amount')
             ->from('istoregomlaphoneBundle:Transaction', 't')
             ->join('istoregomlaphoneBundle:Supplier', 's' , 'WITH' , 't.transaction_supplier=s.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 't.transaction_store=st.id')

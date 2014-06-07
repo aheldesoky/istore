@@ -66,7 +66,7 @@
 				<th id="total_due" class="{% if sort_column=='total_due' and sort_type=='asc' %}sortAsc{% elseif sort_column=='total_due' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Total Due{% endtrans %}</th>
 				<th id="discount" class="{% if sort_column=='discount' and sort_type=='asc' %}sortAsc{% elseif sort_column=='discount' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Discount{% endtrans %}</th>
                                 <th id="paid_amount" class="{% if sort_column=='paid_amount' and sort_type=='asc' %}sortAsc{% elseif sort_column=='paid_amount' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Paid Amount{% endtrans %}</th>
-                                <th id="remaining_amount" class="">{% trans %}Remaining{% endtrans %}</th>
+                                <th id="remaining_amount" class="{% if sort_column=='remaining_amount' and sort_type=='asc' %}sortAsc{% elseif sort_column=='remaining_amount' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Remaining{% endtrans %}</th>
 				<th id="date" class="{% if sort_column=='date' and sort_type=='asc' %}sortAsc{% elseif sort_column=='date' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Date{% endtrans %}</th>
 				<th>{% trans %}Action{% endtrans %}</th>
 			</tr>
