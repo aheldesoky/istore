@@ -31,8 +31,6 @@
                                     <label id="supplierPhone" class="col-sm-12 control-label">{{ supplier.supplierPhone }}</label>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-md-6">
                             <div class="form-group">
                                 <label for="supplierAddress" class="col-sm-5 control-label">{% trans %}Address{% endtrans %} :</label>
                                 <div class="col-sm-6">
@@ -40,11 +38,31 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="supplierTotalDue" class="col-sm-5 control-label">{% trans %}Total Due{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="supplierTotalDue" class="col-sm-12 control-label">{{ transactionSummary.transaction_total_due }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplierTotalPaid" class="col-sm-5 control-label">{% trans %}Total Paid{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="supplierTotalPaid" class="col-sm-12 control-label">{{ transactionSummary.transaction_total_paid }}</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="supplierTotalRemaining" class="col-sm-5 control-label">{% trans %}Total Remaining{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <label id="supplierTotalRemaining" class="col-sm-12 control-label">{{ transactionSummary.transaction_total_due - transactionSummary.transaction_total_paid }}</label>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 		<table class="table table-striped table-view">
 			<tr>
-                                <th id="supplier" class="{% if sort_column=='supplier' and sort_type=='asc' %}sortAsc{% elseif sort_column=='supplier' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Supplier{% endtrans %}</th>
+                                <!-- <th id="supplier" class="{% if sort_column=='supplier' and sort_type=='asc' %}sortAsc{% elseif sort_column=='supplier' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Supplier{% endtrans %}</th> -->
 				<th id="total_due" class="{% if sort_column=='total_due' and sort_type=='asc' %}sortAsc{% elseif sort_column=='total_due' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Total Due{% endtrans %}</th>
 				<th id="discount" class="{% if sort_column=='discount' and sort_type=='asc' %}sortAsc{% elseif sort_column=='discount' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Discount{% endtrans %}</th>
                                 <th id="paid_amount" class="{% if sort_column=='paid_amount' and sort_type=='asc' %}sortAsc{% elseif sort_column=='paid_amount' and sort_type=='desc' %}sortDesc{% else %}unsorted{% endif %}">{% trans %}Paid Amount{% endtrans %}</th>
@@ -55,7 +73,7 @@
                     {% if transactions|length %}
                     {% for transaction in transactions %}
 			<tr class="transaction-{{transaction.t_id}}">
-				<td>{{ transaction.s_supplier_name }}</td>
+				<!-- <td>{{ transaction.s_supplier_name }}</td> -->
 				<td>{{ transaction.t_transaction_total_due }}</td>
 				<td class="discount">{{ transaction.t_transaction_discount }}</td>
 				<td class="total-paid">{{ transaction.t_transaction_total_paid }}</td>

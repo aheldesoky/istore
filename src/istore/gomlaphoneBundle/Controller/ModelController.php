@@ -45,8 +45,9 @@ class ModelController extends Controller //implements AuthenticatedController
         switch ($sortColumn){
             case 'id': $column = 'm.id'; break;
             case 'serial': $column = 'm.model_serial'; break;
-            case 'brand': $column = 'm.model_brand'; break;
-            case 'model': $column = 'm.model_model'; break;
+            case 'brand': $column = 'br.brand_name'; break;
+            case 'model_name': $column = 'm.model_name'; break;
+            case 'model_number': $column = 'm.model_number'; break;
             case 'category': $column = 'c.category_name'; break;
         }
         //echo $sortColumn.' by '.$sortType;die;

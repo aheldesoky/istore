@@ -293,6 +293,22 @@ class TransactionController extends Controller //implements AuthenticatedControl
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
+        
+        $transactionSummary = $this->getDoctrine()->getManager()->createQueryBuilder()
+                ->select('SUM(t.transaction_total_due-t.transaction_discount) AS transaction_total_due ,
+                          SUM(t.transaction_total_paid) AS transaction_total_paid ')
+                ->from('istoregomlaphoneBundle:Supplier', 'sp')
+                ->leftJoin('istoregomlaphoneBundle:Transaction', 't', 'WITH', 't.transaction_supplier=sp.id')
+                ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 't.transaction_store=st.id')
+                ->where('sp.id=?1')
+                ->andWhere('st.id=?2')
+                ->setParameter(1, $supplier->getId())
+                ->setParameter(2, $user->getStoreId())
+                ->groupBy('sp.id')
+                ->orderBy('sp.id', 'ASC')
+                ->getQuery()
+                ->getScalarResult();
+//var_dump($transactionSummary);die;
 //var_dump($paginator);die;
         //$paginator = new Paginator($query, $fetchJoinCollection = true);
         
@@ -303,6 +319,7 @@ class TransactionController extends Controller //implements AuthenticatedControl
         return $this->render('istoregomlaphoneBundle:Transaction:index.html.twig', array(
             'supplier'      => $supplier,
             'transactions'      => $paginator,
+            'transactionSummary' => $transactionSummary[0],
             'total_transactions'=> $count['total_transactions'],
             'total_pages'     => ceil($count['total_transactions']/10),
             'current_page'    => $currentPage,
