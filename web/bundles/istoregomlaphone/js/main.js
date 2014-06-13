@@ -2070,6 +2070,7 @@ $(document).ready(function(){
                 
                 var transactionTotalDue = $('.tab-pane.active').find('#transactionTotalDue');
                 var transactionDiscount = $('.tab-pane.active').find('#transactionDiscount');
+                var transactionPaidAmount = $('.tab-pane.active').find('#transactionPaidAmount');
                 
                 if( !globals.isPositiveInteger(transactionInfo.discount) ){
                     $(transactionDiscount).closest('.form-group').addClass('has-error');
@@ -2078,6 +2079,16 @@ $(document).ready(function(){
                 } else if ( transactionInfo.discount > parseInt($(transactionTotalDue).val()) ){
                     $(transactionDiscount).closest('.form-group').addClass('has-error');
                     $(transactionDiscount).next('.transaction-error').html(lang['Discount is invalid.']).show();
+                    return false;
+                }
+                
+                if( !globals.isPositiveInteger(transactionPaidAmount) ){
+                    $(transactionPaidAmount).closest('.form-group').addClass('has-error');
+                    $(transactionPaidAmount).next('.transaction-error').html(lang['Amount Paid is invalid.']).show();
+                    return false;
+                } else if ( transactionInfo.paidAmount > parseInt($(transactionTotalDue).val() - transactionInfo.discount) ){
+                    $(transactionPaidAmount).closest('.form-group').addClass('has-error');
+                    $(transactionPaidAmount).next('.transaction-error').html(lang['Amount Paid is invalid.']).show();
                     return false;
                 }
                 
@@ -2251,6 +2262,8 @@ $(document).ready(function(){
                     
                 }, onTabShow: function(tab, navigation, index) {
                     //$('.tab-pane.active').find('#bulkSerial').focus();
+                    $('#tabsbulk .tab-pane.bulk.active .tabsitem .tab-pane.item.active #itemSerial').focus();
+                    
                     var $total = navigation.find('li').length;
                     var $current = index+1;
                     var $percent = ($current/$total) * 100;

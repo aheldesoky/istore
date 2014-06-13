@@ -15,22 +15,32 @@
                 <a href="javascript:window.close()" class="btn btn-lg btn-default btn-print">{%trans%}Close{%endtrans%}</a>
             </div>
             <div id="header">{%trans%}INVOICE{%endtrans%}</div>
+            
+            {% if sale.payments|length %}
             <div id="identity">
+                <div id="logo">
+                    
+                </div>
+                <div id="address-postpaid">
+                    
+                </div>
+            </div>
+            {% else %}
+            <div id="identity">
+                <div id="logo">
+                    <img id="image" src="/bundles/istoregomlaphone/img/samsung_logo.png" alt="logo" />
+                </div>
                 <div id="address">
                     <div>{%trans%}Gomla Phone{#sale.st_store_name#}{%endtrans%}</div>
                     <div>{%trans%}Elgaish st, Elarb3een, Suez{#sale.st_store_address#}{%endtrans%}</div>
 
                     <div>{%trans%}Phone{%endtrans%}: {{sale.st_store_phone}}</div>
                 </div>
-                <div id="logo">
-                    <img id="image" src="/bundles/istoregomlaphone/img/samsung_logo.png" alt="logo" />
-                </div>
             </div>
+            {% endif %}
+            
             <div style="clear:both"></div>
             <div id="customer">
-                <div id="customer-title">
-                    {{ sale.c_customer_name }}
-                </div>
                 <table id="meta">
                     <tr>
                         <td class="meta-head">{%trans%}Invoice#{%endtrans%}</td>
@@ -53,6 +63,9 @@
                         <td><div class="due">{{ sale.s_sale_total_price - sale.s_sale_discount }} {%trans%}L.E.{%endtrans%}</div></td>
                     </tr>
                 </table>
+                <div id="customer-title">
+                    {{ sale.c_customer_name }}
+                </div>
             </div>
             <table id="items">
                 <tr>
