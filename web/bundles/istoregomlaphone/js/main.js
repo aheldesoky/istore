@@ -117,12 +117,12 @@ $(document).ready(function(){
                     success: function(response){
                         $('#deleteConfirmation').modal('hide');
                         if(response.error===1){
-                            $('#alert-message').html(alertDangerMessage(response.message));
+                            $('#alert-message').html(alertDangerMessage(lang[response.message]));
                         } else {
                             $('.'+controller+'_'+entityId).remove();
                             var bulkQuantity = $('#bulkQuantity').html();
                             $('#bulkQuantity').html(parseInt(bulkQuantity)-1);
-                            $('#alert-message').html(alertSuccessMessage(response.message));
+                            $('#alert-message').html(alertSuccessMessage(lang[response.message]));
                         }
                     }
             }).always(function () {

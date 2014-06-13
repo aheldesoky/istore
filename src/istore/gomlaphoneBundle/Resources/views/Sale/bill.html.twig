@@ -33,8 +33,9 @@
                 <div id="address">
                     <div>{%trans%}Gomla Phone{#sale.st_store_name#}{%endtrans%}</div>
                     <div>{%trans%}Elgaish st, Elarb3een, Suez{#sale.st_store_address#}{%endtrans%}</div>
+                    <div>{%trans%}Trade ST{%endtrans%}</div>
 
-                    <div>{%trans%}Phone{%endtrans%}: {{sale.st_store_phone}}</div>
+                    <!--<div>{%trans%}Phone{%endtrans%}: {{sale.st_store_phone}}</div>-->
                 </div>
             </div>
             {% endif %}
@@ -146,7 +147,7 @@
             </table>
             <div id="terms">
               <h5>{%trans%}Terms{%endtrans%}</h5>
-              <div>NET 30 Days. Finance Charge of 1.5% will be made on unpaid balances after 30 days.</div>
+              <div>{% trans %}Terms points{% endtrans %}</div>
             </div>
             <div class="print-control">
                 <a href="javascript:window.print()" class="btn btn-lg btn-default btn-print">{%trans%}Print{%endtrans%}</a>

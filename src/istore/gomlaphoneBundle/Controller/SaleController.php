@@ -723,7 +723,7 @@ class SaleController extends Controller //implements AuthenticatedController
         
 //var_dump($sale[0]['items']);die;
 //var_dump($payments);die;
-    
+        /*
         if($first){
             $message = \Swift_Message::newInstance()
                 ->setSubject('Hello Email')
@@ -740,7 +740,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ;
             $this->get('mailer')->send($message);
         }
-        
+        */
         return $this->render('istoregomlaphoneBundle:Sale:bill.html.twig', array(
             'sale'      => $sale[0],
             "action" => "bill",
