@@ -157,7 +157,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
-        
+
         foreach ($paginatorPostpaid as &$temp){
             $postpaid = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('SUM(po.postpaid_amount) AS total_paid')
@@ -177,12 +177,12 @@ class CustomerController extends Controller //implements AuthenticatedController
                 ->where('s.id=?1')
                 ->setParameter(1, $temp['s_id'])
                 ->getQuery()
-                ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
-                ->setMaxResults(10)
+                //->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+                //->setMaxResults(10)
                 ->getSingleResult();
             $temp['s_sale_total'] = $sale['total_sale'];
         }
-//var_dump($paginator);die;
+//var_dump($paginatorPostpaid);die;
         
         return $this->render('istoregomlaphoneBundle:Customer:transactions.html.twig', array(
             'sales'      => $paginatorPostpaid,
