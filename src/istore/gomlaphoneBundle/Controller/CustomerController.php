@@ -361,11 +361,25 @@ var_dump($customer);die;
             if (!$customer) {
                 throw $this->createNotFoundException('No customer found');
             }
-            $entityManager = $this->getDoctrine()->getManager();
-            $entityManager->remove($customer);
-            $entityManager->flush();
+            
+            $sales = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s')
+            ->from('istoregomlaphoneBundle:Sale', 's')
+            ->where('s.sale_customer_id = ?1')
+            ->setParameter(1 , $customer->getId())
+            ->getQuery()
+            ->getScalarResult();
+            
+            if(!count($sales)){
+                $entityManager = $this->getDoctrine()->getManager();
+                $entityManager->remove($customer);
+                $entityManager->flush();
+                return new JsonResponse(array('error' => 0 , 'message' => 'Customer has been successfully deleted'));
+            } else {
+                return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete customer that already has transactions'));
+            }
 
-            return new JsonResponse(array('error' => 0 , 'message' => 'Customer has been successfully deleted'));
+            
         } catch (DBALException $e){
             return new JsonResponse(array('error' => 1 , 'message' => 'Can not delete customer that already has transactions'));
         }

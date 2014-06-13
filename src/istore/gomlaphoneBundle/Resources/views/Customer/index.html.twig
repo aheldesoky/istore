@@ -17,7 +17,7 @@
 			</tr>
                 {% if customers|length %}
 		{% for customer in customers %}
-			<tr>
+			<tr class="customer_{{customer.c_id}}">
                                 <td>{{ customer.c_customer_phone }}</td>
 				<td>{{ customer.c_customer_name }}</td>
                                 <!--<td>{{ customer.c_customer_notes }}</td>-->
