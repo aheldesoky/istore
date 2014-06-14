@@ -18,11 +18,23 @@ body {
   height: 10000px;
   width: 100%;
   background-color: #2b4170; 
-  background: -moz-linear-gradient(top, #3b5998, #2b4170);
+  /*background: -moz-linear-gradient(top, #3b5998, #2b4170);
   background: -ms-linear-gradient(top, #3b5998, #2b4170);
-  background: -webkit-linear-gradient(top, #3b5998, #2b4170);
+  background: -webkit-linear-gradient(top, #3b5998, #2b4170);*/
+  background: url(../img/istore.jpg) no-repeat center center fixed;
+  background-size: cover;
   border: 1px solid #2b4170;
   text-shadow: 0 -1px -1px #1f2f52;
+}
+.login-box{
+    padding-top: 215px;
+}
+.panel-login{
+    opacity: 0.9;
+    background-color: #7b529e;
+    color: white;
+    border-color: #7b529e;
+    border-radius: 25px;
 }
 .login-header{
     color: #fff;

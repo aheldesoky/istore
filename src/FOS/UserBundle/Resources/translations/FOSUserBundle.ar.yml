@@ -20,6 +20,8 @@ security:
         password: "كلمة المرور:"
         remember_me: حفظ البيانات
         submit: تسجيل دخول
+        enterusername: أدخل أسم المستخدم
+        enterpassword: أدخل كلمة المرور
 
 # Profile
 profile:
@@ -90,7 +92,9 @@ layout:
 form:
     group_name: "اسم المجموعة :"
     username: "اسم المستخدم :"
+    name: " الأسم بالكامل:"
     email: "البريد الإلكتروني :" 
+    roles: " دور المستخدم:" 
     current_password: "كلمة المرور الحالية :"
     password: "كلمة المرور :"
     password_confirmation: "تاكيد :"
