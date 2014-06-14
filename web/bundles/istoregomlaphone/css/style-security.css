@@ -35,6 +35,7 @@ body {
     color: white;
     border-color: #7b529e;
     border-radius: 25px;
+    box-shadow: white -20px 40px 80px 10px;
 }
 .login-header{
     color: #fff;
