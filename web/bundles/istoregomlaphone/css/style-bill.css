@@ -1,5 +1,5 @@
 * { margin: 0; padding: 0; }
-body { font: 14px/1.4 Georgia, serif; direction: rtl; }
+body { /*font: 14px/1.4 Georgia, serif;*/ direction: rtl; }
 #page-wrap { width: 800px; margin: 0 auto; padding: 30px;}
 textarea { border: 0; font: 14px Georgia, Serif; overflow: hidden; resize: none; }
 table { border-collapse: collapse; }
