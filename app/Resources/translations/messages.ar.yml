@@ -566,8 +566,11 @@ Search in stock: البحث فى البضاعة
 Enter Model or Item Serial: أدخل كود موديل أو منتج
 
 Brands: الفئات
+Brand List: قائمة الفئات
 Add New Brand: أضافة فئة جديدة
 Add Brand: أضف الفئة
+Edit Brand: تعديل الفئة
+Back to brands: العودة لقائمة الفئات
 Select brand: أختر الفئة
 Search Results: نتائج البحث
 All suppliers: كل الموردين
@@ -580,3 +583,11 @@ New Sale: عملية بيع جديدة
 Entry Date: تاريخ الدخول
 Warranty Date: تاريخ الضمان
 Back to suppliers: العودة للموردين
+
+Color List: قائمة الألوان
+colors: الألوان
+Add New Color: إضافة لون جديد
+Add Color: أضف اللون
+Color Name: أسم اللون
+Back to colors: العودة لقائمة الألوان
+Edit Color: تعديل اللون
