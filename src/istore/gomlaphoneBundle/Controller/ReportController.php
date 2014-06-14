@@ -219,7 +219,9 @@ class ReportController extends Controller //implements AuthenticatedController
                 SUM(CASE WHEN i.item_status=\'sold\' THEN 1 ELSE 0 END) AS sold ,
                 SUM(CASE WHEN i.item_status=\'warranty\' THEN 1 ELSE 0 END) AS warranty ,
                 SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN 1 ELSE 0 END) AS warranty_replaced ,
-                SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count ')
+                SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count ,
+                SUM(i.item_buy_price) AS total_buy_price ,
+                SUM(i.item_sell_price) AS total_sell_price')
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
             ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')

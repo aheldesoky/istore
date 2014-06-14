@@ -8,6 +8,8 @@
                 {% if status == null %}
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Total{% endtrans %}</th>
                 {% endif %}
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Buy Price{% endtrans %}</th>
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Sell Price{% endtrans %}</th>
         </tr>
         
         <tr class="active">
@@ -42,6 +44,9 @@
         {% set total_warranty_replaced = 0 %}
         {% set total = 0 %}
         
+        {% set total_buy = 0 %}
+        {% set total_sell = 0 %}
+        
         {% for model in report %}
                 {% set total_pending_info = total_pending_info + model.pending_info %}
                 {% set total_in_stock = total_in_stock + model.in_stock %}
@@ -49,6 +54,8 @@
                 {% set total_warranty = total_warranty + model.warranty %}
                 {% set total_warranty_replaced = total_warranty_replaced + model.warranty_replaced %}
                 {% set total = total + model.total_count %}
+                {% set total_buy = total_buy + model.total_buy_price %}
+                {% set total_sell = total_sell + model.total_sell_price %}
                         
                 <tr class="text-center">
                         <td >{{ model.m_model_serial }}</td>
@@ -72,6 +79,8 @@
                         {% elseif status == 'warranty_replaced' %}
                             <td class="text-center">{{ model.warranty_replaced }}</td>
                         {% endif %}
+                        <td class="text-center">{{ model.total_buy_price }}</td>
+                        <td class="text-center">{{ model.total_sell_price }}</td>
                 </tr>
         {% endfor %}
         <tr>
@@ -105,9 +114,11 @@
                 {% if status == 'warranty_replaced' %}
                         <th class="text-center">{{ total_warranty_replaced }}</th>
                 {% endif %}
+                        <th class="text-center">{{ total_buy }}</th>
+                        <th class="text-center">{{ total_sell }}</th>
         </tr>
         <tr class="text-center">
-                <td colspan="9">
+                <td colspan="11">
                         <a href="" class="btn btn-info btn-lg hidden" id="exportReportPDF">{% trans %}Export PDF{% endtrans %}</a>
                         <a href="" class="btn btn-info btn-lg" id="printReport" target="_blank">{% trans %}Print{% endtrans %}</a>
                 </td>
