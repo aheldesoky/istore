@@ -220,6 +220,19 @@ class ReportController extends Controller //implements AuthenticatedController
                 SUM(CASE WHEN i.item_status=\'warranty\' THEN 1 ELSE 0 END) AS warranty ,
                 SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN 1 ELSE 0 END) AS warranty_replaced ,
                 SUM(CASE WHEN i.item_status IS NOT NULL THEN 1 ELSE 0 END) AS total_count ,
+                
+                SUM(CASE WHEN i.item_status=\'pending_info\' THEN i.item_buy_price ELSE 0 END) AS pending_info_buy_price ,
+                SUM(CASE WHEN i.item_status=\'in_stock\' THEN i.item_buy_price ELSE 0 END) AS in_stock_buy_price ,
+                SUM(CASE WHEN i.item_status=\'sold\' THEN i.item_buy_price ELSE 0 END) AS sold_buy_price ,
+                SUM(CASE WHEN i.item_status=\'warranty\' THEN i.item_buy_price ELSE 0 END) AS warranty_buy_price ,
+                SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN i.item_buy_price ELSE 0 END) AS warranty_replaced_buy_price ,
+                
+                SUM(CASE WHEN i.item_status=\'pending_info\' THEN i.item_sell_price ELSE 0 END) AS pending_info_sell_price ,
+                SUM(CASE WHEN i.item_status=\'in_stock\' THEN i.item_sell_price ELSE 0 END) AS in_stock_sell_price ,
+                SUM(CASE WHEN i.item_status=\'sold\' THEN i.item_sell_price ELSE 0 END) AS sold_sell_price ,
+                SUM(CASE WHEN i.item_status=\'warranty\' THEN i.item_sell_price ELSE 0 END) AS warranty_sell_price ,
+                SUM(CASE WHEN i.item_status=\'warranty_replaced\' THEN i.item_sell_price ELSE 0 END) AS warranty_replaced_sell_price ,
+                
                 SUM(i.item_buy_price) AS total_buy_price ,
                 SUM(i.item_sell_price) AS total_sell_price')
             ->from('istoregomlaphoneBundle:Model', 'm')

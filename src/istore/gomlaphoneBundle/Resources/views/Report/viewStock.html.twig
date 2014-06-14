@@ -44,6 +44,18 @@
         {% set total_warranty_replaced = 0 %}
         {% set total = 0 %}
         
+        {% set total_pending_info_buy_price = 0 %}
+        {% set total_in_stock_buy_price = 0 %}
+        {% set total_sold_buy_price = 0 %}
+        {% set total_warranty_buy_price = 0 %}
+        {% set total_warranty_replaced_buy_price = 0 %}
+        
+        {% set total_pending_info_sell_price = 0 %}
+        {% set total_in_stock_sell_price = 0 %}
+        {% set total_sold_sell_price = 0 %}
+        {% set total_warranty_sell_price = 0 %}
+        {% set total_warranty_replaced_sell_price = 0 %}
+        
         {% set total_buy = 0 %}
         {% set total_sell = 0 %}
         
@@ -54,6 +66,19 @@
                 {% set total_warranty = total_warranty + model.warranty %}
                 {% set total_warranty_replaced = total_warranty_replaced + model.warranty_replaced %}
                 {% set total = total + model.total_count %}
+        
+                {% set total_pending_info_buy_price = total_pending_info_buy_price + model.pending_info_buy_price %}
+                {% set total_in_stock_buy_price = total_in_stock_buy_price + model.in_stock_buy_price %}
+                {% set total_sold_buy_price = total_sold_buy_price + model.sold_buy_price %}
+                {% set total_warranty_buy_price = total_warranty_buy_price + model.warranty_buy_price %}
+                {% set total_warranty_replaced_buy_price = total_warranty_replaced_buy_price + model.warranty_replaced_buy_price %}
+                
+                {% set total_pending_info_sell_price = total_pending_info_sell_price + model.pending_info_sell_price %}
+                {% set total_in_stock_sell_price = total_in_stock_sell_price + model.in_stock_sell_price %}
+                {% set total_sold_sell_price = total_sold_sell_price + model.sold_sell_price %}
+                {% set total_warranty_sell_price = total_warranty_sell_price + model.warranty_sell_price %}
+                {% set total_warranty_replaced_sell_price = total_warranty_replaced_sell_price + model.warranty_replaced_sell_price %}
+                
                 {% set total_buy = total_buy + model.total_buy_price %}
                 {% set total_sell = total_sell + model.total_sell_price %}
                         
@@ -79,8 +104,27 @@
                         {% elseif status == 'warranty_replaced' %}
                             <td class="text-center">{{ model.warranty_replaced }}</td>
                         {% endif %}
-                        <td class="text-center">{{ model.total_buy_price }}</td>
-                        <td class="text-center">{{ model.total_sell_price }}</td>
+                            
+                        {% if status == null %}
+                            <td class="text-center">{{ model.total_buy_price }}</td>
+                            <td class="text-center">{{ model.total_sell_price }}</td>
+                        {% elseif status == 'pending_info' %}
+                            <td class="text-center">{{ model.pending_info_buy_price }}</td>
+                            <td class="text-center">{{ model.pending_info_sell_price }}</td>
+                        {% elseif status == 'in_stock' %}
+                            <td class="text-center">{{ model.in_stock_buy_price }}</td>
+                            <td class="text-center">{{ model.in_stock_sell_price }}</td>
+                        {% elseif status == 'sold' %}
+                            <td class="text-center">{{ model.sold_buy_price }}</td>
+                            <td class="text-center">{{ model.sold_sell_price }}</td>
+                        {% elseif status == 'warranty' %}
+                            <td class="text-center">{{ model.warranty_buy_price }}</td>
+                            <td class="text-center">{{ model.warranty_sell_price }}</td>
+                        {% elseif status == 'warranty_replaced' %}
+                            <td class="text-center">{{ model.warranty_replaced_buy_price }}</td>
+                            <td class="text-center">{{ model.warranty_replaced_sell_price }}</td>
+                        {% endif %}
+                        
                 </tr>
         {% endfor %}
         <tr>
@@ -114,8 +158,25 @@
                 {% if status == 'warranty_replaced' %}
                         <th class="text-center">{{ total_warranty_replaced }}</th>
                 {% endif %}
-                        <th class="text-center">{{ total_buy }}</th>
-                        <th class="text-center">{{ total_sell }}</th>
+                        {% if status == null %}
+                            <th class="text-center">{{ total_buy }}</th>
+                            <th class="text-center">{{ total_sell }}</th>
+                        {% elseif status == 'pending_info' %}
+                            <td class="text-center">{{ total_pending_info_buy_price }}</td>
+                            <td class="text-center">{{ total_pending_info_sell_price }}</td>
+                        {% elseif status == 'in_stock' %}
+                            <td class="text-center">{{ total_in_stock_buy_price }}</td>
+                            <td class="text-center">{{ total_in_stock_sell_price }}</td>
+                        {% elseif status == 'sold' %}
+                            <td class="text-center">{{ total_sold_buy_price }}</td>
+                            <td class="text-center">{{ total_sold_sell_price }}</td>
+                        {% elseif status == 'warranty' %}
+                            <td class="text-center">{{ total_warranty_buy_price }}</td>
+                            <td class="text-center">{{ total_warranty_sell_price }}</td>
+                        {% elseif status == 'warranty_replaced' %}
+                            <td class="text-center">{{ total_warranty_replaced_buy_price }}</td>
+                            <td class="text-center">{{ total_warranty_replaced_sell_price }}</td>
+                        {% endif %}
         </tr>
         <tr class="text-center">
                 <td colspan="11">
