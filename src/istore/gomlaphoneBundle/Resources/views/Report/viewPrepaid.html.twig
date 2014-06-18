@@ -5,6 +5,8 @@
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Model Name{% endtrans %}</th>
                 <th rowspan="2" class="vertical-middle text-center">{% trans %}Category{% endtrans %}</th>
                 <th colspan="1" class="text-center">{% trans %}Prepaid{% endtrans %}</th>
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Buy Price{% endtrans %}</th>
+                <th rowspan="2" class="vertical-middle text-center">{% trans %}Sell Price{% endtrans %}</th>
         </tr>
         
         <tr class="active">
@@ -12,23 +14,31 @@
         </tr>
         {% set prepaid_count_sold = 0 %}
         {% set prepaid_count_warranty = 0 %}
+        {% set total_sold_buy_price = 0 %}
+        {% set total_sold_sell_price = 0 %}
         
         {% for model in report %}
                 {% set prepaid_count_sold = prepaid_count_sold + model.prepaid_count_sold %}
-                        
+                {% set total_sold_buy_price = total_sold_buy_price + model.sold_buy_price %}
+                {% set total_sold_sell_price = total_sold_sell_price + model.sold_sell_price %}
+        
                 <tr class="text-center">
                         <td>{{ model.m_model_serial }}</td>
                         <td>{{ model.br_brand_name }} {{ model.m_model_name }} {{ model.co_color_name }} {{ model.m_model_number }}</td>
                         <td>{{ model.c_category_name }}</td>
                         <td class="text-center">{{ model.prepaid_count_sold }}</td>
+                        <td class="text-center">{{ model.sold_buy_price }}</td>
+                        <td class="text-center">{{ model.sold_sell_price }}</td>
                 </tr>
         {% endfor %}
         <tr>
                 <th colspan="3" class="text-center">{% trans %}Total{% endtrans %}</th>
                 <th class="text-center">{{ prepaid_count_sold }}</th>
+                <th class="text-center">{{ total_sold_buy_price }}</th>
+                <th class="text-center">{{ total_sold_sell_price }}</th>
         </tr>
         <tr class="text-center">
-                <td colspan="9">
+                <td colspan="11">
                         <a href="" class="btn btn-info btn-lg hidden" id="exportReportPDF">{% trans %}Export PDF{% endtrans %}</a>
                         <a href="" class="btn btn-info btn-lg" id="printReport" target="_blank">{% trans %}Print{% endtrans %}</a>
                 </td>

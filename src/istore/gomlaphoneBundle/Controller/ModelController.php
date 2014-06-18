@@ -45,9 +45,10 @@ class ModelController extends Controller //implements AuthenticatedController
         switch ($sortColumn){
             case 'id': $column = 'm.id'; break;
             case 'serial': $column = 'm.model_serial'; break;
-            case 'brand': $column = 'br.brand_name'; break;
+            case 'model': $column = 'model'; break;
+            /*case 'brand': $column = 'br.brand_name'; break;
             case 'model_name': $column = 'm.model_name'; break;
-            case 'model_number': $column = 'm.model_number'; break;
+            case 'model_number': $column = 'm.model_number'; break;*/
             case 'category': $column = 'c.category_name'; break;
         }
         //echo $sortColumn.' by '.$sortType;die;
@@ -65,7 +66,7 @@ class ModelController extends Controller //implements AuthenticatedController
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('m , br , co , c')
+            ->select('m , br , co , c , CONCAT(br.brand_name,\' \',m.model_name,\' \',co.color_name,\' \',m.model_number) AS model')
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
             ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')

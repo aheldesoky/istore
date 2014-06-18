@@ -2848,4 +2848,21 @@ $(document).ready(function(){
         else return false;
     };
     
+    // Change sell price for items of the same model
+    $(document).on('change', '.item-sell-price', function(){
+        var modelId = $(this).closest('tr:regex(class, .*model-*)').attr('class');
+        $('tr.'+modelId+' .item-sell-price').val($(this).val());
+    });
+    jQuery.expr[':'].regex = function(elem, index, match) {
+        var matchParams = match[3].split(','),
+            validLabels = /^(data|css):/,
+            attr = {
+                method: matchParams[0].match(validLabels) ? 
+                            matchParams[0].split(':')[0] : 'attr',
+                property: matchParams.shift().replace(validLabels,'')
+            },
+            regexFlags = 'ig',
+            regex = new RegExp(matchParams.join('').replace(/^\s+|\s+$/g,''), regexFlags);
+        return regex.test(jQuery(elem)[attr.method](attr.property));
+    }
 });
