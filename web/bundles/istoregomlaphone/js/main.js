@@ -864,15 +864,22 @@ $(document).ready(function(){
             return false;
         }
         
+        var modelId = $(this).closest('tr').attr('id');
+        $('tr.model-'+modelId+' .item-sell-price').val(sellPrice);
+        
         globals.itemListRequired = new Array();
         $.each(globals.itemList , function(index , item){
-            if(item.m_model_item_has_serial){
+            /*if(item.m_model_item_has_serial){
                 if(item.i_id == id)
                     globals.itemList[index].i_item_sell_price = sellPrice;
             } else {
                 if(item.m_id == id)
                     globals.itemList[index].i_item_sell_price = sellPrice;
-            }
+            }*/
+            
+            if(item.m_id == modelId)
+                globals.itemList[index].i_item_sell_price = sellPrice;
+            
             var requiredItem = {
                 itemId: item.i_id ,
                 sellPrice: item.i_item_sell_price
@@ -1660,7 +1667,7 @@ $(document).ready(function(){
             globals.bulkList[globals.bulk[0].m_id] = globals.bulk;
         }
         //console.log(globals.itemList)     
-        var tableRow =  "<tr class='model-" + globals.item.m_id + "'>" +
+        var tableRow =  "<tr class='model-" + globals.item.m_id + "' id='" + globals.item.m_id + "'>" +
                             "<td>" + displayedSerial + "</td>" +
                             "<td>" + globals.item.br_brand_name + ' '
                                    + globals.item.m_model_name + ' '
@@ -2849,10 +2856,10 @@ $(document).ready(function(){
     };
     
     // Change sell price for items of the same model
-    $(document).on('change', '.item-sell-price', function(){
+    /*$(document).on('change', '.item-sell-price', function(){
         var modelId = $(this).closest('tr:regex(class, .*model-*)').attr('class');
         $('tr.'+modelId+' .item-sell-price').val($(this).val());
-    });
+    });*/
     jQuery.expr[':'].regex = function(elem, index, match) {
         var matchParams = match[3].split(','),
             validLabels = /^(data|css):/,

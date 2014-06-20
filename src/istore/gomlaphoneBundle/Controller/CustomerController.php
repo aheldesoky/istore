@@ -28,17 +28,29 @@ class CustomerController extends Controller //implements AuthenticatedController
     public function indexAction(Request $request)
     {
         
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(c) AS total_customers')
             ->from('istoregomlaphoneBundle:Customer', 'c')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
     
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
             ->from('istoregomlaphoneBundle:Customer', 'c')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
+            ->where('s.id=?1')
+            ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
