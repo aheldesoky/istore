@@ -595,17 +595,17 @@ $(document).ready(function(){
         else{
             $(this).val(parseInt($(this).val(), 10));
         }
-    });*/
-    /*
+    });
+    
     $('.customer-data #customerName, .customer-data #customerPhone').on('keypress', function(event){
         if(event.which == 13)
             $('.btn-find-customer').click();
-    });
+    });*/
     $('.btn-clear-customer').click(function(e){
         $('#customerPhone').val('');
         $('#customerName').val('');
     });
-    $('.btn-find-customer').click(function(e){
+    /*$('.btn-find-customer').click(function(e){
         var customerPhone = $('#customerPhone').val();
         var customerName = $('#customerName').val();
         var btn = $(this);
