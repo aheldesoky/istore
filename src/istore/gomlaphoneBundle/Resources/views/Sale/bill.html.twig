@@ -49,7 +49,8 @@
                     </tr>
                     <tr>
                         <td class="meta-head">{%trans%}Date{%endtrans%}</td>
-                        <td>{{ sale.s_sale_date.format('l jS') }} of {{ sale.s_sale_date.format('F Y') }}</td>
+                        <td>{{ sale.s_sale_date.format('Y-m-d') }}</td>
+                        <!--<td>{{ sale.s_sale_date.format('l jS') }} of {{ sale.s_sale_date.format('F Y') }}</td>-->
                     </tr>
                     <tr>
                         <td class="meta-head">{%trans%}Time{%endtrans%}</td>

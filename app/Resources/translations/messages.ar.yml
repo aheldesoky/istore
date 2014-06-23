@@ -43,7 +43,7 @@ Brand: الفئة
 Model: الموديل
 Category: الصنف
 Price: السعر
-Serial: الكود
+Serial: رقم المسلسل
 Item: المنتج
 Qty: الكمية
 of: من
@@ -130,7 +130,7 @@ Loading: تحميل
 ##--------------------------------------------------------------------------------------------------------------------
 
 ## Bulks
-Serial: الكود
+Serial: رقم المسلسل
 Brand Name: اسم الفئة
 Model: الموديل
 Category: الصنف
@@ -281,7 +281,7 @@ Serial can not be empty.: يجب إدخال الكود
 Check: فحص
 Serial is valid.: الكود صالح
 Model already exist.: الموديل موجود بالفعل
-Serial: الكود
+Serial: رقم المسلسل
 Brand: الفئة
 Brand Name:	اسم الفئة
 Model:	الموديل
