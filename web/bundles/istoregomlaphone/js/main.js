@@ -733,6 +733,7 @@ $(document).ready(function(){
 	//width:300,
 	zIndex: 9999,
 	deferRequestBy: 0, //miliseconds
+        triggerSelectOnValidInput: false,
 	params: { param:'phone' }, //aditional parameters
 	noCache: false, //default is false, set to true to disable caching
 	onSelect: function(customer){$('#customerName').val(customer.data);}
@@ -746,6 +747,7 @@ $(document).ready(function(){
 	//width:300,
 	zIndex: 9999,
 	deferRequestBy: 0, //miliseconds
+        triggerSelectOnValidInput: false,
 	params: { param:'name' }, //aditional parameters
 	noCache: false, //default is false, set to true to disable caching
 	onSelect: function(customer){$('#customerPhone').val(customer.data);}

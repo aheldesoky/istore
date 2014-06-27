@@ -25,7 +25,7 @@ class CustomerController extends Controller //implements AuthenticatedController
         //echo $request->setLocale($language);
     }
 
-    public function indexAction(Request $request)
+    public function indexPrepaidAction(Request $request)
     {
         
         $user = $this->getUser();
@@ -41,7 +41,9 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Customer', 'c')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
             ->where('s.id=?1')
+            ->andWhere('c.customer_type=?2')
             ->setParameter(1, $user->getStoreId())
+            ->setParameter(2, 'prepaid')
             ->getQuery()
             ->getSingleResult();
     
@@ -50,27 +52,69 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->from('istoregomlaphoneBundle:Customer', 'c')
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
             ->where('s.id=?1')
+            ->andWhere('c.customer_type=?2')
             ->setParameter(1, $user->getStoreId())
+            ->setParameter(2, 'prepaid')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
             ->getScalarResult();
         
         //var_dump($paginator);die;
-        /*
-        $paginator = new Paginator($query, $fetchJoinCollection = true);
-        
-        if (!$paginator) {
-            throw $this->createNotFoundException('Unable to find categories.');
-        }
-        */
         
         return $this->render('istoregomlaphoneBundle:Customer:index.html.twig', array(
             'customers'      => $paginator,
             'total_customers'=> $count['total_customers'],
             'total_pages'     => ceil($count['total_customers']/10),
             'current_page'    => $currentPage,
-            'action'    => 'index',
+            'action'    => 'prepaid',
+            'controller' => 'customer',
+        ));
+    }
+    
+    public function indexPostpaidAction(Request $request)
+    {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(c) AS total_customers')
+            ->from('istoregomlaphoneBundle:Customer', 'c')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
+            ->where('s.id=?1')
+            ->andWhere('c.customer_type=?2')
+            ->setParameter(1, $user->getStoreId())
+            ->setParameter(2, 'postpaid')
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('c')
+            ->from('istoregomlaphoneBundle:Customer', 'c')
+            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'c.customer_store=s.id')
+            ->where('s.id=?1')
+            ->andWhere('c.customer_type=?2')
+            ->setParameter(1, $user->getStoreId())
+            ->setParameter(2, 'postpaid')
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+        //var_dump($paginator);die;
+        
+        return $this->render('istoregomlaphoneBundle:Customer:index.html.twig', array(
+            'customers'      => $paginator,
+            'total_customers'=> $count['total_customers'],
+            'total_pages'     => ceil($count['total_customers']/10),
+            'current_page'    => $currentPage,
+            'action'    => 'postpaid',
             'controller' => 'customer',
         ));
     }
@@ -220,6 +264,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             $customer = new Customer();
             $customer->setCustomerName($request->request->get('customerName'));
             $customer->setCustomerPhone($request->request->get('customerPhone'));
+            $customer->setCustomerType($request->request->get('customerType'));
             //$customer->setCustomerNotes($request->request->get('customerNotes'));
             //$customerStore = $this->getDoctrine()
             //        ->getRepository('istoregomlaphoneBundle:Store')
@@ -229,7 +274,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             $entityManager->persist($customer);
             $entityManager->flush();
 
-            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
+            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index_'.$request->request->get('customerType')));
         }
         
         return $this->render('istoregomlaphoneBundle:Customer:add.html.twig' , array(
@@ -245,12 +290,13 @@ class CustomerController extends Controller //implements AuthenticatedController
         {
             $customer->setCustomerName($request->request->get('customerName'));
             $customer->setCustomerPhone($request->request->get('customerPhone'));
+            $customer->setCustomerType($request->request->get('customerType'));
             //$customer->setCustomerNotes($request->request->get('customerNotes'));
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($customer);
             $entityManager->flush();
 
-            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index'));
+            return $this->redirect($this->generateUrl('istoregomlaphone_customer_index_'.$request->request->get('customerType')));
         }
         
         return $this->render('istoregomlaphoneBundle:Customer:edit.html.twig' , array(
@@ -285,13 +331,16 @@ var_dump($customer);die;
     
     public function queryAction(Request $request)
     {
+        $user = $this->getUser();
         //echo $request->request->get('serial');die;
         if($request->query->get('param') === 'phone'){
             $customer = $this->getDoctrine()->getManager()->createQueryBuilder()
                 ->select('c.customer_phone AS value , c.customer_name AS data')
                 ->from('istoregomlaphoneBundle:Customer', 'c')
                 ->where('c.customer_phone LIKE ?1')
+                ->andWhere('c.customer_store = ?2')
                 ->setParameter(1 , '%'.$request->query->get('query').'%')
+                ->setParameter(2 , $user->getStoreId())
                 ->getQuery()
                 ->getScalarResult();
             
@@ -300,7 +349,9 @@ var_dump($customer);die;
                 ->select('c.customer_name AS value , c.customer_phone AS data')
                 ->from('istoregomlaphoneBundle:Customer', 'c')
                 ->where('c.customer_name LIKE ?1')
+                ->andWhere('c.customer_store = ?2')
                 ->setParameter(1 , '%'.$request->query->get('query').'%')
+                ->setParameter(2 , $user->getStoreId())
                 ->getQuery()
                 ->getScalarResult();
         }

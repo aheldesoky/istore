@@ -23,9 +23,14 @@ class Customer
     protected $customer_name;
     
     /**
-     * @ORM\Column(type="string", unique=true, nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $customer_phone;
+    
+    /**
+     * @ORM\Column(type="string", nullable=false)
+     */
+    protected $customer_type;
     
     /**
      * @ORM\Column(type="string", nullable=true)
@@ -46,6 +51,11 @@ class Customer
      *
      * @return integer 
      */
+    
+    function __construct() {
+        $this->customer_type = 'prepaid';
+    }
+    
     public function getId()
     {
         return $this->id;
@@ -141,5 +151,28 @@ class Customer
     public function getCustomerStore()
     {
         return $this->customer_store;
+    }
+
+    /**
+     * Set customer_type
+     *
+     * @param string $customerType
+     * @return Customer
+     */
+    public function setCustomerType($customerType)
+    {
+        $this->customer_type = $customerType;
+
+        return $this;
+    }
+
+    /**
+     * Get customer_type
+     *
+     * @return string 
+     */
+    public function getCustomerType()
+    {
+        return $this->customer_type;
     }
 }

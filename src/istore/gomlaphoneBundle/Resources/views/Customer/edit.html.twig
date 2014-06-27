@@ -25,6 +25,15 @@
                                                                         <label for="categoryName" class="customer-error hidden"></label>
 								</div>
 							</div>
+                                                        <div class="form-group">
+                                                                <label for="customerType" class="col-sm-4 control-label">{% trans %}Type{% endtrans %}</label>
+                                                                <div class="col-sm-6">
+                                                                        <select class="form-control" id="customerType" name="customerType">
+                                                                                <option value="prepaid" {% if customer.customerType == 'prepaid' %}selected{% endif %}>{%trans%}Prepaid{%endtrans%}</option>
+                                                                                <option value="postpaid" {% if customer.customerType == 'postpaid' %}selected{% endif %}>{%trans%}Postpaid{%endtrans%}</option>
+                                                                        </select>
+                                                                </div>
+                                                        </div>
                                                         <!--<div class="form-group">
 								<label for="customerNotes" class="col-sm-4 control-label">{% trans %}Customer Notes{% endtrans %}</label>
 								<div class="col-sm-6">

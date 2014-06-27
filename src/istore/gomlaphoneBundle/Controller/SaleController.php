@@ -445,6 +445,7 @@ class SaleController extends Controller //implements AuthenticatedController
                 $customer = array(new Customer());
                 $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
                 $customer[0]->setCustomerName($request->request->get('customerName'));
+                $customer[0]->setCustomerType($request->request->get('paymentMethod'));
                 //$customer[0]->setCustomerNotes($request->request->get('customerNotes'));
                 //$customerStore = $this->getDoctrine()
                 //    ->getRepository('istoregomlaphoneBundle:Store')
@@ -538,7 +539,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->where('s.id=?1')
             ->andWhere('st.id=?2')
             ->setParameter(1, $id)
-            ->setParameter(2, 1)
+            ->setParameter(2, $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
@@ -562,7 +563,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('i.item_serial')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $id)
             ->setParameter(3, true)
             ->getQuery()
@@ -586,7 +587,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $sale[0]['items']['without_serial_grouped'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca , COUNT(i.id) AS quantity , SUM(i.item_price) AS totalPrice')
+            ->select('i , b , m , ca , COUNT(i.id) AS quantity , SUM(i.item_buy_price) AS totalBuyPrice , SUM(i.item_sell_price) AS totalSellPrice')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')

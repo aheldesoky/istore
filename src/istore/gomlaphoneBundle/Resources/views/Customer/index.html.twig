@@ -3,8 +3,27 @@
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Customer List{% endtrans %}
-			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_customers }}) {% trans %}customers{% endtrans %}</span>
+                        <div class="row">
+                                <div class="col-lg-3 padding-top-7">
+                                    {% if action == 'postpaid' %}
+                                        {% trans %}Postpaid Customers{% endtrans %}
+                                    {% elseif action == 'prepaid' %}
+                                        {% trans %}Prepaid Customers{% endtrans %}
+                                    {% endif %}
+                                </div>
+                                <div class="col-lg-1 col-lg-offset-5">
+                                    <!--<a {% if action!='index' %}href="/sale"{% endif %} class="btn btn-warning btn-md {% if action=='index' %}active{% endif %}">{% trans %}All Sales{% endtrans %}</a>-->
+                                </div>
+                                <div class="col-lg-1">
+                                    <a {% if action!='prepaid' %}href="/customer/prepaid"{% endif %} class="btn btn-warning btn-md {% if action=='prepaid' %}active{% endif %}">{% trans %}Prepaid{% endtrans %}</a>
+                                </div>
+                                <div class="col-lg-1">
+                                    <a {% if action!='postpaid' %}href="/customer/postpaid"{% endif %} class="btn btn-warning btn-md {% if action=='postpaid' %}active{% endif %}">{% trans %}Postpaid{% endtrans %}</a>
+                                </div>
+                                <div class="col-lg-1 padding-top-7">
+                                    <span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_customers }}) {% trans %}customers{% endtrans %}</span>
+                                </div>
+                        </div>
 		</h4>
 	</div>
 	<div class="panel-body">
@@ -24,7 +43,11 @@
 				<td>
                                         <a href="/customer/{{customer.c_id}}" class="btn btn-success btn-sm">{% trans %}New Sale{% endtrans %}</a>
 					<!--<a href="/customer/prepaid/{{customer.c_id}}" class="btn btn-info btn-sm">{% trans %}Prepaid Transactions{% endtrans %}</a>-->
-                                        <a href="/customer/postpaid/{{customer.c_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a>
+                                        {% if action == 'postpaid' %}
+                                            <a href="/customer/postpaid/{{customer.c_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a>
+                                        {% elseif action == 'prepaid' %}
+                                            <a href="/customer/prepaid/{{customer.c_id}}" class="btn btn-info btn-sm">{% trans %}Transactions{% endtrans %}</a>
+                                        {% endif %}
                                         <a href="/customer/edit/{{customer.c_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a>
 					<a href="#" class="btn btn-danger btn-sm btn-delete" data-id="customer:{{customer.c_id}}:{{ customer.c_customer_name }}">{% trans %}Delete{% endtrans %}</a>
 				</td>

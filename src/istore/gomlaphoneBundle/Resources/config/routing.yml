@@ -252,6 +252,14 @@ istoregomlaphone_customer_validate:
     pattern:  /customer/validate
     defaults: { _controller: istoregomlaphoneBundle:Customer:validate }
 
+istoregomlaphone_customer_index_prepaid:
+    pattern:  /customer/prepaid
+    defaults: { _controller: istoregomlaphoneBundle:Customer:indexPrepaid }
+
+istoregomlaphone_customer_index_postpaid:
+    pattern:  /customer/postpaid
+    defaults: { _controller: istoregomlaphoneBundle:Customer:indexPostpaid }
+
 istoregomlaphone_customer_sale:
     pattern:  /customer/{id}
     defaults: { _controller: istoregomlaphoneBundle:Default:index }
@@ -316,8 +324,12 @@ istoregomlaphone_user_index:
     pattern:  /user
     defaults: { _controller: istoregomlaphoneBundle:User:index }
 
+istoregomlaphone_user_view:
+    pattern:  /user/view/{id}
+    defaults: { _controller: istoregomlaphoneBundle:User:view }
+
 istoregomlaphone_user_add:
-    pattern:  /user/add
+    pattern:  /user/add/{id}
     defaults: { _controller: FOSUserBundle:Registration:register }
 
 istoregomlaphone_user_edit:
@@ -340,8 +352,16 @@ istoregomlaphone_store_index:
     pattern:  /store
     defaults: { _controller: istoregomlaphoneBundle:Store:index }
 
-istoregomlaphone_store_add:
+istoregomlaphone_store_add_master:
     pattern:  /store/add
+    defaults: { _controller: istoregomlaphoneBundle:Store:add }
+
+istoregomlaphone_store_view:
+    pattern:  /store/{id}
+    defaults: { _controller: istoregomlaphoneBundle:Store:view }
+    
+istoregomlaphone_store_add_branch:
+    pattern:  /store/add/{id}
     defaults: { _controller: istoregomlaphoneBundle:Store:add }
 
 istoregomlaphone_store_edit:
