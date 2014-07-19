@@ -9,6 +9,7 @@ use istore\gomlaphoneBundle\Entity\Category;
 use Symfony\Component\HttpFoundation\Session\Session;
 use istore\gomlaphoneBundle\Controller\AuthenticatedController;
 use istore\gomlaphoneBundle\Entity\User;
+use istore\gomlaphoneBundle\Entity\Store;
 use Doctrine\DBAL\DBALException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
@@ -61,13 +62,6 @@ class UserController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         //var_dump($paginator);die;
-        /*
-        $paginator = new Paginator($query, $fetchJoinCollection = true);
-        
-        if (!$paginator) {
-            throw $this->createNotFoundException('Unable to find categories.');
-        }
-        */
         
         return $this->render('istoregomlaphoneBundle:User:index.html.twig', array(
             'users'      => $paginator,
@@ -78,6 +72,51 @@ class UserController extends Controller //implements AuthenticatedController
             'controller'      => 'user',
         ));
     }
+    
+    public function viewAction(Request $request , Store $store)
+    {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_SUPER_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(u)-1 AS total_users')
+            ->from('FOSUserBundle:User', 'u')
+            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'u.store_id=st.id')
+            ->where('st.id = ?1')
+            ->setParameter(1, $store->getId())
+            ->getQuery()
+            ->getSingleResult();
+    
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('u')
+            ->from('FOSUserBundle:User', 'u')
+            ->join('istoregomlaphoneBundle:Store', 'st', 'WITH', 'u.store_id=st.id')
+            ->where('st.id = ?1')
+            ->setParameter(1, $store->getId())
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+        //var_dump($paginator);die;
+        
+        return $this->render('istoregomlaphoneBundle:User:index.html.twig', array(
+            'users'      => $paginator,
+            'total_users'=> $count['total_users'],
+            'total_pages'     => ceil($count['total_users']/10),
+            'current_page'    => $currentPage,
+            'action'          => 'index',
+            'controller'      => 'user',
+            'store'           => $store,
+        ));
+    }
+    
     
     public function addAction(Request $request) {
         

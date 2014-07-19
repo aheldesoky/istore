@@ -758,7 +758,7 @@ $(document).ready(function(){
     });
     
     //Checkout sale
-    $('.btn-checkout').click(function(e){
+    $(document).on('click' , '.btn-checkout' , function(e){
         var checkoutForm = $('#saleForm');
         var btn = $(this);
         //e.preventDefault();
@@ -855,6 +855,8 @@ $(document).ready(function(){
         removeItem(itemSerial);
         $('#alert-message').html(alertInfoMessage(lang['Item removed from list.']));
         $(this).closest('tr').remove();
+        $('#subtotal').html(globals.calculateSubtotal() + lang[' L.E.']);
+        $('#total').html(globals.calculateTotal() + lang[' L.E.']);
         
     }).on('change', 'input.item-sell-price', function(){
         var _self = $(this);

@@ -100,7 +100,7 @@ class SupplierController extends Controller //implements AuthenticatedController
             $supplier->setSupplierPhone($request->request->get('supplierPhone'));
             $supplier->setSupplierEmail($request->request->get('supplierEmail'));
             $supplier->setSupplierGovernorateId($request->request->get('supplierGovernorate'));
-            $supplier->setSupplierStoreId(1);
+            $supplier->setSupplierStoreId($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($supplier);
             $entityManager->flush();

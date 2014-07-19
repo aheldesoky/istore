@@ -40,8 +40,7 @@ class BrandController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(br) AS total_brands')
             ->from('istoregomlaphoneBundle:Brand', 'br')
-            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'br.brand_store_id=s.id')
-            ->where('s.id=?1')
+            ->where('br.brand_store_id = ?1')
             ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->getSingleResult();
@@ -49,8 +48,7 @@ class BrandController extends Controller //implements AuthenticatedController
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('br')
             ->from('istoregomlaphoneBundle:Brand', 'br')
-            ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'br.brand_store_id=s.id')
-            ->where('s.id=?1')
+            ->where('br.brand_store_id = ?1')
             ->setParameter(1, $user->getStoreId())
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
@@ -87,7 +85,7 @@ class BrandController extends Controller //implements AuthenticatedController
         if ($request->getMethod() == 'POST') {
             $brand = new Brand();
             $brand->setBrandName($request->request->get('brandName'));
-            $brand->setBrandStoreId(1);
+            $brand->setBrandStoreId($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($brand);
             $entityManager->flush();
@@ -202,7 +200,9 @@ class BrandController extends Controller //implements AuthenticatedController
             ->select('br')
             ->from('istoregomlaphoneBundle:Brand', 'br')
             ->where('br.brand_name = ?1')
+            ->where('br.brand_store_id = ?2')
             ->setParameter(1 , $brandNew['brandName'])
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
 //var_dump($brand);die;
@@ -211,7 +211,7 @@ class BrandController extends Controller //implements AuthenticatedController
             if($action === 'add')
                 $error = 'brand_exists';
             
-            elseif($action === 'edit' && $brand[0]['c_id'] != $brandNew['brandId'])
+            elseif($action === 'edit' && $brand[0]['br_id'] != $brandNew['brandId'])
                 $error = 'brand_exists';
                 
             else 

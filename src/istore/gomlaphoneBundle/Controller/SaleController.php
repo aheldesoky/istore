@@ -266,8 +266,6 @@ class SaleController extends Controller //implements AuthenticatedController
                 ->where('s.id=?1')
                 ->setParameter(1, $temp['s_id'])
                 ->getQuery()
-                ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
-                ->setMaxResults(10)
                 ->getSingleResult();
             $temp['s_sale_total'] = $sale['total_sale'];
         }
@@ -436,6 +434,8 @@ class SaleController extends Controller //implements AuthenticatedController
                 ->from('istoregomlaphoneBundle:Customer', 'c')
                 ->where('c.customer_phone = ?1')
                 ->setParameter(1 , $request->request->get('customerPhone'))
+                ->andWhere('c.customer_store = ?2')
+                ->setParameter(2 , $user->getStoreId())
                 ->getQuery()
                 ->getResult();
             
@@ -463,7 +463,7 @@ class SaleController extends Controller //implements AuthenticatedController
             $sale->setSaleDiscount($request->request->get('saleDiscount'));
             $sale->setSaleTotalCount($saleTotalCount);
             $sale->setSaleTotalPaid($request->request->get('amountPaid'));
-            $sale->setSaleStoreId(1);
+            $sale->setSaleStoreId($user->getStoreId());
             $entityManager->persist($sale);
             $entityManager->flush();
 //var_dump($sale);die;            
@@ -526,6 +526,108 @@ class SaleController extends Controller //implements AuthenticatedController
         $user = $this->getUser();
         $entityManager = $this->getDoctrine()->getManager();
         
+        if ($request->getMethod() == 'POST') {
+            
+            $saleOld = $entityManager->createQueryBuilder()
+                ->select('s')
+                ->from('istoregomlaphoneBundle:Sale', 's')
+                ->where('c.customer_phone = ?1')
+                ->setParameter(1 , $request->request->get('customerPhone'))
+                ->andWhere('c.customer_store = ?2')
+                ->setParameter(2 , $user->getStoreId())
+                ->getQuery()
+                ->getResult();
+            
+            $customer = $entityManager->createQueryBuilder()
+                ->select('c')
+                ->from('istoregomlaphoneBundle:Customer', 'c')
+                ->where('c.customer_phone = ?1')
+                ->setParameter(1 , $request->request->get('customerPhone'))
+                ->andWhere('c.customer_store = ?2')
+                ->setParameter(2 , $user->getStoreId())
+                ->getQuery()
+                ->getResult();
+            
+        //echo count($customer);die;
+        //var_dump($customer);die;
+            if(count($customer) == 0){
+                $customer = array(new Customer());
+                $customer[0]->setCustomerPhone($request->request->get('customerPhone'));
+                $customer[0]->setCustomerName($request->request->get('customerName'));
+                $customer[0]->setCustomerType($request->request->get('paymentMethod'));
+                //$customer[0]->setCustomerNotes($request->request->get('customerNotes'));
+                //$customerStore = $this->getDoctrine()
+                //    ->getRepository('istoregomlaphoneBundle:Store')
+                //    ->find($user->getStoreId());
+                $customer[0]->setCustomerStore($user->getStoreId());
+                $entityManager->persist($customer[0]);
+                $entityManager->flush();
+            }
+            
+            $itemList = json_decode(stripcslashes($request->request->get('itemList')));
+            $saleTotalCount = count($itemList);
+            
+            $sale = new Sale();
+            $sale->setSaleCustomerId($customer[0]->getId());
+            $sale->setSaleDiscount($request->request->get('saleDiscount'));
+            $sale->setSaleTotalCount($saleTotalCount);
+            $sale->setSaleTotalPaid($request->request->get('amountPaid'));
+            $sale->setSaleStoreId($user->getStoreId());
+            $entityManager->persist($sale);
+            $entityManager->flush();
+//var_dump($sale);die;            
+            
+            if($request->request->get('paymentMethod') === 'postpaid'){
+                $postpaid = new Postpaid();
+                $postpaid->setPostpaidSaleId($sale->getId());
+                $postpaid->setPostpaidAmount($request->request->get('amountPaid'));
+                $entityManager->persist($postpaid);
+                //$entityManager->flush();
+            }
+            
+            //var_dump($customer);die;
+            
+            
+            $saleTotalPrice = 0;
+            
+            foreach ($itemList as $item){
+                $soldItem = $entityManager->createQueryBuilder()
+                    ->select('i')
+                    ->from('istoregomlaphoneBundle:Item', 'i')
+                    ->where('i.id = ?1')
+                    ->setParameter(1 , $item->itemId)
+                    ->getQuery()
+                    ->getSingleResult();
+                /*if($item->itemDiscount == 0)
+                    $soldItem->setItemStatus('sold');
+                else
+                    $soldItem->setItemStatus('pending_discount');*/
+                $saleTotalPrice += intval($item->sellPrice);
+                
+                $soldItem->setItemStatus('sold')->setItemSellPrice($item->sellPrice);
+                $entityManager->persist($soldItem);
+                //$entityManager->flush();
+                
+                $saleItem = new SaleItem();
+                $saleItem->setSaleitemSaleId($sale->getId());
+                $saleItem->setSaleitemItemId($item->itemId);
+                $entityManager->persist($saleItem);
+                //$entityManager->flush();
+            }
+            
+            $sale->setSaleTotalPrice($saleTotalPrice);
+            if($request->request->get('paymentMethod') === 'prepaid')
+                $sale->setSaleTotalPaid($saleTotalPrice);
+            $entityManager->persist($sale);
+            $entityManager->flush();
+            
+            //return $this->redirect('/sale/bill/'.$sale->getId().'/true' );
+            return new JsonResponse(array(
+                'url' => '/sale/bill/'.$sale->getId().'/true',
+            ));
+            
+        }
+        
         $sale = $entityManager->createQueryBuilder()
             ->select('s , c , st')
             ->from('istoregomlaphoneBundle:Sale', 's')
@@ -535,6 +637,8 @@ class SaleController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Item', 'i', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
             ->join('istoregomlaphoneBundle:Store', 'st' , 'WITH' , 's.sale_store_id=st.id')
             ->where('s.id=?1')
             ->andWhere('st.id=?2')
@@ -553,13 +657,15 @@ class SaleController extends Controller //implements AuthenticatedController
         $sale[0]['po_total_paid'] = $postpaid['total_paid'];
         
         $sale[0]['items']['with_serial'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca')
+            ->select('i , b , m , br , co , c')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
-            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
-            ->where('ca.category_store_id=?1')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->where('c.category_store_id=?1')
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('i.item_serial')
@@ -570,13 +676,15 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $sale[0]['items']['without_serial'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca')
+            ->select('i , b , m , br , co , c')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
-            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
-            ->where('ca.category_store_id=?1')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->where('c.category_store_id=?1')
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             //->groupBy('m.model_serial')
@@ -587,13 +695,15 @@ class SaleController extends Controller //implements AuthenticatedController
             ->getScalarResult();
         
         $sale[0]['items']['without_serial_grouped'] = $entityManager->createQueryBuilder()
-            ->select('i , b , m , ca , COUNT(i.id) AS quantity , SUM(i.item_buy_price) AS totalBuyPrice , SUM(i.item_sell_price) AS totalSellPrice')
+            ->select('i , b , m , br , co , c , COUNT(i.id) AS quantity , SUM(i.item_buy_price) AS totalBuyPrice , SUM(i.item_sell_price) AS totalSellPrice')
             ->from('istoregomlaphoneBundle:Item', 'i')
             ->join('istoregomlaphoneBundle:SaleItem', 'si', 'WITH', 'si.saleitem_item_id=i.id')
             ->join('istoregomlaphoneBundle:Bulk', 'b' , 'WITH' , 'i.item_bulk=b.id')
             ->join('istoregomlaphoneBundle:Model', 'm' , 'WITH' , 'b.bulk_model=m.id')
-            ->join('istoregomlaphoneBundle:Category', 'ca' , 'WITH' , 'm.model_category=ca.id')
-            ->where('ca.category_store_id=?1')
+            ->join('istoregomlaphoneBundle:Brand', 'br' , 'WITH' , 'm.model_brand=br.id')
+            ->join('istoregomlaphoneBundle:Color', 'co' , 'WITH' , 'm.model_color=co.id')
+            ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
+            ->where('c.category_store_id=?1')
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('m.model_serial')
@@ -689,7 +799,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('i.item_serial')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $id)
             ->setParameter(3, true)
             ->getQuery()
@@ -708,7 +818,7 @@ class SaleController extends Controller //implements AuthenticatedController
             ->andWhere('si.saleitem_sale_id=?2')
             ->andWhere('m.model_item_has_serial=?3')
             ->groupBy('m.model_serial')
-            ->setParameter(1, 1)
+            ->setParameter(1, $user->getStoreId())
             ->setParameter(2, $id)
             ->setParameter(3, false)
             ->getQuery()

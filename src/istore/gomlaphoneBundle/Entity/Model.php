@@ -36,7 +36,7 @@ class Model
     protected $model_number;
     
     /**
-     * @ORM\Column(type="string", unique=true, nullable=false)
+     * @ORM\Column(type="string", nullable=false)
      */
     protected $model_serial;
     

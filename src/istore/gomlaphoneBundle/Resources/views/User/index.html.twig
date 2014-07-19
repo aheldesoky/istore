@@ -40,7 +40,8 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/user/add" class="btn btn-success btn-lg">+ {% trans %}Add New User{% endtrans %}</a>
+		<a href="/user/add/{{ store.id }}" class="btn btn-success btn-lg">+ {% trans %}Add New User{% endtrans %}</a>
+                <a href="/store" class="btn btn-default btn-lg">{% trans %}Back to Stores{% endtrans %}</a>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>

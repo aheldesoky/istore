@@ -1,9 +1,9 @@
-{% extends 'istoregomlaphoneBundle::layout.html.twig' %}
+{% extends 'istoreBackendBundle::layout.html.twig' %}
 {% block body %}
 <div class="panel panel-primary">
 	<div class="panel-heading">
 		<h4 class="">
-			{% trans %}Store List{% endtrans %}
+			{% trans %}Master Store List{% endtrans %}
 			<span class="badge {% if(lang=='ar') %}pull-left{% else %}pull-right{% endif %}">({{ total_stores }}) {% trans %}stores{% endtrans %}</span>
 		</h4>
 	</div>
@@ -24,9 +24,11 @@
                                 <td>{{ store.s_store_phone }}</td>
                                 <td>{{ store.s_store_logo }}</td>
 				<td>
+                                        <a href="/store/{{store.s_id}}" class="btn btn-info btn-sm">{% trans %}View Branches{% endtrans %}</a> 
+                                        <a href="/user/view/{{store.s_id}}" class="btn btn-info btn-sm">{% trans %}View Users{% endtrans %}</a> 
 					<a href="/store/edit/{{store.s_id}}" class="btn btn-primary btn-sm">{% trans %}Edit{% endtrans %}</a> 
                                         {% if 'ROLE_SUPER_ADMIN' in app.user.roles %}
-                                        - <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="store:{{store.s_id}}:{{ store.s_store_name }}">{% trans %}Delete{% endtrans %}</a>
+                                        <a href="#" class="btn btn-danger btn-sm btn-delete" data-id="store:{{store.s_id}}:{{ store.s_store_name }}">{% trans %}Delete{% endtrans %}</a>
                                         {% endif %}
 				</td>
 			</tr>
@@ -42,7 +44,7 @@
 		</table>
 	</div>
 	<div class="panel-footer">
-		<a href="/store/add" class="btn btn-success btn-lg">+ {% trans %}Add New Store{% endtrans %}</a>
+		<a href="/store/add" class="btn btn-success btn-lg">+ {% trans %}Add Master Store{% endtrans %}</a>
 		<input type="hidden" value="{% if total_pages > 0 %}{{total_pages}}{% else %}1{% endif %}" id="total_pages">
 		<input type="hidden" value="{{ current_page }}" id="current_page">
 	</div>

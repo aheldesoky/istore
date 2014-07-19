@@ -87,7 +87,7 @@ class ColorController extends Controller //implements AuthenticatedController
         if ($request->getMethod() == 'POST') {
             $color = new Color();
             $color->setColorName($request->request->get('colorName'));
-            $color->setColorStoreId(1);
+            $color->setColorStoreId($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($color);
             $entityManager->flush();
@@ -169,7 +169,9 @@ class ColorController extends Controller //implements AuthenticatedController
             ->select('co')
             ->from('istoregomlaphoneBundle:Color', 'co')
             ->where('co.color_name = ?1')
+            ->andWhere('co.color_store_id = ?2')
             ->setParameter(1 , $request->request->get('colorName'))
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
     //var_dump($color);die;
@@ -202,7 +204,9 @@ class ColorController extends Controller //implements AuthenticatedController
             ->select('co')
             ->from('istoregomlaphoneBundle:Color', 'co')
             ->where('co.color_name = ?1')
+            ->andWhere('co.color_store_id = ?2')
             ->setParameter(1 , $colorNew['colorName'])
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
 //var_dump($color);die;

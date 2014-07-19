@@ -3,9 +3,41 @@
 <form class="form-horizontal" role="form" method="post" id="storeForm">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>{% trans %}Add New Store{% endtrans %}</h4>
+                        {% if master is null %}
+                            <h4>{% trans %}Add New Master{% endtrans %}</h4>
+                        {% else %}
+                            <h4>{% trans %}Add New Branch{% endtrans %}</h4>
+                        {% endif %}
 		</div>
 		<div class="panel-body">
+                        {% if master is not null %}
+                        <div class="immutable-bulk-view-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="storeName" class="col-sm-5 control-label">{% trans %}Store Name{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storeName" class="col-sm-12 control-label">{{ master.storeName }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="storePhone" class="col-sm-5 control-label">{% trans %}Store Phone{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storePhone" class="col-sm-12 control-label">{{ master.storePhone }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="storeAddress" class="col-sm-5 control-label">{% trans %}Store Address{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storeAddress" class="col-sm-12 control-label">{{ master.storeAddress }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
 			<div class="form-container">
 				<div class="">
 					<div class="row">
@@ -41,6 +73,7 @@
 		</div>
 		<div class="panel-footer">
 			<button type="submit" class="btn btn-success btn-lg">{% trans %}Add Store{% endtrans %}</button>
+                        <a href="/store" class="btn btn-default btn-lg">{% trans %}Back to Store{% endtrans %}</a>
 		</div>
 	</div>
 </form>

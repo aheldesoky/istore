@@ -87,7 +87,7 @@ class CategoryController extends Controller //implements AuthenticatedController
         if ($request->getMethod() == 'POST') {
             $category = new Category();
             $category->setCategoryName($request->request->get('categoryName'));
-            $category->setCategoryStoreId(1);
+            $category->setCategoryStoreId($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($category);
             $entityManager->flush();
@@ -202,7 +202,9 @@ class CategoryController extends Controller //implements AuthenticatedController
             ->select('c')
             ->from('istoregomlaphoneBundle:Category', 'c')
             ->where('c.category_name = ?1')
+            ->andWhere('c.category_store_id = ?2')
             ->setParameter(1 , $categoryNew['categoryName'])
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
 //var_dump($category);die;

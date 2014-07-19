@@ -33,6 +33,11 @@ class Store
     protected $store_address;
 
     /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    protected $store_master;
+    
+    /**
      * @ORM\Column(type="string", nullable=true)
      */
     protected $store_logo;
@@ -137,5 +142,28 @@ class Store
     public function getStoreLogo()
     {
         return $this->store_logo;
+    }
+
+    /**
+     * Set store_master
+     *
+     * @param integer $storeMaster
+     * @return Store
+     */
+    public function setStoreMaster($storeMaster)
+    {
+        $this->store_master = $storeMaster;
+
+        return $this;
+    }
+
+    /**
+     * Get store_master
+     *
+     * @return integer 
+     */
+    public function getStoreMaster()
+    {
+        return $this->store_master;
     }
 }

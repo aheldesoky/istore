@@ -319,7 +319,7 @@ class CustomerController extends Controller //implements AuthenticatedController
             ->getQuery()
             ->getScalarResult();
         
-var_dump($customer);die;
+//var_dump($customer);die;
         
         if(count($customer)){
             return new JsonResponse(array('count' => count($customer) , 'customer' => $customer[0]));
@@ -388,6 +388,8 @@ var_dump($customer);die;
             ->from('istoregomlaphoneBundle:Customer', 'cu')
             ->where('cu.customer_phone = ?1')
             ->setParameter(1 , $customerNew['customerPhone'])
+            ->andWhere('cu.customer_store = ?2')
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
 //var_dump($category);die;

@@ -137,18 +137,24 @@ class ModelController extends Controller //implements AuthenticatedController
         $categories = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
             ->from('istoregomlaphoneBundle:Category', 'c')
+            ->where('c.category_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
         $colors = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('co')
             ->from('istoregomlaphoneBundle:Color', 'co')
+            ->where('co.color_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
         $brands = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('br')
             ->from('istoregomlaphoneBundle:Brand', 'br')
+            ->where('br.brand_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
@@ -171,7 +177,7 @@ class ModelController extends Controller //implements AuthenticatedController
             $model->setModelColor($modelColor);
             $model->setModelSpecs($request->request->get('modelSpecs'));
             $model->setModelItemHasSerial($request->request->get('modelItemHasSerial'));
-            $model->setModelStoreId(1);
+            $model->setModelStoreId($user->getStoreId());
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($model);
             $entityManager->flush();
@@ -205,18 +211,24 @@ class ModelController extends Controller //implements AuthenticatedController
         $categories = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('c')
             ->from('istoregomlaphoneBundle:Category', 'c')
+            ->where('c.category_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
         $colors = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('co')
             ->from('istoregomlaphoneBundle:Color', 'co')
+            ->where('co.color_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
         $brands = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('br')
             ->from('istoregomlaphoneBundle:Brand', 'br')
+            ->where('br.brand_store_id= ?1')
+            ->setParameter(1 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         
@@ -281,6 +293,7 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function findAction(Request $request)
     {
+        $user = $this->getUser();
         //echo $request->request->get('serial');die;
         $model = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('m , c')
@@ -288,6 +301,8 @@ class ModelController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Category', 'c' , 'WITH' , 'm.model_category=c.id')
             ->where('m.model_serial = ?1')
             ->setParameter(1 , $request->request->get('serial'))
+            ->andWhere('m.model_store_id = ?2')
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
         /*if(count($model)){
@@ -301,6 +316,8 @@ class ModelController extends Controller //implements AuthenticatedController
     
     public function validateAction(Request $request)
     {
+        $user = $this->getUser();
+        
         //var_dump($request->request);die;
         $modelNew['modelId'] = $request->request->get('modelId');
         $modelNew['modelSerial'] = $request->request->get('modelSerial');
@@ -347,6 +364,8 @@ class ModelController extends Controller //implements AuthenticatedController
             ->join('istoregomlaphoneBundle:Store', 's' , 'WITH' , 'm.model_store_id=s.id')
             ->where('m.model_serial = ?1')
             ->setParameter(1 , $modelNew['modelSerial'])
+            ->andWhere('m.model_store_id = ?2')
+            ->setParameter(2 , $user->getStoreId())
             ->getQuery()
             ->getScalarResult();
     //var_dump($model);die;

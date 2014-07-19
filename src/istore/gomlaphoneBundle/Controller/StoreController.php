@@ -40,12 +40,14 @@ class StoreController extends Controller //implements AuthenticatedController
         $count = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('COUNT(s) AS total_stores')
             ->from('istoregomlaphoneBundle:Store', 's')
+            ->where('s.store_master is null')
             ->getQuery()
             ->getSingleResult();
         
         $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
             ->select('s')
             ->from('istoregomlaphoneBundle:Store', 's')
+            ->where('s.store_master is null')
             ->getQuery()
             ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
             ->setMaxResults(10)
@@ -70,7 +72,56 @@ class StoreController extends Controller //implements AuthenticatedController
         ));
     }
     
-    public function addAction(Request $request) {
+    public function viewAction(Request $request , Store $storeMaster)
+    {
+        
+        $user = $this->getUser();
+        
+        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+            return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
+        }
+        
+        $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
+        
+        $count = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('COUNT(s) AS total_stores')
+            ->from('istoregomlaphoneBundle:Store', 's')
+            ->where('s.store_master = ?1')
+            ->setParameter(1 , $storeMaster->getId())
+            ->getQuery()
+            ->getSingleResult();
+        
+        $paginator = $this->getDoctrine()->getManager()->createQueryBuilder()
+            ->select('s')
+            ->from('istoregomlaphoneBundle:Store', 's')
+            ->where('s.store_master = ?1')
+            ->setParameter(1 , $storeMaster->getId())
+            ->getQuery()
+            ->setFirstResult($currentPage==1 ? 0 : ($currentPage-1)*10)
+            ->setMaxResults(10)
+            ->getScalarResult();
+        
+        //var_dump($paginator);die;
+        /*
+        $paginator = new Paginator($query, $fetchJoinCollection = true);
+        
+        if (!$paginator) {
+            throw $this->createNotFoundException('Unable to find categories.');
+        }
+        */
+        
+        return $this->render('istoregomlaphoneBundle:Store:view.html.twig', array(
+            'stores'      => $paginator,
+            'total_stores'=> $count['total_stores'],
+            'total_pages'     => ceil($count['total_stores']/10),
+            'current_page'    => $currentPage,
+            'action'          => 'index',
+            'controller'      => 'store',
+            'master'          => $storeMaster,
+        ));
+    }
+    
+    public function addAction(Request $request , Store $storeMaster = null) {
         
         $user = $this->getUser();
         
@@ -84,6 +135,10 @@ class StoreController extends Controller //implements AuthenticatedController
             $store->setStoreAddress($request->request->get('storeAddress'));
             $store->setStorePhone($request->request->get('storePhone'));
             $store->setStoreLogo($request->request->get('storeLogo'));
+            if($storeMaster)
+                $store->setStoreMaster($storeMaster->getId());
+            else
+                $store->setStoreMaster(null);
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($store);
             $entityManager->flush();
@@ -95,6 +150,7 @@ class StoreController extends Controller //implements AuthenticatedController
         return $this->render('istoregomlaphoneBundle:Store:add.html.twig', array(
             'action'          => 'add',
             'controller'      => 'store',
+            'master'          => $storeMaster,
         ));
     }
     

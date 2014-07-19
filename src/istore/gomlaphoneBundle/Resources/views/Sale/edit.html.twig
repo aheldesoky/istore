@@ -3,139 +3,111 @@
 <div class="form-horizontal">
     <div class="panel panel-primary">
         <div class="panel-heading">
-            <h4 class="panel-heading-sale">{% trans %}Edit Bill{% endtrans %}</h4>            
+            <h4 class="panel-heading-sale">{% trans %}Edit Bill{% endtrans %} #{{ sale.s_id }}</h4>
         </div>
         <div class="panel-body">
-            <div class="immutable-bulk-view-data">
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="customerName" class="col-sm-5 control-label">{% trans %}Customer Name{% endtrans %} :</label>
-                            <div class="col-sm-6">
-                                <label for="customerName" class="col-sm-12 control-label">{{ sale.c_customer_name }}</label>
+            <form class="form-horizontal" id="saleForm" role="form" method="post" action="/sale/edit">
+                <div class="immutable-bulk-view-data">
+                    <div class="row customer-data">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerName" class="col-sm-4 control-label">{% trans %}Customer Name{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control text-center" id="customerName" name="customerName" placeholder="{%trans%}Customer Name{%endtrans%}" value="{{sale.c_customer_name}}">
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="customerPhone" class="col-sm-5 control-label">{% trans %}Phone{% endtrans %} :</label>
-                            <div class="col-sm-6">
-                                <label id="customerPhone" class="col-sm-12 control-label">{{ sale.c_customer_phone }}</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-4">
-                        <div class="form-group">
-                            <label for="customerNotes" class="col-sm-5 control-label">{% trans %}Notes{% endtrans %} :</label>
-                            <div class="col-sm-6">
-                                <label id="customerNotes" class="col-sm-12 control-label">{{ sale.c_customer_notes }}</label>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="customerPhone" class="col-sm-3 control-label">{% trans %}Phone{% endtrans %} :</label>
+                                <div class="col-sm-6">
+                                    <input type="text" class="form-control text-center" id="customerPhone" name="customerPhone" placeholder="{%trans%}Phone Number{%endtrans%}" value="{{sale.c_customer_phone}}">
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="form-container">
-                <div class="row">
-                    <form class="form-horizontal" id="saleForm" role="form" method="post" action="/sale/edit">
-                        <div class="col-lg-12">
+                <div class="form-container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row input-serial alert-serial-sale immutable-bulk-view-data">
+                                <div class="col-md-7 col-md-offset-2">
+                                    <div class="form-group">
+                                        <input type="text" class="form-control input-lg text-center" id="itemSerial" name="itemSerial" placeholder="{% trans %}Item Serial{% endtrans %}">
+                                        <label for="itemSerial" class="serial-error"></label>
+                                    </div>
+                                </div>
+                                <div class="col-md-1">
+                                    <button id="item-serial-sale" data-loading-text="{% trans %}Loading{% endtrans %}" class="btn btn-warning btn-lg" type="button">{% trans %}Check{% endtrans %}</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
                             <div class="row item-list">
-                                <div class="col-lg-12">
-                                    {% set itemList = null %}
-                                    {% set totalDue = 0 %}
-                                    
-                                    {# Items with serial #}
-                                    {% for item in sale.items.with_serial %}
-                                        {% if loop.first == true %}
-                                            {% set itemId = '{"itemId":' ~ item.i_id ~ '}' %}
-                                        {% else %}
-                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
-                                        {% endif %}
-                                        
-                                        {% set itemList = itemList ~ itemId %}
-                                        {% set totalDue = totalDue + item.i_item_price %}
-                                    {% endfor %}
-                                    
-                                    {# Items without serial #}
-                                    {% for item in sale.items.without_serial %}
-                                        {% if loop.first == true and itemList|length == null %}
-                                            {% set itemId = '{"itemId":' ~ item.i_id ~ '}' %}
-                                        {% elseif loop.first == true and itemList|length != null %}
-                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
-                                        {% else %}
-                                            {% set itemId = ',{"itemId":' ~ item.i_id ~ '}' %}
-                                        {% endif %}
-                                        
-                                        {% set itemList = itemList ~ itemId %}
-                                        {% set totalDue = totalDue + item.i_item_price %}
-                                    {% endfor %}
-                                    
-                                    <input type="hidden" id="itemList" value="[{{ itemList }}]" />
-                                    <table class="table table-bordered table-curved table-view table-view-sale">
-                                        <tr class="table-header active">
-                                            <th>{% trans %}Serial{% endtrans %}</th>
-                                            <th>{% trans %}Item{% endtrans %}</th>
-                                            <th>{% trans %}Category{% endtrans %}</th>
-                                            <th>{% trans %}Qty{% endtrans %}</th>
-                                            <th class="table-col-price">{% trans %}Price{% endtrans %}</th>
-                                            <th class="table-col-action">{% trans %}Action{% endtrans %}</th>
-                                        </tr>
-                                        
-                                        <tr class="table-footer success">
-                                            <td colspan="3" rowspan="3">
-                                                <div class="row padding-10">
-                                                    <div class="col-md-12">
-                                                        <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Payment{% endtrans %} : </label>
-                                                        <div class="col-sm-6">
-                                                            {% if sale.payments|length > 0 %}
-                                                                <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Postpaid{% endtrans %}</label>
-                                                            {% else %}
-                                                                <label for="paymentMethod" class="col-sm-5 control-label">{% trans %}Prepaid{% endtrans %}</label>
-                                                            {% endif %}
+                                <div class="col-md-12">
+                                    <input type="hidden" id="itemList" name="itemList" value="" />
+                                    <table class="table table-bordered table-view table-view-sale tablesorter">
+                                        <thead>
+                                            <tr class="table-header warning">
+                                                <th>{% trans %}Serial{% endtrans %}</th>
+                                                <th>{% trans %}Item{% endtrans %}</th>
+                                                <th>{% trans %}Category{% endtrans %}</th>
+                                                <th>{% trans %}Qty{% endtrans %}</th>
+                                                <th class="table-col-price">{% trans %}Average Price{% endtrans %}</th>
+                                                <th class="table-col-price">{% trans %}Sell Price{% endtrans %}</th>
+                                                <th class="table-col-action">{% trans %}Action{% endtrans %}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr class="table-empty-row">
+                                                <td colspan="7">{% trans %}There is no items.{% endtrans %}</td>
+                                            </tr>
+                                            <tr class="table-footer">
+                                                <td colspan="4" rowspan="3">
+                                                    <div class="row padding-10">
+                                                        <div class="col-md-12">
+                                                            <label for="paymentMethod" class="col-md-5 control-label">{% trans %}Payment{% endtrans %} : </label>
+                                                            <div class="col-md-6">
+                                                                <select class="form-control" id="paymentMethod" name="paymentMethod">
+                                                                    <option value="prepaid" {% if sale.payments|length == 0 %}selected{% endif %}>{% trans %}Prepaid{% endtrans %}</option>
+                                                                    <option value="postpaid" {% if sale.payments|length > 0 %}selected{% endif %}>{% trans %}Postpaid{% endtrans %}</option>
+                                                                </select>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
-                                                    <div class="col-md-12">
-                                                        <label for="amountPaid" class="col-sm-5 control-label">{% trans %}Amount Paid{% endtrans %} : </label>
-                                                        <div class="col-sm-6">
-                                                            {% if sale.payments|length > 0 %}
-                                                                <label for="amountPaid" class="col-sm-5 control-label">{{sale.s_sale_total_paid}} {% trans %}L.E.{% endtrans %}</label>
-                                                            {% endif %}
+                                                    <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
+                                                        <div class="col-md-12">
+                                                            <label for="amountPaid" class="col-md-5 control-label">{% trans %}Amount Paid{% endtrans %} : </label>
+                                                            <div class="col-md-6">
+                                                                <input type="number" class="form-control text-center" id="amountPaid" name="amountPaid" placeholder="Amount L.E." value="{{sale.s_sale_total_paid}}">
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
-                                                    <div class="col-md-12">
-                                                        <label for="remainingAmount" class="col-sm-5 control-label">{% trans %}Remaining{% endtrans %} : </label>
-                                                        <div class="col-sm-6">
-                                                            {% if sale.payments|length > 0 %}
-                                                                <label id="remainingAmount" name="remainingAmount" class="col-sm-5 control-label">{{ sale.s_sale_total_price - sale.s_sale_discount - sale.s_sale_total_paid }} {% trans %}L.E.{% endtrans %}</label>
-                                                            {% endif %}
+                                                    <div class="row padding-10 input-amount-paid {% if sale.payments|length == 0 %}hidden{% endif %}">
+                                                        <div class="col-md-12">
+                                                            <label for="remainingAmount" class="col-md-5 control-label">{% trans %}Remaining{% endtrans %} : </label>
+                                                            <div class="col-md-6">
+                                                                <label id="remainingAmount" name="remainingAmount" class="col-md-8 control-label">0 {% trans %}L.E.{% endtrans %}</label>
+                                                            </div>
                                                         </div>
                                                     </div>
-                                                </div>
-                                                <div class="row padding-10"></div>
-                                                <div class="row padding-10">
-                                                    <div class="col-md-12">
-                                                        <div class="col-md-6 col-md-offset-3">
-                                                            <a href="#" class="btn btn-md btn-success btn-add-item-modal">+ {% trans %}Add New Item{% endtrans %}</a>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </td>
-                                            <th>{% trans %}Subtotal{% endtrans %}</th>
-                                            <th colspan="2" id="subtotal">{{ totalDue }} {% trans %}L.E.{% endtrans %}</th>
-                                        </tr>
-                                        <tr class="success">
-                                            <th>{% trans %}Discount{% endtrans %}</th>
-                                            <td colspan="2" class="discount-field">
-                                                <input type="number" class="form-control" id="saleDiscount" name="saleDiscount" value="{{ sale.s_sale_discount }}" placeholder="{% trans %}Discount L.E.{% endtrans %}">
-                                            </td>
-                                        </tr>
-                                        <tr class="success">
-                                            <th>{% trans %}Total{% endtrans %}</th>
-                                            <th colspan="2" id="total">{{ sale.s_sale_total_price - sale.s_sale_discount }} {% trans %}L.E.{% endtrans %}</th>
-                                        </tr>
+                                                </td>
+                                                <th>{% trans %}Subtotal{% endtrans %}</th>
+                                                <th colspan="2" id="subtotal">0 {% trans %}L.E.{% endtrans %}</th>
+                                            </tr>
+                                            <tr class="">
+                                                <th>{% trans %}Discount{% endtrans %}</th>
+                                                <td colspan="2" class="discount-field">
+                                                    <input type="number" class="form-control text-center" id="saleDiscount" name="saleDiscount" value="{{ sale.s_sale_discount }}" placeholder="{% trans %}Discount L.E.{% endtrans %}">
+                                                </td>
+                                            </tr>
+                                            <tr class="">
+                                                <th>{% trans %}Total{% endtrans %}</th>
+                                                <th colspan="2" id="total">0 {% trans %}L.E.{% endtrans %}</th>
+                                            </tr>
+                                        </tbody>
                                     </table>
                                 </div>
                             </div>
@@ -143,16 +115,18 @@
                                 <div class="col-md-12">
                                     <a class="col-md-3 col-md-offset-2 btn btn-primary btn-lg btn-checkout">{%trans%}Edit Bill{%endtrans%}</a>
                                     <a class="col-md-3 col-md-offset-2 btn btn-danger btn-lg" href="/sale/prepaid">{%trans%}Back to sales{%endtrans%}</a>
+                                    {#% include('istoregomlaphoneBundle:Default:addCustomer.html.twig') %#}
+                                    <a id="bill-link" class="hidden" href=""></a>
                                 </div>
                             </div>
                         </div>
-                    </form>
+                    </div>
                 </div>
-            </div>
+            </form>
         </div>
     </div>
 </div>
-{% include('istoregomlaphoneBundle:Sale:addItem.html.twig') %}
+{#% include('istoregomlaphoneBundle:Sale:addItem.html.twig') %#}
 <script>
     {% set items = [] %}
     {% set items = items|merge(sale.items.with_serial) %}
@@ -166,7 +140,7 @@
         //var addItem = require("addItem");
         $.each(itemListTemp , function (index, value){
             globals.item = value;
-            console.log(globals.item);
+            //console.log(globals.item);
             var displayedSerial;
             var itemQuantity = $('#itemQuantity').val();
             globals.item['s_sale_quantity'] = itemQuantity;
@@ -184,16 +158,25 @@
                     globals.bulkList.push(globals.bulk[i]);
                 }
            //console.log(globals.itemList)
-            var tableRow = "<tr>" +
-                                "<td>" + displayedSerial + "</td>" +
-                                "<td>" + globals.item.m_model_brand + ' ' + globals.item.m_model_model + "</td>" +
-                                "<td>" + globals.item.ca_category_name + "</td>" +
-                                "<td>" + itemQuantity + "</td>" +
-                                "<td>" + globals.item.b_bulk_price + lang[" L.E."] + "</td>" +
-                                "<td>" +
-                                    "<a class='btn btn-sm btn-danger btn-remove-item'>"+ lang['Remove'] +"</a>" +
-                                "</td>" +
-                            "</tr>";
+            var tableRow =  "<tr class='model-" + globals.item.m_id + "' id='" + globals.item.m_id + "'>" +
+                            "<td>" + displayedSerial + "</td>" +
+                            "<td>" + globals.item.br_brand_name + ' '
+                                   + globals.item.m_model_name + ' '
+                                   + globals.item.co_color_name + ' '
+                                   + globals.item.m_model_number +
+                            "</td>"+
+                            "<td>" + globals.item.c_category_name + "</td>" +
+                            "<td>" +
+                                     (globals.item.m_model_item_has_serial ? 1 : "<input type='number' class='form-control text-center item-quantity' data-id='" + globals.item.m_id + "' value='1'/>") +
+                            "</td>"+
+                            "<td>" + '<label class="average-buy-price">' + globals.item.i_item_average_price + '</label>'
+                                   + '<input type="hidden" class="item-buy-price" value="'+ globals.item.i_item_average_price +'">' +
+                            "</td>"+
+                            "<td><input type='number' class='form-control text-center item-sell-price' data-id='" + (globals.item.m_model_item_has_serial ? globals.item.i_id : globals.item.m_id) + "' value='" + globals.item.i_item_sell_price + "'/></td>" +
+                            "<td>" +
+                                "<a class='btn btn-sm btn-danger btn-remove-item'>"+ lang['Remove'] +"</a>" +
+                            "</td>"+
+                        "</tr>";
             $('.table-view-sale .table-footer').before(tableRow);
             $('.table-empty-row').addClass('hidden');
             //clearItem();
@@ -202,7 +185,8 @@
             globals.itemListRequired = new Array();
             $.each(globals.itemList , function (index, value){
                 var requiredItem = {
-                    itemId: value.i_id , 
+                    itemId: value.i_id ,
+                    sellPrice: value.i_item_sell_price 
                 };
                 globals.itemListRequired.push(requiredItem);
                 $('#itemList').val(JSON.stringify(globals.itemListRequired));
