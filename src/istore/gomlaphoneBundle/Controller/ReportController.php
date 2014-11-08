@@ -360,8 +360,8 @@ class ReportController extends Controller //implements AuthenticatedController
         //SUM(CASE WHEN i.item_status='warranty' AND po.id IS NULL AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_warranty
         $prepaidQuery = $queryBuilder->select("m , br , co , i , b , c , s ,
                 CONCAT(br.brand_name,' ',m.model_name,' ',co.color_name,' ',m.model_number) AS model ,
-                SUM(CASE WHEN i.item_status='sold' AND $dateFilter THEN i.item_buy_price ELSE 0 END) AS sold_buy_price ,
-                SUM(CASE WHEN i.item_status='sold' AND $dateFilter THEN i.item_sell_price ELSE 0 END) AS sold_sell_price ,
+                SUM(CASE WHEN po.id IS NULL AND i.item_status='sold' AND $dateFilter THEN i.item_buy_price ELSE 0 END) AS sold_buy_price ,
+                SUM(CASE WHEN po.id IS NULL AND i.item_status='sold' AND $dateFilter THEN i.item_sell_price ELSE 0 END) AS sold_sell_price ,
                 SUM(CASE WHEN po.id IS NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS prepaid_count_sold")
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
@@ -493,7 +493,9 @@ class ReportController extends Controller //implements AuthenticatedController
         // Doctrine Query Language DQL
         $postpaidQuery = $queryBuilder->select("DISTINCT(po.id) AS temp , m , br , co , i , b , c , s , si , po ,
             CONCAT(br.brand_name,' ',m.model_name,' ',co.color_name,' ',m.model_number) AS model ,
-            SUM(CASE WHEN po.id IS NOT NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS postpaid_count_sold")
+            SUM(CASE WHEN po.id IS NOT NULL AND i.item_status != 'warranty_replaced' AND $dateFilter THEN 1 ELSE 0 END) AS postpaid_count_sold,
+            SUM(CASE WHEN po.id IS NOT NULL AND i.item_status='sold' AND $dateFilter THEN i.item_buy_price ELSE 0 END) AS sold_buy_price ,
+            SUM(CASE WHEN po.id IS NOT NULL AND i.item_status='sold' AND $dateFilter THEN i.item_sell_price ELSE 0 END) AS sold_sell_price ")
             ->from('istoregomlaphoneBundle:Model', 'm')
             ->join('istoregomlaphoneBundle:Brand', 'br', 'WITH', 'm.model_brand=br.id')
             ->join('istoregomlaphoneBundle:Color', 'co', 'WITH', 'm.model_color=co.id')

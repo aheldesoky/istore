@@ -1,48 +1,69 @@
 {% extends 'istoregomlaphoneBundle::layout.html.twig' %}
 {% block body %}
-<form class="form-horizontal" role="form" method="post" id="supplierForm">
+<form class="form-horizontal" role="form" method="post" id="storeForm">
 	<div class="panel panel-primary">
 		<div class="panel-heading">
-			<h4>{% trans %}Edit Supplier{% endtrans %}</h4>
+                        {% if master is null %}
+                            <h4>{% trans %}Add New Master{% endtrans %}</h4>
+                        {% else %}
+                            <h4>{% trans %}Add New Branch{% endtrans %}</h4>
+                        {% endif %}
 		</div>
 		<div class="panel-body">
+                        {% if master is not null %}
+                        <div class="immutable-bulk-view-data">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="storeName" class="col-sm-5 control-label">{% trans %}Store Name{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storeName" class="col-sm-12 control-label">{{ master.storeName }}</label>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="storePhone" class="col-sm-5 control-label">{% trans %}Store Phone{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storePhone" class="col-sm-12 control-label">{{ master.storePhone }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="storeAddress" class="col-sm-5 control-label">{% trans %}Store Address{% endtrans %} :</label>
+                                        <div class="col-sm-6">
+                                            <label for="storeAddress" class="col-sm-12 control-label">{{ master.storeAddress }}</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endif %}
 			<div class="form-container">
 				<div class="">
 					<div class="row">
 						<div class="col-md-6">
 							<div class="form-group">
-								<label for="supplierName" class="col-sm-4 control-label">{% trans %}Supplier Name{% endtrans %}</label>
+								<label for="storeName" class="col-sm-4 control-label">{% trans %}Store Name{% endtrans %}</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="supplierName" name="supplierName" placeholder="{% trans %}Name{% endtrans %}" value="{{ supplier.supplierName }}">
+									<input type="text" class="form-control" id="storeName" name="storeName" placeholder="{% trans %}Name{% endtrans %}" value="{{ store.storeName }}">
 								</div>
 							</div>
                                                         <div class="form-group">
-								<label for="supplierPhone" class="col-sm-4 control-label">{% trans %}Supplier Phone{% endtrans %}</label>
+								<label for="storePhone" class="col-sm-4 control-label">{% trans %}Store Phone{% endtrans %}</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="supplierPhone" name="supplierPhone" placeholder="{% trans %}Phone{% endtrans %}" value="{{ supplier.supplierPhone }}">
+									<input type="text" class="form-control" id="storePhone" name="storePhone" placeholder="{% trans %}Phone{% endtrans %}" value="{{ store.storePhone }}">
 								</div>
 							</div>
                                                         <div class="form-group">
-								<label for="supplierEmail" class="col-sm-4 control-label">{% trans %}Supplier Email{% endtrans %}</label>
+								<label for="storeAddress" class="col-sm-4 control-label">{% trans %}Store Address{% endtrans %}</label>
 								<div class="col-sm-6">
-									<input type="text" class="form-control" id="supplierEmail" name="supplierEmail" placeholder="{% trans %}Email{% endtrans %}" value="{{ supplier.supplierEmail }}">
+									<input type="text" class="form-control" id="storeAddress" name="storeAddress" placeholder="{% trans %}Address{% endtrans %}" value="{{ store.storeAddress }}">
 								</div>
 							</div>
                                                         <div class="form-group">
-								<label for="supplierGovernorate" class="col-sm-4 control-label">{% trans %}Supplier Governorate{% endtrans %}</label>
+								<label for="storeLogo" class="col-sm-4 control-label">{% trans %}Store Logo{% endtrans %}</label>
 								<div class="col-sm-6">
-									<select class="form-control required" id="supplierGovernorate" name="supplierGovernorate">
-										<option value="" selected>{% trans %}Select governorate{% endtrans %}</option>
-										{% for governorate in governorates %}
-										<option value="{{ governorate.g_id }}" {% if governorate.g_id == supplier.supplierGovernorateId %}selected{% endif %}>{{ governorate.g_governorate_name }}</option>
-										{% endfor %}
-									</select>
-								</div>
-							</div>
-                                                        <div class="form-group">
-								<label for="supplierAddress" class="col-sm-4 control-label">{% trans %}Supplier Address{% endtrans %}</label>
-								<div class="col-sm-6">
-									<input type="text" class="form-control" id="supplierAddress" name="supplierAddress" placeholder="{% trans %}Address{% endtrans %}" value="{{ supplier.supplierAddress }}">
+									<input type="text" class="form-control" id="storeLogo" name="storeLogo" placeholder="{% trans %}Logo{% endtrans %}" value="{{ store.storeLogo }}">
 								</div>
 							</div>
 						</div>
@@ -51,7 +72,7 @@
 			</div>
 		</div>
 		<div class="panel-footer">
-			<button type="submit" class="btn btn-success btn-lg">{% trans %}Edit Supplier{% endtrans %}</button>
+			<button type="submit" class="btn btn-success btn-lg">{% trans %}Edit Store{% endtrans %}</button>
                         <a href="/store" class="btn btn-default btn-lg">{% trans %}Back to Store{% endtrans %}</a>
 		</div>
 	</div>

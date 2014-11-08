@@ -163,35 +163,29 @@ class StoreController extends Controller //implements AuthenticatedController
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
         }
         
-        $governorates = $this->getDoctrine()->getManager()->createQueryBuilder()
-            ->select('g')
-            ->from('istoregomlaphoneBundle:Governorate', 'g')
-            ->getQuery()
-            ->getScalarResult();
-        
         $store = $this->getDoctrine()
             ->getRepository('istoregomlaphoneBundle:Store')
             ->find($id);
         
-        if( $request->getMethod() == 'POST')
-        {
+        if ($request->getMethod() == 'POST') {
             $store->setStoreName($request->request->get('storeName'));
             $store->setStoreAddress($request->request->get('storeAddress'));
             $store->setStorePhone($request->request->get('storePhone'));
-            $store->setStoreEmail($request->request->get('storeEmail'));
-            $store->setStoreGovernorateId($request->request->get('storeGovernorate'));
+            $store->setStoreLogo($request->request->get('storeLogo'));
+            
             $entityManager = $this->getDoctrine()->getManager();
             $entityManager->persist($store);
             $entityManager->flush();
 
             return $this->redirect($this->generateUrl('istoregomlaphone_store_index'));
+            //return $this->forward('istoregomlaphoneBundle:Category:index');
         }
         
-        return $this->render('istoregomlaphoneBundle:Store:edit.html.twig' , array(
-            "store" => $store,
-            'governorates' => $governorates,
+        return $this->render('istoregomlaphoneBundle:Store:edit.html.twig', array(
             'action'          => 'edit',
             'controller'      => 'store',
+            'store'           => $store,
+            'master'          => $storeMaster,
         ));
     }
     

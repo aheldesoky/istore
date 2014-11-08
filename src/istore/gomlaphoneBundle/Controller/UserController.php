@@ -64,6 +64,7 @@ class UserController extends Controller //implements AuthenticatedController
         //var_dump($paginator);die;
         
         return $this->render('istoregomlaphoneBundle:User:index.html.twig', array(
+            'store_id'  => $user->getStoreId(),
             'users'      => $paginator,
             'total_users'=> $count['total_users'],
             'total_pages'     => ceil($count['total_users']/10),
