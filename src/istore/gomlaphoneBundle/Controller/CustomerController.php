@@ -30,9 +30,9 @@ class CustomerController extends Controller //implements AuthenticatedController
         
         $user = $this->getUser();
         
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        /*if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-        }
+        }*/
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -77,9 +77,9 @@ class CustomerController extends Controller //implements AuthenticatedController
         
         $user = $this->getUser();
         
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        /*if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-        }
+        }*/
         
         $currentPage = (int) ($request->query->get('page') ? $request->query->get('page') : 1);
         
@@ -255,9 +255,9 @@ class CustomerController extends Controller //implements AuthenticatedController
     {
         $user = $this->getUser();
         
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        /*if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-        }
+        }*/
         
         if( $request->getMethod() == 'POST')
         {
@@ -368,9 +368,9 @@ class CustomerController extends Controller //implements AuthenticatedController
         
         $user = $this->getUser();
         
-        if(!in_array('ROLE_ADMIN', $user->getRoles())){
+        /*if(!in_array('ROLE_ADMIN', $user->getRoles())){
             return $this->render('istoregomlaphoneBundle::unauthorized.html.twig', array());
-        }
+        }*/
         
         //var_dump($request);die;
         $customerNew['customerId'] = $request->request->get('customerId');
