@@ -28,6 +28,7 @@ profile:
     show:
         username: اسم المستخدم
         email: بريد الكتروني
+        back: العودة للصفحة الرئيسية
     edit:
         submit: تحديث
     flash:
